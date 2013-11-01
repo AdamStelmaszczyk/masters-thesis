@@ -10,6 +10,9 @@ import Jama.Matrix;
 /** P[j] + sqrt(2) * F * v */
 public class MutationRandomInfinity extends Mutation
 {
+	private final double[] z = new double[NP];
+	private final double[] diffVector = new double[NP];
+
 	protected Matrix L;
 
 	public MutationRandomInfinity(int NP)
@@ -37,22 +40,21 @@ public class MutationRandomInfinity extends Mutation
 
 	protected Solution computeDiffVector(Population pop, Random rand)
 	{
-		final double[] z = new double[NP];
 		for (int x = 0; x < NP; x++)
 		{
 			z[x] = rand.nextGaussian();
 		}
 
-		final double[] result = new double[NP];
 		for (int y = 0; y < NP; y++)
 		{
+			diffVector[y] = 0.0;
 			for (int x = 0; x <= y; x++)
 			{
-				result[y] += L.get(y, x) * z[x];
+				diffVector[y] += L.get(y, x) * z[x];
 			}
 		}
 
-		return new Solution(result, pop.solutions[0].getFunEvalsCounter());
+		return new Solution(diffVector, pop.solutions[0].getFunEvalsCounter());
 	}
 
 	protected void computeL(Population pop)

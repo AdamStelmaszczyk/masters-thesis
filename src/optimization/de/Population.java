@@ -6,13 +6,16 @@ import Jama.Matrix;
 
 public class Population
 {
+	private final double[][] covarianceMatrix;
+
 	public final Solution[] solutions;
 	public final int DIM;
 
-	public Population(int n, int dim, Random rand, FunEvalsCounter funEvals)
+	public Population(int NP, int dim, Random rand, FunEvalsCounter funEvals)
 	{
-		solutions = new Solution[n];
-		for (int i = 0; i < n; i++)
+		covarianceMatrix = new double[NP][NP];
+		solutions = new Solution[NP];
+		for (int i = 0; i < NP; i++)
 		{
 			solutions[i] = new Solution(dim, rand, funEvals);
 		}
@@ -34,7 +37,6 @@ public class Population
 
 	public Matrix computeCovarianceMatrix()
 	{
-		final double[][] covarianceMatrix = new double[solutions.length][solutions.length];
 		for (int y = 0; y < solutions.length; y++)
 		{
 			for (int x = 0; x < solutions.length; x++)
