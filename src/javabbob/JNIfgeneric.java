@@ -11,46 +11,6 @@ public class JNIfgeneric
 		System.loadLibrary("cjavabbob");
 	}
 
-	/** Class of the optional parameters to fgeneric. */
-	static public class Params
-	{
-		/** Algorithm name. Default is "not-specified". */
-		public String algName = "not-specified";
-		/** Comment line. Default is "". */
-		public String comments = "";
-		/** Index and data file names prefix. Default is "bbobexp". */
-		public String filePrefix = "bbobexp";
-	}
-
-	// Need to make sure the default values are the same as the ones in C
-	// Is it possible to collect the default values in C?
-
-	/** Deletes all files and subdirectories under dir. (method obtained from the Java developers almanac) Will remove
-	 * the File instance dir (which should be a directory) and all files and subdirectories under dir. Will do nothing
-	 * if dir is not a directory.
-	 * @param dir an instance of File which should be a directory.
-	 * @return true if all deletions were successful. If a deletion fails, the method stops attempting to delete and
-	 * returns false. */
-	protected static boolean deleteDir(File dir)
-	{
-		if (dir.isDirectory())
-		{
-			final String[] children = dir.list();
-			for (int i = 0; i < children.length; i++)
-			{
-				final String element = children[i];
-				final boolean success = deleteDir(new File(dir, element));
-				if (!success)
-				{
-					return false;
-				}
-			}
-		}
-
-		// The directory is now empty so delete it
-		return dir.delete();
-	}
-
 	/** Creates required directories which will contain the data. This method creates the directories data_f1 to
 	 * data_f24, and data_f101 to data_f130 for the noisy functions in the folder designated by the String outputPath.
 	 * @param outputPath folder name in which the directories will be created
@@ -105,28 +65,50 @@ public class JNIfgeneric
 		return ret;
 	}
 
+	// Need to make sure the default values are the same as the ones in C
+	// Is it possible to collect the default values in C?
+
+	/** Deletes all files and subdirectories under dir. (method obtained from the Java developers almanac) Will remove
+	 * the File instance dir (which should be a directory) and all files and subdirectories under dir. Will do nothing
+	 * if dir is not a directory.
+	 * @param dir an instance of File which should be a directory.
+	 * @return true if all deletions were successful. If a deletion fails, the method stops attempting to delete and
+	 * returns false. */
+	protected static boolean deleteDir(File dir)
+	{
+		if (dir.isDirectory())
+		{
+			final String[] children = dir.list();
+			for (final String element : children)
+			{
+				final boolean success = deleteDir(new File(dir, element));
+				if (!success)
+				{
+					return false;
+				}
+			}
+		}
+
+		// The directory is now empty so delete it
+		return dir.delete();
+	}
+
+	/** Returns the fitness value of X. X is a double array representing the decision variable vector. The search
+	 * interval for X is [-5, 5] in each component. evalute(X) will return a reasonable value nonetheless for any
+	 * real-valued X. Occasionally data are written in the data files.
+	 * @param X decision variable vector
+	 * @return the objective function value for the given search point */
+	public native double evaluate(double[] X);
+
 	// Native method declaration
-
-	/** Initializes the BBOB C backend. Has to be called each time any of the parameters (e.g. dimensions, functionID)
-	 * changes; do not forget to call exitBBOB() before again calling initialize.
-	 * @return the target function value of the specified fitness function */
-	public native double initBBOB(int funcId, int instanceId, int dim, String datapath, Params optParams);
-
-	/** Closes down the BBOB C backend initiated by initialize.
-	 * @return the best true fitness value ever obtained */
-	public native double exitBBOB();
 
 	/** Determines if the function given by funcId is part of the testbed.
 	 * @return true if it is, false otherwise */
 	public native boolean exist(int funcId);
 
-	// exist() function is missing
-
-	/** Returns the target objective function value.
-	 * @return the target function value. */
-	public native double getFtarget();
-
-	// Should be renamed getFtarget
+	/** Closes down the BBOB C backend initiated by initialize.
+	 * @return the best true fitness value ever obtained */
+	public native double exitBBOB();
 
 	/** Returns the best function value obtained so far. If any search points have been evaluated already (see
 	 * evaluate()), the current best value is returned, otherwise it is the value DBL_MAX in C. Is the same as
@@ -134,15 +116,28 @@ public class JNIfgeneric
 	 * @return the best function value obtained so far. */
 	public native double getBest();
 
+	// exist() function is missing
+
+	/** Returns the number of function since initialize() was called.
+	 * @return the number of function evaluations since initialize() was called. */
+	public native double getEvaluations();
+
+	// Should be renamed getFtarget
+
 	/** Returns the best function value obtained so far. If any search points have been evaluated already (see
 	 * evaluate()), the current best value is returned, otherwise it is the value DBL_MAX in C. Is the same as
 	 * getBest().
 	 * @return the best function value obtained so far. */
 	public native double getFbest();
 
-	/** Returns the number of function since initialize() was called.
-	 * @return the number of function evaluations since initialize() was called. */
-	public native double getEvaluations();
+	/** Returns the target objective function value.
+	 * @return the target function value. */
+	public native double getFtarget();
+
+	/** Initializes the BBOB C backend. Has to be called each time any of the parameters (e.g. dimensions, functionID)
+	 * changes; do not forget to call exitBBOB() before again calling initialize.
+	 * @return the target function value of the specified fitness function */
+	public native double initBBOB(int funcId, int instanceId, int dim, String datapath, Params optParams);
 
 	/** Sets the noise random seed for the noisy functions. This function is provided for comparing the values of noisy
 	 * functions for different implementation of fgeneric. */
@@ -156,10 +151,14 @@ public class JNIfgeneric
 	 * @param inseed an integer seed */
 	public native void unif(double[] r, int N, int inseed);
 
-	/** Returns the fitness value of X. X is a double array representing the decision variable vector. The search
-	 * interval for X is [-5, 5] in each component. evalute(X) will return a reasonable value nonetheless for any
-	 * real-valued X. Occasionally data are written in the data files.
-	 * @param X decision variable vector
-	 * @return the objective function value for the given search point */
-	public native double evaluate(double[] X);
+	/** Class of the optional parameters to fgeneric. */
+	static public class Params
+	{
+		/** Algorithm name. Default is "not-specified". */
+		public String algName = "not-specified";
+		/** Comment line. Default is "". */
+		public String comments = "";
+		/** Index and data file names prefix. Default is "bbobexp". */
+		public String filePrefix = "bbobexp";
+	}
 }

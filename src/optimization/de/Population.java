@@ -6,7 +6,7 @@ import Jama.Matrix;
 
 public class Population
 {
-	public Solution[] solutions;
+	public final Solution[] solutions;
 	public final int DIM;
 
 	public Population(int n, int dim, Random rand, FunEvalsCounter funEvals)
@@ -19,23 +19,17 @@ public class Population
 		DIM = dim;
 	}
 
-	/** @return Solutions in columns. */
-	public double[][] getData()
+	private static Solution computeSum(Population pop)
 	{
-		final double[][] data = new double[DIM][solutions.length];
-		for (int x = 0; x < DIM; x++)
+		final Solution sum = new Solution(pop.solutions[0]);
+		for (int i = 1; i < pop.size(); i++)
 		{
-			for (int y = 0; y < solutions.length; y++)
+			for (int j = 0; j < pop.solutions[i].feat.length; j++)
 			{
-				data[x][y] = solutions[y].feat[x];
+				sum.feat[j] += pop.solutions[i].feat[j];
 			}
 		}
-		return data;
-	}
-
-	public int size()
-	{
-		return solutions.length;
+		return sum;
 	}
 
 	public Matrix computeCovarianceMatrix()
@@ -56,16 +50,22 @@ public class Population
 		return computeSum(pop).mul(1.0 / pop.size());
 	}
 
-	private static Solution computeSum(Population pop)
+	/** @return Solutions in columns. */
+	public double[][] getData()
 	{
-		final Solution sum = new Solution(pop.solutions[0]);
-		for (int i = 1; i < pop.size(); i++)
+		final double[][] data = new double[DIM][solutions.length];
+		for (int x = 0; x < DIM; x++)
 		{
-			for (int j = 0; j < pop.solutions[i].feat.length; j++)
+			for (int y = 0; y < solutions.length; y++)
 			{
-				sum.feat[j] += pop.solutions[i].feat[j];
+				data[x][y] = solutions[y].feat[x];
 			}
 		}
-		return sum;
+		return data;
+	}
+
+	public int size()
+	{
+		return solutions.length;
 	}
 }

@@ -10,9 +10,9 @@ public class FunEvalsCounter
 		this.maxFunEvals = maxFunEvals;
 	}
 
-	public boolean isEnough()
+	public int getCounter()
 	{
-		return counter >= maxFunEvals;
+		return counter;
 	}
 
 	public void increment()
@@ -20,8 +20,8 @@ public class FunEvalsCounter
 		counter++;
 	}
 
-	public int getCounter()
+	public boolean isEnough()
 	{
-		return counter;
+		return counter >= maxFunEvals;
 	}
 }

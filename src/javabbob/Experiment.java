@@ -9,10 +9,10 @@ import java.util.Random;
 
 import optimization.Optimizer;
 import optimization.de.DE;
-import optimization.de.MidpointActionEvaluate;
-import optimization.de.MutationOperatorWithMidpoint;
-import optimization.de.MutationOperatorWithMidpointInfinity;
-import optimization.de.MutationOperatorWithRandomInfinity;
+import optimization.de.midpoint.MidpointActionEvaluate;
+import optimization.de.mutation.MutationMidpoint;
+import optimization.de.mutation.MutationMidpointInfinity;
+import optimization.de.mutation.MutationRandomInfinity;
 import optimization.random.RandomOptimizer;
 
 /** Wrapper class running an entire BBOB experiment. */
@@ -25,18 +25,7 @@ public class Experiment
 	final static int RUNS = 100;
 	final static int FUN_EVALS_TO_DIM_RATIO = 100000;
 	final static int SEED = 1;
-
-	final static Map cmdToOptimizerMap = new HashMap();
-
-	private static void initCmdToOptimizerMap()
-	{
-		cmdToOptimizerMap.put("derand", new DE());
-		cmdToOptimizerMap.put("derandinf", new DE(new MutationOperatorWithRandomInfinity()));
-		cmdToOptimizerMap.put("demid", new DE(new MutationOperatorWithMidpoint()));
-		cmdToOptimizerMap.put("demidinf", new DE(new MutationOperatorWithMidpointInfinity()));
-		cmdToOptimizerMap.put("demidplus", new DE(new MutationOperatorWithMidpoint(), new MidpointActionEvaluate()));
-		cmdToOptimizerMap.put("random", new RandomOptimizer());
-	}
+	final static Map<String, Optimizer> cmdToOptimizerMap = new HashMap<String, Optimizer>();
 
 	/** Main method for running the whole BBOB experiment. */
 	public static void main(String[] args)
@@ -46,7 +35,7 @@ public class Experiment
 		{
 			die();
 		}
-		final Optimizer optimizer = (Optimizer) cmdToOptimizerMap.get(args[0]);
+		final Optimizer optimizer = cmdToOptimizerMap.get(args[0]);
 
 		// Sets default locale to always have 1.23 not 1,23 in files
 		Locale.setDefault(Locale.US);
@@ -73,12 +62,10 @@ public class Experiment
 		final long startTime = System.currentTimeMillis();
 		printDate();
 
-		for (int i = 0; i < DIMENSIONS.length; i++)
+		for (final int dim : DIMENSIONS)
 		{
-			final int dim = DIMENSIONS[i];
-			for (int f = 0; f < FUNCTIONS.length; f++)
+			for (final int fun : FUNCTIONS)
 			{
-				final int fun = FUNCTIONS[f];
 				for (int run = 1; run <= RUNS; run++)
 				{
 					fgeneric.initBBOB(fun, run, dim, args[0], new JNIfgeneric.Params());
@@ -102,13 +89,23 @@ public class Experiment
 		}
 	}
 
-	private static void printDate()
-	{
-		System.out.println(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()));
-	}
-
 	private static void die()
 	{
 		throw new IllegalArgumentException("First argument must be one of the following: " + cmdToOptimizerMap.keySet());
+	}
+
+	private static void initCmdToOptimizerMap()
+	{
+		cmdToOptimizerMap.put("derand", new DE());
+		cmdToOptimizerMap.put("derandinf", new DE(MutationRandomInfinity.class));
+		cmdToOptimizerMap.put("demid", new DE(MutationMidpoint.class));
+		cmdToOptimizerMap.put("demidinf", new DE(MutationMidpointInfinity.class));
+		cmdToOptimizerMap.put("demidplus", new DE(MutationMidpoint.class, MidpointActionEvaluate.class));
+		cmdToOptimizerMap.put("random", new RandomOptimizer());
+	}
+
+	private static void printDate()
+	{
+		System.out.println(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()));
 	}
 }

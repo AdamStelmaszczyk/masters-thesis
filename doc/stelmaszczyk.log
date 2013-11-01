@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2013.5.27)  27 OCT 2013 13:00
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2013.5.27)  1 NOV 2013 18:25
 entering extended mode
  %&-line parsing enabled.
 **stelmaszczyk.tex
@@ -734,41 +734,109 @@ Underfull \hbox (badness 10000) in paragraph at lines 203--208
 <../pngs/24.png, id=69, 481.8pt x 481.8pt>
 File: ../pngs/24.png Graphic file (type png)
  <use ../pngs/24.png>
-<../pngs/110.png, id=70, 481.8pt x 481.8pt>
-File: ../pngs/110.png Graphic file (type png)
- <use ../pngs/110.png>
 
-LaTeX Warning: Float too large for page by 132.16801pt on input line 215.
+LaTeX Warning: File `../pngs/110.png' not found on input line 214.
 
-<../pngs/113.png, id=71, 481.8pt x 481.8pt>
-File: ../pngs/113.png Graphic file (type png)
- <use ../pngs/113.png>
-<../pngs/116.png, id=72, 481.8pt x 481.8pt>
-File: ../pngs/116.png Graphic file (type png)
- <use ../pngs/116.png>
 
-LaTeX Warning: Float too large for page by 132.16801pt on input line 221.
+! Package pdftex.def Error: File `../pngs/110.png' not found.
 
-<../pngs/119.png, id=73, 481.8pt x 481.8pt>
-File: ../pngs/119.png Graphic file (type png)
- <use ../pngs/119.png>
-<../pngs/122.png, id=74, 481.8pt x 481.8pt>
-File: ../pngs/122.png Graphic file (type png)
- <use ../pngs/122.png>
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.214 ...ludegraphics[scale=0.75]{../pngs/110.png}
+                                                  
+Using draft setting for this image.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
 
-LaTeX Warning: Float too large for page by 132.16801pt on input line 227.
-
-<../pngs/126.png, id=75, 481.8pt x 481.8pt>
-File: ../pngs/126.png Graphic file (type png)
- <use ../pngs/126.png>
-(./stelmaszczyk.bbl
-LaTeX Font Info:    Try loading font information for OT4+cmtt on input line 15.
-
- (/usr/share/texmf-texlive/tex/latex/polski/ot4cmtt.fd
+LaTeX Font Info:    Try loading font information for OT4+cmtt on input line 214
+.
+(/usr/share/texmf-texlive/tex/latex/polski/ot4cmtt.fd
 File: ot4cmtt.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
-))
-[1pdfTeX warning (ext4): destination with the same identifier (name{table.3}) h
-as been already used, duplicate ignored
+)
+
+LaTeX Warning: File `../pngs/113.png' not found on input line 219.
+
+
+! Package pdftex.def Error: File `../pngs/113.png' not found.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.219 ...ludegraphics[scale=0.75]{../pngs/113.png}
+                                                  
+Using draft setting for this image.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: File `../pngs/116.png' not found on input line 220.
+
+
+! Package pdftex.def Error: File `../pngs/116.png' not found.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.220 ...ludegraphics[scale=0.75]{../pngs/116.png}
+                                                  
+Using draft setting for this image.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: File `../pngs/119.png' not found on input line 225.
+
+
+! Package pdftex.def Error: File `../pngs/119.png' not found.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.225 ...ludegraphics[scale=0.75]{../pngs/119.png}
+                                                  
+Using draft setting for this image.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: File `../pngs/122.png' not found on input line 226.
+
+
+! Package pdftex.def Error: File `../pngs/122.png' not found.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.226 ...ludegraphics[scale=0.75]{../pngs/122.png}
+                                                  
+Using draft setting for this image.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: File `../pngs/126.png' not found on input line 231.
+
+
+! Package pdftex.def Error: File `../pngs/126.png' not found.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.231 ...ludegraphics[scale=0.75]{../pngs/126.png}
+                                                  
+Using draft setting for this image.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+(./stelmaszczyk.bbl) [1pdfTeX warning (ext4): destination with the same identif
+ier (name{table.3}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
@@ -778,53 +846,40 @@ r (name{page.}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
 l.237 \end{document}
-                     [2 <../pngs/24.png (PNG copy)> <../pngs/110.png (PNG copy)
->]pdfTeX warning (ext4): destination with the same identifier (name{page.}) has
- been already used, duplicate ignored
+                     [2 <../pngs/24.png (PNG copy)>]pdfTeX warning (ext4): dest
+ination with the same identifier (name{page.}) has been already used, duplicate
+ ignored
 <to be read again> 
                    \relax 
 l.237 \end{document}
-                     [3 <../pngs/113.png (PNG copy)> <../pngs/116.png (PNG copy
-)>]pdfTeX warning (ext4): destination with the same identifier (name{page.}) ha
-s been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.237 \end{document}
-                     [4 <../pngs/119.png (PNG copy)> <../pngs/122.png (PNG copy
-)>]pdfTeX warning (ext4): destination with the same identifier (name{page.}) ha
-s been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.237 \end{document}
-                     [5 <../pngs/126.png (PNG copy)>] (./stelmaszczyk.aux) ) 
+                     [3] (./stelmaszczyk.aux) ) 
 Here is how much of TeX's memory you used:
- 6260 strings out of 493848
- 87733 string characters out of 1152823
+ 6236 strings out of 493848
+ 87235 string characters out of 1152823
  173376 words of memory out of 3000000
- 9372 multiletter control sequences out of 15000+50000
+ 9348 multiletter control sequences out of 15000+50000
  17407 words of font info for 54 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
  38i,11n,36p,278b,331s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/u
-sr/share/texmf-texlive/fonts/enc/dvips/pl/pltt.enc}{/usr/share/texmf-texlive/fo
-nts/enc/dvips/pl/plit.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plms.enc
-}{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plmi.enc}{/usr/share/texmf-texliv
-e/fonts/enc/dvips/pl/plrm.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plme
-.enc}</usr/share/texmf-texlive/fonts/type1/public/amsfonts/symbols/msbm10.pfb><
-/usr/share/texmf-texlive/fonts/type1/public/pl/plbx10.pfb></usr/share/texmf-tex
-live/fonts/type1/public/pl/plbx12.pfb></usr/share/texmf-texlive/fonts/type1/pub
-lic/pl/plex10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plmi12.pfb></
-usr/share/texmf-texlive/fonts/type1/public/pl/plmi6.pfb></usr/share/texmf-texli
-ve/fonts/type1/public/pl/plmi8.pfb></usr/share/texmf-texlive/fonts/type1/public
-/pl/plr10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plr12.pfb></usr/s
-hare/texmf-texlive/fonts/type1/public/pl/plr6.pfb></usr/share/texmf-texlive/fon
-ts/type1/public/pl/plr8.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/pls
-y10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plsy8.pfb></usr/share/t
-exmf-texlive/fonts/type1/public/pl/plti12.pfb></usr/share/texmf-texlive/fonts/t
-ype1/public/pl/pltt12.pfb>
-Output written on stelmaszczyk.pdf (9 pages, 240177 bytes).
+{/usr/share/texmf-texlive/fonts/
+enc/dvips/pl/pltt.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plit.enc}{/u
+sr/share/texmf-texlive/fonts/enc/dvips/pl/plms.enc}{/usr/share/texmf-texlive/fo
+nts/enc/dvips/pl/plmi.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plrm.enc
+}{/usr/share/texmf-texlive/fonts/enc/dvips/pl/plme.enc}</usr/share/texmf-texliv
+e/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texmf-texlive/font
+s/type1/public/pl/plbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/pl
+bx12.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plex10.pfb></usr/share
+/texmf-texlive/fonts/type1/public/pl/plmi12.pfb></usr/share/texmf-texlive/fonts
+/type1/public/pl/plmi6.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plmi
+8.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plr10.pfb></usr/share/tex
+mf-texlive/fonts/type1/public/pl/plr12.pfb></usr/share/texmf-texlive/fonts/type
+1/public/pl/plr6.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/plr8.pfb><
+/usr/share/texmf-texlive/fonts/type1/public/pl/plsy10.pfb></usr/share/texmf-tex
+live/fonts/type1/public/pl/plsy8.pfb></usr/share/texmf-texlive/fonts/type1/publ
+ic/pl/plti12.pfb></usr/share/texmf-texlive/fonts/type1/public/pl/pltt12.pfb>
+Output written on stelmaszczyk.pdf (7 pages, 140188 bytes).
 PDF statistics:
- 158 PDF objects out of 1000 (max. 8388607)
+ 146 PDF objects out of 1000 (max. 8388607)
  23 named destinations out of 1000 (max. 500000)
- 52 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 22 words of extra memory for PDF output out of 10000 (max. 10000000)
 

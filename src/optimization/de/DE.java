@@ -4,30 +4,48 @@ import java.util.Random;
 
 import javabbob.JNIfgeneric;
 import optimization.Optimizer;
+import optimization.de.midpoint.MidpointAction;
+import optimization.de.midpoint.MidpointActionDoNothing;
+import optimization.de.mutation.Mutation;
+import optimization.de.mutation.MutationRandom;
 
 public class DE implements Optimizer
 {
-	final static double F = 0.9;
-	final static double CR = 0.9;
-	final static int NP_TO_DIM_RATIO = 10;
+	public final static double F = 0.9;
+	public final static double CR = 0.9;
+	public final static int NP_TO_DIM_RATIO = 10;
 
-	private final MutationOperator mutationOperator;
-	private final MidpointAction midpointAction;
+	private final Class<? extends Mutation> mutationClass;
+	private final Class<? extends MidpointAction> midpointActionClass;
 
-	public DE(MutationOperator mutationOperator, MidpointAction midpointAction)
-	{
-		this.mutationOperator = mutationOperator;
-		this.midpointAction = midpointAction;
-	}
-
-	public DE(MutationOperator mutationOperator)
-	{
-		this(mutationOperator, new MidpointActionDoNothing());
-	}
+	private Mutation mutation;
+	private MidpointAction midpointAction;
 
 	public DE()
 	{
-		this(new MutationOperatorWithRandom());
+		this(MutationRandom.class);
+	}
+
+	public DE(Class<? extends Mutation> mutationClass)
+	{
+		this(mutationClass, MidpointActionDoNothing.class);
+	}
+
+	public DE(Class<? extends Mutation> mutationClass, Class<? extends MidpointAction> midpointActionClass)
+	{
+		this.mutationClass = mutationClass;
+		this.midpointActionClass = midpointActionClass;
+	}
+
+	public static int getRandomIndex(Random rand, int NP, int i, int j, int k)
+	{
+		int result;
+		do
+		{
+			result = (int) (rand.nextDouble() * NP);
+		}
+		while (result == i || result == j || result == k);
+		return result;
 	}
 
 	public void optimize(JNIfgeneric fgeneric, int dim, int maxFunEvals, Random rand)
@@ -39,6 +57,16 @@ public class DE implements Optimizer
 		final Population children = new Population(NP, dim, rand, funEvals);
 		final double target = fgeneric.getFtarget();
 
+		try
+		{
+			mutation = mutationClass.getDeclaredConstructor(int.class).newInstance(NP);
+			midpointAction = midpointActionClass.newInstance();
+		}
+		catch (final Exception e)
+		{
+			e.printStackTrace();
+		}
+
 		while (true)
 		{
 			midpointAction.isMidpointBetterThanTarget(old, fgeneric);
@@ -49,7 +77,7 @@ public class DE implements Optimizer
 
 			for (int i = 0; i < NP; i++)
 			{
-				final Solution mutant = mutationOperator.getMutant(old, rand, i);
+				final Solution mutant = mutation.getMutant(old, rand, i);
 				children.solutions[i] = old.solutions[i].crossover(mutant, rand);
 				if (children.solutions[i].getFitness(fgeneric) <= target)
 				{
@@ -74,16 +102,5 @@ public class DE implements Optimizer
 				old.solutions[i] = children.solutions[i];
 			}
 		}
-	}
-
-	public static int getRandomIndex(Random rand, int NP, int i, int j, int k)
-	{
-		int result;
-		do
-		{
-			result = (int) (rand.nextDouble() * NP);
-		}
-		while (result == i || result == j || result == k);
-		return result;
 	}
 }
