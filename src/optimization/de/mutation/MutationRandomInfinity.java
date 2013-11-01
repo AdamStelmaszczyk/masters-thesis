@@ -37,12 +37,22 @@ public class MutationRandomInfinity extends Mutation
 
 	protected Solution computeDiffVector(Population pop, Random rand)
 	{
-		final double[] vector = new double[NP];
-		for (int i = 0; i < NP; i++)
+		final double[] z = new double[NP];
+		for (int x = 0; x < NP; x++)
 		{
-			vector[i] = L.get(i, 0) * rand.nextGaussian();
+			z[x] = rand.nextGaussian();
 		}
-		return new Solution(vector, pop.solutions[0].getFunEvalsCounter());
+
+		final double[] result = new double[NP];
+		for (int y = 0; y < NP; y++)
+		{
+			for (int x = 0; x <= y; x++)
+			{
+				result[y] += L.get(y, x) * z[x];
+			}
+		}
+
+		return new Solution(result, pop.solutions[0].getFunEvalsCounter());
 	}
 
 	protected void computeL(Population pop)

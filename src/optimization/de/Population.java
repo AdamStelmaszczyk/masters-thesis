@@ -19,14 +19,14 @@ public class Population
 		DIM = dim;
 	}
 
-	private static Solution computeSum(Population pop)
+	private Solution computeSum()
 	{
-		final Solution sum = new Solution(pop.solutions[0]);
-		for (int i = 1; i < pop.size(); i++)
+		final Solution sum = new Solution(solutions[0]);
+		for (int i = 1; i < solutions.length; i++)
 		{
-			for (int j = 0; j < pop.solutions[i].feat.length; j++)
+			for (int j = 0; j < solutions[i].feat.length; j++)
 			{
-				sum.feat[j] += pop.solutions[i].feat[j];
+				sum.feat[j] += solutions[i].feat[j];
 			}
 		}
 		return sum;
@@ -45,9 +45,9 @@ public class Population
 		return new Matrix(covarianceMatrix);
 	}
 
-	public Solution computeMidpoint(Population pop)
+	public Solution computeMidpoint()
 	{
-		return computeSum(pop).mul(1.0 / pop.size());
+		return computeSum().mul(1.0 / solutions.length);
 	}
 
 	/** @return Solutions in columns. */

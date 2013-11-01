@@ -27,7 +27,7 @@ public class MutationMidpoint extends Mutation
 	{
 		if (i == 0)
 		{
-			midpoint = pop.computeMidpoint(pop);
+			midpoint = pop.computeMidpoint();
 		}
 		final int k = DE.getRandomIndex(rand, NP, i, i, i);
 		final int l = DE.getRandomIndex(rand, NP, i, k, i);
