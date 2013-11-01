@@ -1,0 +1,17 @@
+\begin{thebibliography}{1}
+
+\bibitem{opara}
+Jaros{\l}aw Arabas and Karol Opara.
+\newblock Decomposition and metaoptimization of mutation operator in
+  differential evolution.
+\newblock {\em Swarm and Evolutionary Computation}, (LNCS 7269), 2012.
+
+\bibitem{hansen}
+Nikolaus Hansen, Anne Auger, Steffen Finck, and Raymond Ros.
+\newblock Real-parameter black-box optimization benchmarking: Experimental
+  setup.
+\newblock 2013.
+\newblock
+  {\url{http://coco.lri.fr/downloads/download13.09/bbobdocexperiment.pdf}}.
+
+\end{thebibliography}

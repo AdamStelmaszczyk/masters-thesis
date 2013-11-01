@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
+The top-level auxiliary file: stelmaszczyk.aux
+The style file: plain.bst
+Database file #1: references.bib
+Warning--there's a number but no volume in opara
+Warning--empty journal in hansen
+You've used 2 entries,
+            2118 wiz_defined-function locations,
+            509 strings with 4398 characters,
+and the built_in function-call counts, 581 in all, are:
+= -- 52
+> -- 36
+< -- 0
++ -- 14
+- -- 12
+* -- 40
+:= -- 113
+add.period$ -- 7
+call.type$ -- 2
+change.case$ -- 12
+chr.to.int$ -- 0
+cite$ -- 4
+duplicate$ -- 20
+empty$ -- 36
+format.name$ -- 12
+if$ -- 110
+int.to.chr$ -- 0
+int.to.str$ -- 2
+missing$ -- 2
+newline$ -- 14
+num.names$ -- 4
+pop$ -- 12
+preamble$ -- 1
+purify$ -- 10
+quote$ -- 0
+skip$ -- 14
+stack$ -- 0
+substring$ -- 10
+swap$ -- 1
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 8
+warning$ -- 2
+while$ -- 4
+width$ -- 3
+write$ -- 24
+(There were 2 warnings)
