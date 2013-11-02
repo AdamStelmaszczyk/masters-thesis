@@ -2,8 +2,6 @@ package optimization.de;
 
 import java.util.Random;
 
-import Jama.Matrix;
-
 public class Population
 {
 	private final double[][] covarianceMatrix;
@@ -35,7 +33,7 @@ public class Population
 		return sum;
 	}
 
-	public Matrix computeCovarianceMatrix()
+	public double[][] computeCovarianceMatrix()
 	{
 		for (int y = 0; y < solutions.length; y++)
 		{
@@ -44,7 +42,7 @@ public class Population
 				covarianceMatrix[x][y] = solutions[x].cov(solutions[y]);
 			}
 		}
-		return new Matrix(covarianceMatrix);
+		return covarianceMatrix;
 	}
 
 	public Solution computeMidpoint()

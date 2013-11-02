@@ -54,7 +54,7 @@ public class Solution
 	public Solution crossover(Solution other, Random rand)
 	{
 		final Solution result = new Solution(this);
-		for (int i = 0; i < feat.length; ++i)
+		for (int i = 0; i < feat.length; i++)
 		{
 			if (rand.nextDouble() < DE.CR)
 			{
@@ -87,7 +87,7 @@ public class Solution
 	public Solution minus(Solution other)
 	{
 		final Solution result = new Solution(this);
-		for (int i = 0; i < feat.length; ++i)
+		for (int i = 0; i < feat.length; i++)
 		{
 			result.feat[i] -= other.feat[i];
 		}
@@ -97,7 +97,7 @@ public class Solution
 	public Solution mul(double factor)
 	{
 		final Solution result = new Solution(this);
-		for (int i = 0; i < feat.length; ++i)
+		for (int i = 0; i < feat.length; i++)
 		{
 			result.feat[i] *= factor;
 		}
@@ -107,7 +107,7 @@ public class Solution
 	public Solution plus(Solution other)
 	{
 		final Solution result = new Solution(this);
-		for (int i = 0; i < feat.length; ++i)
+		for (int i = 0; i < feat.length; i++)
 		{
 			result.feat[i] += other.feat[i];
 		}
