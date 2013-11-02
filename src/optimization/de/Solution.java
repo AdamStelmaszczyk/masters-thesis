@@ -128,9 +128,9 @@ public class Solution
 	private double computeFeatSum()
 	{
 		double sum = 0.0;
-		for (final double element : feat)
+		for (final double f : feat)
 		{
-			sum += element;
+			sum += f;
 		}
 		return sum;
 	}

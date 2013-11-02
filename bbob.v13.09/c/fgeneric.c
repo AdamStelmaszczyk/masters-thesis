@@ -28,6 +28,7 @@ Loosely inspired by fgeneric.m, the matlab version
 #include <limits.h>
 #include <float.h>
 #include <string.h>
+#include <locale.h>
 
 /*int strcasecmp (const char *s1, const char *s2);*/
 /*int strncasecmp (const char *s1, const char *s2, size_t n);*/
@@ -215,6 +216,8 @@ double fgeneric_initialize(ParamStruct PARAMS)
     char sLoc[1024];   /* general purpose buffer, mainly for sprintf */
     double * X;
     TwoDoubles res;
+    
+    setlocale(LC_ALL, "POSIX");
 
     /* if nothing important has changed */
     if (!( (PARAMS.DIM == CurrentPARAMS.DIM) &&
@@ -601,9 +604,10 @@ void writeNewIndexEntry(ParamStruct PARAMS)
     if (newline == 1)
         fprintf(indexFileId,"\n");
 
-    //fprintf(indexFileId, "funcId = %d, DIM = %d, Precision = %.3e, algId = '%s'\n", PARAMS.funcId, PARAMS.DIM, PARAMS.precision, PARAMS.algName);
-    //fprintf(indexFileId,"%% %s\n%s, %d", PARAMS.comments, PARAMS.hdataFileNameOnly, PARAMS.instanceId);
-    //fprintf(indexFileId, "%d", PARAMS.instanceId);
+    /*fprintf(indexFileId, "funcId = %d, DIM = %d, Precision = %.3e, algId = '%s'\n", PARAMS.funcId, PARAMS.DIM, PARAMS.precision, PARAMS.algName);
+    fprintf(indexFileId,"%% %s\n%s, %d", PARAMS.comments, PARAMS.hdataFileNameOnly, PARAMS.instanceId);
+    fprintf(indexFileId, "%d", PARAMS.instanceId);*/
+    
     fclose(indexFileId);
 }
 
