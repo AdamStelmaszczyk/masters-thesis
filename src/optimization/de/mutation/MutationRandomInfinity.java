@@ -11,7 +11,7 @@ import optimization.de.Solution;
 /** P[j] + sqrt(2) * F * v */
 public class MutationRandomInfinity extends Mutation
 {
-	private double[][] L;
+	private double[][] l;
 	private final double[] z = new double[NP];
 	private final double[] diffVector = new double[NP];
 
@@ -52,7 +52,7 @@ public class MutationRandomInfinity extends Mutation
 			diffVector[y] = 0.0;
 			for (int x = 0; x <= y; x++)
 			{
-				diffVector[y] += L[y][x] * z[x];
+				diffVector[y] += l[y][x] * z[x];
 			}
 		}
 
@@ -61,11 +61,11 @@ public class MutationRandomInfinity extends Mutation
 
 	protected void computeL(Population pop)
 	{
-		L = pop.computeCovarianceMatrix();
+		l = pop.computeCovarianceMatrix();
 
 		// Use a "left-looking", dot-product, Crout/Doolittle algorithm.
-		final int m = L.length;
-		final int n = L[0].length;
+		final int m = l.length;
+		final int n = l[0].length;
 
 		final int[] piv = new int[m];
 		for (int i = 0; i < m; i++)
@@ -82,13 +82,13 @@ public class MutationRandomInfinity extends Mutation
 			// Make a copy of the j-th column to localize references.
 			for (int i = 0; i < m; i++)
 			{
-				LUcolj[i] = L[i][j];
+				LUcolj[i] = l[i][j];
 			}
 
 			// Apply previous transformations.
 			for (int i = 0; i < m; i++)
 			{
-				LUrowi = L[i];
+				LUrowi = l[i];
 
 				// Most of the time is spent in the following dot product.
 				final int kmax = Math.min(i, j);
@@ -114,9 +114,9 @@ public class MutationRandomInfinity extends Mutation
 			{
 				for (int k = 0; k < n; k++)
 				{
-					final double t = L[p][k];
-					L[p][k] = L[j][k];
-					L[j][k] = t;
+					final double t = l[p][k];
+					l[p][k] = l[j][k];
+					l[j][k] = t;
 				}
 				final int k = piv[p];
 				piv[p] = piv[j];
@@ -125,18 +125,18 @@ public class MutationRandomInfinity extends Mutation
 			}
 
 			// Compute multipliers.
-			if (j < m & L[j][j] != 0.0)
+			if (j < m && l[j][j] != 0.0)
 			{
 				for (int i = j + 1; i < m; i++)
 				{
-					L[i][j] /= L[j][j];
+					l[i][j] /= l[j][j];
 				}
 			}
 		}
 
 		for (int i = 0; i < NP; i++)
 		{
-			L[i][i] = 1.0;
+			l[i][i] = 1.0;
 		}
 	}
 }
