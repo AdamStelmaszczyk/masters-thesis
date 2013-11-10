@@ -1,5 +1,6 @@
 package optimization.de;
 
+import java.util.List;
 import java.util.Random;
 
 import javabbob.JNIfgeneric;
@@ -14,6 +15,7 @@ public class DE implements Optimizer
 	public final static double F = 0.9;
 	public final static double CR = 0.9;
 	public final static int NP_TO_DIM_RATIO = 10;
+	public final static int K = 6;
 
 	private final Class<? extends Mutation> mutationClass;
 	private final Class<? extends MidpointAction> midpointActionClass;
@@ -37,14 +39,14 @@ public class DE implements Optimizer
 		this.midpointActionClass = midpointActionClass;
 	}
 
-	public static int getRandomIndex(Random rand, int NP, int i, int j, int k)
+	public static int getRandomIndex(Random rand, int NP, List<Integer> excluded)
 	{
 		int result;
 		do
 		{
-			result = (int) (rand.nextDouble() * NP);
+			result = rand.nextInt(NP);
 		}
-		while (result == i || result == j || result == k);
+		while (excluded.contains(result));
 		return result;
 	}
 

@@ -19,7 +19,7 @@ import optimization.random.RandomOptimizer;
 public class Experiment
 {
 	final static int DIMENSIONS[] =
-	{ 10 };
+	{ 5 };
 	final static int FUNCTIONS[] =
 	{ 24, 110, 113, 116, 119, 122, 126 };
 	final static int RUNS = 100;
@@ -69,11 +69,9 @@ public class Experiment
 				for (int run = 1; run <= RUNS; run++)
 				{
 					fgeneric.initBBOB(fun, run, dim, args[0], new JNIfgeneric.Params());
+
 					final int MAX_FUN_EVALS = FUN_EVALS_TO_DIM_RATIO * dim;
-					while (fgeneric.getEvaluations() < MAX_FUN_EVALS && fgeneric.getBest() > fgeneric.getFtarget())
-					{
-						optimizer.optimize(fgeneric, dim, MAX_FUN_EVALS - (int) fgeneric.getEvaluations(), rand);
-					}
+					optimizer.optimize(fgeneric, dim, MAX_FUN_EVALS, rand);
 
 					final double distance = fgeneric.getBest() - fgeneric.getFtarget();
 					final int fes = (int) fgeneric.getEvaluations();

@@ -29,7 +29,7 @@ public class MutationMidpointInfinity extends MutationRandomInfinity
 			computeL(pop);
 			midpoint = pop.computeMidpoint();
 		}
-		final Solution diffVector = computeDiffVector(pop, rand).mul(SCALING_FACTOR);
+		final Solution diffVector = computeDiffVector(pop, rand).mul(computeScalingFactor());
 		return midpoint.plus(diffVector);
 	}
 }

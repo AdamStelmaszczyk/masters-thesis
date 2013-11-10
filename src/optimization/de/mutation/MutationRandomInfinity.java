@@ -1,5 +1,7 @@
 package optimization.de.mutation;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import optimization.de.DE;
@@ -31,9 +33,11 @@ public class MutationRandomInfinity extends Mutation
 		{
 			computeL(pop);
 		}
-		final int j = DE.getRandomIndex(rand, NP, i, i, i);
-		final Solution diffVector = computeDiffVector(pop, rand).mul(SCALING_FACTOR);
-		return pop.solutions[j].plus(diffVector);
+		final List<Integer> indices = new ArrayList<Integer>(2);
+		indices.add(i);
+		indices.add(DE.getRandomIndex(rand, NP, indices));
+		final Solution diffVector = computeDiffVector(pop, rand).mul(computeScalingFactor());
+		return pop.solutions[indices.get(1)].plus(diffVector);
 	}
 
 	protected Solution computeDiffVector(Population pop, Random rand)
