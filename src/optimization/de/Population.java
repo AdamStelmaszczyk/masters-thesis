@@ -20,19 +20,6 @@ public class Population
 		DIM = dim;
 	}
 
-	private Solution computeSum()
-	{
-		final Solution sum = new Solution(solutions[0]);
-		for (int i = 1; i < solutions.length; i++)
-		{
-			for (int j = 0; j < solutions[i].feat.length; j++)
-			{
-				sum.feat[j] += solutions[i].feat[j];
-			}
-		}
-		return sum;
-	}
-
 	public double[][] computeCovarianceMatrix()
 	{
 		for (int y = 0; y < solutions.length; y++)
@@ -67,5 +54,18 @@ public class Population
 	public int size()
 	{
 		return solutions.length;
+	}
+
+	private Solution computeSum()
+	{
+		final Solution sum = new Solution(solutions[0]);
+		for (int i = 1; i < solutions.length; i++)
+		{
+			for (int j = 0; j < solutions[i].feat.length; j++)
+			{
+				sum.feat[j] += solutions[i].feat[j];
+			}
+		}
+		return sum;
 	}
 }

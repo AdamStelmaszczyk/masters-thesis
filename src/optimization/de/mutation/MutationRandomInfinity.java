@@ -64,17 +64,17 @@ public class MutationRandomInfinity extends Mutation
 		L = pop.computeCovarianceMatrix();
 
 		// Use a "left-looking", dot-product, Crout/Doolittle algorithm.
-		int m = L.length;
-		int n = L[0].length;
+		final int m = L.length;
+		final int n = L[0].length;
 
-		int[] piv = new int[m];
+		final int[] piv = new int[m];
 		for (int i = 0; i < m; i++)
 		{
 			piv[i] = i;
 		}
 		int pivsign = 1;
 		double[] LUrowi;
-		double[] LUcolj = new double[m];
+		final double[] LUcolj = new double[m];
 
 		// Outer loop.
 		for (int j = 0; j < n; j++)
@@ -91,7 +91,7 @@ public class MutationRandomInfinity extends Mutation
 				LUrowi = L[i];
 
 				// Most of the time is spent in the following dot product.
-				int kmax = Math.min(i, j);
+				final int kmax = Math.min(i, j);
 				double s = 0.0;
 				for (int k = 0; k < kmax; k++)
 				{
@@ -114,11 +114,11 @@ public class MutationRandomInfinity extends Mutation
 			{
 				for (int k = 0; k < n; k++)
 				{
-					double t = L[p][k];
+					final double t = L[p][k];
 					L[p][k] = L[j][k];
 					L[j][k] = t;
 				}
-				int k = piv[p];
+				final int k = piv[p];
 				piv[p] = piv[j];
 				piv[j] = k;
 				pivsign = -pivsign;
