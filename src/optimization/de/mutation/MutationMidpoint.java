@@ -21,7 +21,7 @@ public class MutationMidpoint extends Mutation
 	@Override
 	public double computeScalingFactor()
 	{
-		return Math.sqrt((1 + 2 * DE.F * DE.F - 1 / NP) / (2 * DE.K));
+		return Math.sqrt((1 + 2 * DE.F * DE.F - 1.0 / NP) / (2 * DE.K));
 	}
 
 	@Override
