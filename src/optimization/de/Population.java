@@ -24,9 +24,16 @@ public class Population
 	{
 		for (int y = 0; y < solutions.length; y++)
 		{
-			for (int x = 0; x < solutions.length; x++)
+			for (int x = 0; x <= y; x++)
 			{
 				covarianceMatrix[x][y] = solutions[x].cov(solutions[y]);
+			}
+		}
+		for (int y = 0; y < solutions.length; y++)
+		{
+			for (int x = y + 1; x < solutions.length; x++)
+			{
+				covarianceMatrix[x][y] = covarianceMatrix[y][x];
 			}
 		}
 		return covarianceMatrix;
