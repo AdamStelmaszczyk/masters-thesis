@@ -58,6 +58,11 @@ public class Population
 		return data;
 	}
 
+	public int size()
+	{
+		return solutions.length;
+	}
+
 	private Solution computeSum()
 	{
 		final Solution sum = new Solution(solutions[0]);

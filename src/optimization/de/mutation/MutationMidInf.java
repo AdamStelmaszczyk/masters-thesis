@@ -7,14 +7,9 @@ import optimization.de.Population;
 import optimization.de.Solution;
 
 /** midpoint + sqrt(1 + 2*F*F) * v */
-public class MutationMidpointInfinity extends MutationRandomInfinity
+public class MutationMidInf extends MutationRandInf
 {
 	private Solution midpoint;
-
-	public MutationMidpointInfinity(int NP)
-	{
-		super(NP);
-	}
 
 	public double computeScalingFactor(Population pop)
 	{
@@ -29,7 +24,7 @@ public class MutationMidpointInfinity extends MutationRandomInfinity
 			computeL(pop);
 			midpoint = pop.computeMidpoint();
 		}
-		final Solution diffVector = computeDiffVector(pop, rand).mul(computeScalingFactor());
+		final Solution diffVector = computeDiffVector(pop, rand).mul(computeScalingFactor(pop.size()));
 		return midpoint.plus(diffVector);
 	}
 }

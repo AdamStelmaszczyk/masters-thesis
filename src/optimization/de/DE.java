@@ -8,35 +8,31 @@ import optimization.Optimizer;
 import optimization.de.midpoint.MidpointAction;
 import optimization.de.midpoint.MidpointActionDoNothing;
 import optimization.de.mutation.Mutation;
-import optimization.de.mutation.MutationRandom;
+import optimization.de.mutation.MutationRand;
 
 public class DE implements Optimizer
 {
 	public final static double F = 0.9;
 	public final static double CR = 0.9;
 	public final static int NP_TO_DIM_RATIO = 10;
-	public final static int K = 6;
 
-	private final Class<? extends Mutation> mutationClass;
-	private final Class<? extends MidpointAction> midpointActionClass;
-
-	private Mutation mutation;
-	private MidpointAction midpointAction;
+	private final Mutation mutation;
+	private final MidpointAction midpointAction;
 
 	public DE()
 	{
-		this(MutationRandom.class);
+		this(new MutationRand(1));
 	}
 
-	public DE(Class<? extends Mutation> mutationClass)
+	public DE(Mutation mutation)
 	{
-		this(mutationClass, MidpointActionDoNothing.class);
+		this(mutation, new MidpointActionDoNothing());
 	}
 
-	public DE(Class<? extends Mutation> mutationClass, Class<? extends MidpointAction> midpointActionClass)
+	public DE(Mutation mutation, MidpointAction midpointAction)
 	{
-		this.mutationClass = mutationClass;
-		this.midpointActionClass = midpointActionClass;
+		this.mutation = mutation;
+		this.midpointAction = midpointAction;
 	}
 
 	public static int getRandomIndex(Random rand, int NP, List<Integer> excluded)
@@ -58,16 +54,6 @@ public class DE implements Optimizer
 		final Population old = new Population(NP, dim, rand, funEvals);
 		final Population children = new Population(NP, dim, rand, funEvals);
 		final double target = fgeneric.getFtarget();
-
-		try
-		{
-			mutation = mutationClass.getDeclaredConstructor(int.class).newInstance(NP);
-			midpointAction = midpointActionClass.newInstance();
-		}
-		catch (final Exception e)
-		{
-			e.printStackTrace();
-		}
 
 		while (true)
 		{

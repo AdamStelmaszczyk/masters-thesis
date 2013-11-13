@@ -9,19 +9,19 @@ import optimization.de.Population;
 import optimization.de.Solution;
 
 /** DE/mid/k */
-public class MutationMidpoint extends Mutation
+public class MutationMid extends MutationRand
 {
-	private Solution midpoint;
+	protected Solution midpoint;
 
-	public MutationMidpoint(int NP)
+	public MutationMid(int K)
 	{
-		super(NP);
+		super(K);
 	}
 
 	@Override
-	public double computeScalingFactor()
+	public double computeScalingFactor(int NP)
 	{
-		return Math.sqrt((1 + 2 * DE.F * DE.F - 1.0 / NP) / (2 * DE.K));
+		return Math.sqrt((1 + 2 * DE.F * DE.F - 1.0 / NP) / (2 * K));
 	}
 
 	@Override
@@ -31,19 +31,19 @@ public class MutationMidpoint extends Mutation
 		{
 			midpoint = pop.computeMidpoint();
 		}
-		final int INDICES_SIZE = 2 * DE.K + 1;
+		final int INDICES_SIZE = 2 * K + 1;
 		final List<Integer> indices = new ArrayList<Integer>(INDICES_SIZE);
 		indices.add(i);
 		for (int j = 1; j < INDICES_SIZE; j++)
 		{
-			indices.add(DE.getRandomIndex(rand, NP, indices));
+			indices.add(DE.getRandomIndex(rand, pop.size(), indices));
 		}
 		final Solution sum = pop.solutions[indices.get(1)].minus(pop.solutions[indices.get(2)]);
 		for (int j = 3; j < INDICES_SIZE; j += 2)
 		{
 			sum.plus(pop.solutions[indices.get(j)]).minus(pop.solutions[indices.get(j + 1)]);
 		}
-		final Solution diffVector = sum.mul(computeScalingFactor());
+		final Solution diffVector = sum.mul(computeScalingFactor(pop.size()));
 		return midpoint.plus(diffVector);
 	}
 }

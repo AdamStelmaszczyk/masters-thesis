@@ -9,19 +9,14 @@ import optimization.de.Population;
 import optimization.de.Solution;
 
 /** P[j] + sqrt(2) * F * v */
-public class MutationRandomInfinity extends Mutation
+public class MutationRandInf extends Mutation
 {
 	private double[][] l;
-	private final double[] z = new double[NP];
-	private final double[] diffVector = new double[NP];
-
-	public MutationRandomInfinity(int NP)
-	{
-		super(NP);
-	}
+	private double[] z;
+	private double[] diffVector;
 
 	@Override
-	public double computeScalingFactor()
+	public double computeScalingFactor(int NP)
 	{
 		return Math.sqrt(2) * DE.F;
 	}
@@ -32,22 +27,30 @@ public class MutationRandomInfinity extends Mutation
 		if (i == 0)
 		{
 			computeL(pop);
+			if (z == null)
+			{
+				z = new double[pop.size()];
+			}
+			if (diffVector == null)
+			{
+				diffVector = new double[pop.size()];
+			}
 		}
 		final List<Integer> indices = new ArrayList<Integer>(2);
 		indices.add(i);
-		indices.add(DE.getRandomIndex(rand, NP, indices));
-		final Solution diffVector = computeDiffVector(pop, rand).mul(computeScalingFactor());
+		indices.add(DE.getRandomIndex(rand, pop.size(), indices));
+		final Solution diffVector = computeDiffVector(pop, rand).mul(computeScalingFactor(pop.size()));
 		return pop.solutions[indices.get(1)].plus(diffVector);
 	}
 
 	protected Solution computeDiffVector(Population pop, Random rand)
 	{
-		for (int x = 0; x < NP; x++)
+		for (int x = 0; x < pop.size(); x++)
 		{
 			z[x] = rand.nextGaussian();
 		}
 
-		for (int y = 0; y < NP; y++)
+		for (int y = 0; y < pop.size(); y++)
 		{
 			diffVector[y] = 0.0;
 			for (int x = 0; x <= y; x++)
@@ -64,29 +67,28 @@ public class MutationRandomInfinity extends Mutation
 		l = pop.computeCovarianceMatrix();
 
 		// Use a "left-looking", dot-product, Crout/Doolittle algorithm.
-		final int m = l.length;
-		final int n = l[0].length;
+		final int NP = l.length;
 
-		final int[] piv = new int[m];
-		for (int i = 0; i < m; i++)
+		final int[] piv = new int[NP];
+		for (int i = 0; i < NP; i++)
 		{
 			piv[i] = i;
 		}
 		int pivsign = 1;
 		double[] LUrowi;
-		final double[] LUcolj = new double[m];
+		final double[] LUcolj = new double[NP];
 
 		// Outer loop.
-		for (int j = 0; j < n; j++)
+		for (int j = 0; j < NP; j++)
 		{
 			// Make a copy of the j-th column to localize references.
-			for (int i = 0; i < m; i++)
+			for (int i = 0; i < NP; i++)
 			{
 				LUcolj[i] = l[i][j];
 			}
 
 			// Apply previous transformations.
-			for (int i = 0; i < m; i++)
+			for (int i = 0; i < NP; i++)
 			{
 				LUrowi = l[i];
 
@@ -103,7 +105,7 @@ public class MutationRandomInfinity extends Mutation
 
 			// Find pivot and exchange if necessary.
 			int p = j;
-			for (int i = j + 1; i < m; i++)
+			for (int i = j + 1; i < NP; i++)
 			{
 				if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p]))
 				{
@@ -112,7 +114,7 @@ public class MutationRandomInfinity extends Mutation
 			}
 			if (p != j)
 			{
-				for (int k = 0; k < n; k++)
+				for (int k = 0; k < NP; k++)
 				{
 					final double t = l[p][k];
 					l[p][k] = l[j][k];
@@ -125,9 +127,9 @@ public class MutationRandomInfinity extends Mutation
 			}
 
 			// Compute multipliers.
-			if (j < m && l[j][j] != 0.0)
+			if (j < NP && l[j][j] != 0.0)
 			{
-				for (int i = j + 1; i < m; i++)
+				for (int i = j + 1; i < NP; i++)
 				{
 					l[i][j] /= l[j][j];
 				}

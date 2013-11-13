@@ -2,40 +2,89 @@ package javabbob;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 
 import optimization.Optimizer;
 import optimization.de.DE;
-import optimization.de.midpoint.MidpointActionEvaluate;
-import optimization.de.mutation.MutationMidpoint;
-import optimization.de.mutation.MutationMidpointInfinity;
-import optimization.de.mutation.MutationRandomInfinity;
-import optimization.random.RandomOptimizer;
+import optimization.de.mutation.MutationMid;
+import optimization.de.mutation.MutationMidInf;
+import optimization.de.mutation.MutationRand;
+import optimization.de.mutation.MutationRandInf;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 /** Wrapper class running an entire BBOB experiment. */
 public class Experiment
 {
-	final static int DIMENSIONS[] =
-	{ 5 };
 	final static int FUNCTIONS[] =
 	{ 24, 110, 113, 116, 119, 122, 126 };
 	final static int RUNS = 100;
 	final static int FUN_EVALS_TO_DIM_RATIO = 100000;
 	final static int SEED = 1;
-	final static Map<String, Optimizer> cmdToOptimizerMap = new HashMap<String, Optimizer>();
+
+	private final static String ALGORITHM_FLAG = "a";
+	private final static String DIMENSION_FLAG = "d";
+	private final static String HELP_FLAG = "help";
 
 	/** Main method for running the whole BBOB experiment. */
 	public static void main(String[] args)
 	{
-		initCmdToOptimizerMap();
-		if (args.length == 0 || !cmdToOptimizerMap.containsKey(args[0]))
+		final CommandLine line = getCommandLine(args);
+
+		String algorithm = "derand";
+		int k = 1;
+		if (line.hasOption(ALGORITHM_FLAG))
+		{
+			final String[] algArgs = line.getOptionValues("a");
+			if (algArgs != null)
+			{
+				algorithm = algArgs[0];
+				if (algArgs.length > 1)
+				{
+					k = Integer.parseInt(algArgs[1]);
+				}
+			}
+		}
+
+		int dimension = 5;
+		if (line.hasOption(DIMENSION_FLAG))
+		{
+			dimension = Integer.parseInt(line.getOptionValue("d"));
+		}
+
+		Optimizer optimizer = null;
+		String filename = algorithm;
+		if (algorithm.equals("derand"))
+		{
+			optimizer = new DE(new MutationRand(k));
+			filename += k;
+		}
+		else if (algorithm.equals("demid"))
+		{
+			optimizer = new DE(new MutationMid(k));
+			filename += k;
+		}
+		else if (algorithm.equals("derandinf"))
+		{
+			optimizer = new DE(new MutationRandInf());
+		}
+		else if (algorithm.equals("demidinf"))
+		{
+			optimizer = new DE(new MutationMidInf());
+		}
+		else
 		{
 			die();
 		}
-		final Optimizer optimizer = cmdToOptimizerMap.get(args[0]);
+		
+		filename += "_" + dimension + "D";
 
 		// Sets default locale to always have 1.23 not 1,23 in files
 		Locale.setDefault(Locale.US);
@@ -44,13 +93,13 @@ public class Experiment
 		final JNIfgeneric fgeneric = new JNIfgeneric();
 
 		// Creates the folders for storing the experimental data.
-		if (JNIfgeneric.makeBBOBdirs(args[0], false))
+		if (JNIfgeneric.makeBBOBdirs(filename, false))
 		{
-			System.out.println("BBOB data directory '" + args[0] + "' created");
+			System.out.println("BBOB data directory '" + filename + "' created");
 		}
 		else
 		{
-			System.out.println("Error! BBOB data directory '" + args[0] + "' was NOT created, stopping");
+			System.out.println("Error! BBOB data directory '" + filename + "' was NOT created, stopping");
 			return;
 		}
 
@@ -62,48 +111,76 @@ public class Experiment
 		final long startTime = System.currentTimeMillis();
 		printDate();
 
-		for (final int dim : DIMENSIONS)
+		for (final int fun : FUNCTIONS)
 		{
-			for (final int fun : FUNCTIONS)
+			for (int run = 1; run <= RUNS; run++)
 			{
-				for (int run = 1; run <= RUNS; run++)
-				{
-					fgeneric.initBBOB(fun, run, dim, args[0], new JNIfgeneric.Params());
+				fgeneric.initBBOB(fun, run, dimension, filename, new JNIfgeneric.Params());
 
-					final int MAX_FUN_EVALS = FUN_EVALS_TO_DIM_RATIO * dim;
-					optimizer.optimize(fgeneric, dim, MAX_FUN_EVALS, rand);
+				final int MAX_FUN_EVALS = FUN_EVALS_TO_DIM_RATIO * dimension;
+				optimizer.optimize(fgeneric, dimension, MAX_FUN_EVALS, rand);
 
-					final double distance = fgeneric.getBest() - fgeneric.getFtarget();
-					final int fes = (int) fgeneric.getEvaluations();
-					final int seconds = (int) ((System.currentTimeMillis() - startTime) / 1000);
-					System.out.println("f" + fun + " in " + dim + "-D, run " + run + ", FEs = " + fes
-							+ " fbest-ftarget = " + distance + ", " + seconds + "s");
+				final double distance = fgeneric.getBest() - fgeneric.getFtarget();
+				final int fes = (int) fgeneric.getEvaluations();
+				final int seconds = (int) ((System.currentTimeMillis() - startTime) / 1000);
+				System.out.println("f" + fun + " in " + dimension + "-D, run " + run + ", FEs = " + fes
+						+ " fbest-ftarget = " + distance + ", " + seconds + "s");
 
-					fgeneric.exitBBOB();
-				}
-				printDate();
+				fgeneric.exitBBOB();
 			}
-			System.out.println("---- " + dim + "-D done ----");
+			printDate();
 		}
+		System.out.println("---- " + dimension + "-D done ----");
 	}
 
 	private static void die()
 	{
-		throw new IllegalArgumentException("First argument must be one of the following: " + cmdToOptimizerMap.keySet());
+		throw new IllegalArgumentException();
 	}
 
-	private static void initCmdToOptimizerMap()
+	private static CommandLine getCommandLine(String[] args)
 	{
-		cmdToOptimizerMap.put("derand", new DE());
-		cmdToOptimizerMap.put("derandinf", new DE(MutationRandomInfinity.class));
-		cmdToOptimizerMap.put("demid", new DE(MutationMidpoint.class));
-		cmdToOptimizerMap.put("demidinf", new DE(MutationMidpointInfinity.class));
-		cmdToOptimizerMap.put("demidplus", new DE(MutationMidpoint.class, MidpointActionEvaluate.class));
-		cmdToOptimizerMap.put("random", new RandomOptimizer());
+		final CommandLineParser parser = new DefaultParser();
+		final Options options = new Options();
+
+		final Option alg = Option.builder(ALGORITHM_FLAG).desc("algorithm and k for derand and demid, i.e. derand 6")
+				.argName("algorithm> <k").optionalArg(true).numberOfArgs(2).build();
+		final Option dim = Option.builder(DIMENSION_FLAG).desc("number of dimensions").argName("dimensions").hasArg()
+				.build();
+		final Option help = new Option(HELP_FLAG, "print this message");
+
+		options.addOption(alg);
+		options.addOption(dim);
+		options.addOption(help);
+
+		CommandLine line = null;
+		try
+		{
+			line = parser.parse(options, args);
+		}
+		catch (final ParseException e)
+		{
+			System.out.println(e.getMessage());
+			printHelp(options);
+			die();
+		}
+
+		if (line.hasOption(HELP_FLAG))
+		{
+			printHelp(options);
+		}
+
+		return line;
 	}
 
 	private static void printDate()
 	{
 		System.out.println(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()));
+	}
+
+	private static void printHelp(Options options)
+	{
+		final HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp("./run.sh", options);
 	}
 }
