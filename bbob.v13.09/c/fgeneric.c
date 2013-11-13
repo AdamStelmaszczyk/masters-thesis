@@ -339,9 +339,9 @@ double fgeneric_initialize(ParamStruct PARAMS)
         PARAMS = setNextDataFile(PARAMS, 0);
         writeNewIndexEntry(PARAMS);
     }
-    writeDataHeader(PARAMS.dataFile, Fopt);
+    /*writeDataHeader(PARAMS.dataFile, Fopt);
     writeDataHeader(PARAMS.hdataFile, Fopt);
-    writeDataHeader(PARAMS.rdataFile, Fopt);
+    writeDataHeader(PARAMS.rdataFile, Fopt);*/
     CurrentPARAMS = PARAMS;
 
     /* These lines are used to align the call to myrand with the ones in Matlab.
@@ -468,12 +468,12 @@ void fgeneric_evaluate_vector(double * XX, unsigned int howMany, double * result
 */
 double fgeneric_evaluate(double * X)
 {
+    double Fvalue, Ftrue;
     int i;
     unsigned int boolImprovement = 0;
-    double Fvalue, Ftrue;
     double evalsj;
-    FILE * dataFileId;
-    FILE * hdataFileId;
+    /*FILE * dataFileId;
+    FILE * hdataFileId;*/
     TwoDoubles res;
 
     if (actFunc == NULL)
@@ -483,31 +483,28 @@ double fgeneric_evaluate(double * X)
     Fvalue = res.Fval;
     Ftrue = res.Ftrue;
 
-    /* should we print ? 2 possible conditions, # evals or fitness value */
     if ( (LastEval.num+1 >= evalsTrigger) || (Ftrue-Fopt < fTrigger) ) 
     {
         evalsj = LastEval.num + 1;
 
-        if (Fvalue < LastEval.bestFnoisy) /* minimization*/
+        if (Fvalue < LastEval.bestFnoisy)
             LastEval.bestFnoisy = Fvalue;
 
-        if (Ftrue < BestFEval.F) { /* minimization*/
+        if (Ftrue < BestFEval.F) { 
             boolImprovement = 1;
             BestFEval.F = Ftrue;
             BestFEval.bestFnoisy = LastEval.bestFnoisy;
             BestFEval.isWritten = 0;
         }
 
-        /* should we print something? First based on # evals */
+		/*
         if (evalsj >= evalsTrigger)
         {
             lastWriteEval = evalsj;
             BestFEval.isWritten = 1;
             dataFileId = bbobOpenFile(CurrentPARAMS.dataFile);
-            /* IMPRESSION */
             sprintData(dataFileId, evalsj,Ftrue, BestFEval.F, Fvalue, LastEval.bestFnoisy, X,Fopt);
             fclose(dataFileId);
-            /* update of next print triggers based on # evals */
             while (evalsj >= floor(pow(10., (double)idxEvalsTrigger/(double)nbPtsEvals)) )
                 idxEvalsTrigger = idxEvalsTrigger + 1;
 
@@ -517,7 +514,6 @@ double fgeneric_evaluate(double * X)
             evalsTrigger = fmin(floor(pow(10., (double)idxEvalsTrigger/(double)nbPtsEvals)), DIM * pow(10., (double) idxDIMEvalsTrigger));
         }
 
-        /* now based on fitness values */
         if (Ftrue - Fopt < fTrigger)
         {
             hdataFileId = bbobOpenFile(CurrentPARAMS.hdataFile);
@@ -537,6 +533,7 @@ double fgeneric_evaluate(double * X)
                 fTrigger = fmin(fTrigger, pow(10., (double)idxFTrigger/(double)nbPtsF));
             }
         }
+        */
 
         if ( ! BestFEval.isWritten && boolImprovement )
         {
@@ -559,7 +556,7 @@ double fgeneric_evaluate(double * X)
             BestFEval.isWritten = 0;
         }
         LastEval.bestFnoisy = fmin(LastEval.bestFnoisy,Fvalue);
-    } /* if (LastEval.num+POPSI >= evalsTrigger || bestFtrue-Fopt <= fTrigger) */
+    }
 
     LastEval.num = LastEval.num + 1;
     LastEval.F = Ftrue;
@@ -652,8 +649,8 @@ void addDatIndexEntry(ParamStruct PARAMS)
 /* complete the data file with unwritten information */
 void writeFinalData(ParamStruct PARAMS, LastEvalStruct BestFEval, double lastWriteEval, LastEvalStruct LastEval, double Fopt)
 {
-    FILE * dataFileId; /* historical name */
-    FILE * indexFileId; /* historical name */
+    FILE * indexFileId;
+    /*FILE * dataFileId;
 
     dataFileId = bbobOpenFile(PARAMS.dataFile);
 
@@ -665,7 +662,7 @@ void writeFinalData(ParamStruct PARAMS, LastEvalStruct BestFEval, double lastWri
             sprintData(dataFileId, BestFEval.num,BestFEval.F, BestFEval.F, BestFEval.Fnoisy, BestFEval.bestFnoisy, LastEval.x, Fopt);
         }
         else
-        {   /* here, need to rewind dataFileId to write best at correct position */
+        {   
             fclose(dataFileId);
             writeBestF(PARAMS.dataFile, BestFEval.num, Fopt);
             dataFileId = bbobOpenFile(PARAMS.dataFile);
@@ -674,7 +671,7 @@ void writeFinalData(ParamStruct PARAMS, LastEvalStruct BestFEval, double lastWri
     if (LastEval.num > lastWriteEval)
         sprintData(dataFileId, LastEval.num, LastEval.F, BestFEval.F, LastEval.Fnoisy, LastEval.bestFnoisy, LastEval.x, Fopt);
 
-    fclose(dataFileId);
+    fclose(dataFileId);*/
 
     /* now the index file */
     indexFileId = bbobOpenFile(PARAMS.indexFile);
