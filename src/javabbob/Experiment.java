@@ -33,13 +33,17 @@ public class Experiment
 	private final static String DIMENSION_FLAG = "d";
 	private final static String HELP_FLAG = "help";
 
+	private final static String DEFAULT_ALGORITHM = "derand";
+	private final static int DEFAULT_K = 1;
+	private final static int DEFAULT_DIMENSION = 5;
+
 	/** Main method for running the whole BBOB experiment. */
 	public static void main(String[] args)
 	{
 		final CommandLine line = getCommandLine(args);
 
-		String algorithm = "derand";
-		int k = 1;
+		String algorithm = DEFAULT_ALGORITHM;
+		int k = DEFAULT_K;
 		if (line.hasOption(ALGORITHM_FLAG))
 		{
 			final String[] algArgs = line.getOptionValues("a");
@@ -53,7 +57,7 @@ public class Experiment
 			}
 		}
 
-		int dimension = 5;
+		int dimension = DEFAULT_DIMENSION;
 		if (line.hasOption(DIMENSION_FLAG))
 		{
 			dimension = Integer.parseInt(line.getOptionValue("d"));
@@ -83,7 +87,7 @@ public class Experiment
 		{
 			die();
 		}
-		
+
 		filename += "_" + dimension + "D";
 
 		// Sets default locale to always have 1.23 not 1,23 in files
