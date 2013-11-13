@@ -8,7 +8,6 @@ import optimization.Optimizer;
 import optimization.de.midpoint.MidpointAction;
 import optimization.de.midpoint.MidpointActionDoNothing;
 import optimization.de.mutation.Mutation;
-import optimization.de.mutation.MutationRand;
 
 public class DE implements Optimizer
 {
@@ -18,11 +17,6 @@ public class DE implements Optimizer
 
 	private final Mutation mutation;
 	private final MidpointAction midpointAction;
-
-	public DE()
-	{
-		this(new MutationRand(1));
-	}
 
 	public DE(Mutation mutation)
 	{

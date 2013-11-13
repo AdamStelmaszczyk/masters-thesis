@@ -148,7 +148,7 @@ public class Experiment
 		final Options options = new Options();
 
 		final Option alg = Option.builder(ALGORITHM_FLAG).desc("algorithm and k for derand and demid, i.e. derand 6")
-				.argName("algorithm> <k").optionalArg(true).numberOfArgs(2).build();
+				.argName("algorithm> <k").optionalArg(true).numberOfArgs(2).required().build();
 		final Option dim = Option.builder(DIMENSION_FLAG).desc("number of dimensions").argName("dimensions").hasArg()
 				.build();
 		final Option help = new Option(HELP_FLAG, "print this message");
