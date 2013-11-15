@@ -94,6 +94,6 @@ public class Population
 		{
 			cov += (solution.feat[x] - mean[x]) * (solution.feat[y] - mean[y]);
 		}
-		return cov;
+		return cov / solutions.length;
 	}
 }
