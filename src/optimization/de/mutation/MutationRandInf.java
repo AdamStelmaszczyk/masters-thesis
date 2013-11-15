@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import Jama.EigenvalueDecomposition;
+import Jama.Matrix;
+
 import optimization.de.DE;
 import optimization.de.Population;
 import optimization.de.Solution;
@@ -11,11 +14,9 @@ import optimization.de.Solution;
 /** P[j] + sqrt(2) * F * v */
 public class MutationRandInf extends Mutation
 {
-	protected double[][] l;
+	protected Matrix a;
 	protected double[] z;
 	protected double[] diffVector;
-	protected int[] piv;
-	protected double[] jCol;
 
 	@Override
 	public double computeScalingFactor(int NP)
@@ -32,7 +33,7 @@ public class MutationRandInf extends Mutation
 			{
 				allocateArrays(pop.DIM);
 			}
-			computeL(pop);
+			computeA(pop);
 		}
 		final List<Integer> indices = new ArrayList<Integer>(2);
 		indices.add(i);
@@ -43,10 +44,9 @@ public class MutationRandInf extends Mutation
 
 	protected void allocateArrays(int DIM)
 	{
+		a = new Matrix(DIM, DIM);
 		z = new double[DIM];
 		diffVector = new double[DIM];
-		piv = new int[DIM];
-		jCol = new double[DIM];
 	}
 
 	protected Solution computeDiffVector(Population pop, Random rand)
@@ -61,88 +61,27 @@ public class MutationRandInf extends Mutation
 			diffVector[y] = 0.0;
 			for (int x = 0; x <= y; x++)
 			{
-				diffVector[y] += l[y][x] * z[x];
+				diffVector[y] += a.get(y, x) * z[x];
 			}
 		}
 
 		return new Solution(diffVector, pop.solutions[0].getFunEvalsCounter());
 	}
 
-	protected void computeL(Population pop)
+	protected void computeA(Population pop)
 	{
-		l = pop.computeCovarianceMatrix();
+		double[][] c = pop.computeCovarianceMatrix();
 
-		// Use a "left-looking", dot-product, Crout/Doolittle algorithm.
-		final int DIM = l.length;
+		EigenvalueDecomposition eigen = new EigenvalueDecomposition(new Matrix(c));
 
-		for (int i = 0; i < DIM; i++)
+		final Matrix V = eigen.getV();
+		final Matrix D = eigen.getD();
+		for (int i = 0; i < pop.DIM; i++)
 		{
-			piv[i] = i;
-		}
-		int pivsign = 1;
-		double[] rowI;
-
-		// Outer loop.
-		for (int j = 0; j < DIM; j++)
-		{
-			// Make a copy of the j-th column to localize references.
-			for (int i = 0; i < DIM; i++)
-			{
-				jCol[i] = l[i][j];
-			}
-
-			// Apply previous transformations.
-			for (int i = 0; i < DIM; i++)
-			{
-				rowI = l[i];
-
-				// Most of the time is spent in the following dot product.
-				final int kmax = Math.min(i, j);
-				double s = 0.0;
-				for (int k = 0; k < kmax; k++)
-				{
-					s += rowI[k] * jCol[k];
-				}
-
-				rowI[j] = jCol[i] -= s;
-			}
-
-			// Find pivot and exchange if necessary.
-			int p = j;
-			for (int i = j + 1; i < DIM; i++)
-			{
-				if (Math.abs(jCol[i]) > Math.abs(jCol[p]))
-				{
-					p = i;
-				}
-			}
-			if (p != j)
-			{
-				for (int k = 0; k < DIM; k++)
-				{
-					final double t = l[p][k];
-					l[p][k] = l[j][k];
-					l[j][k] = t;
-				}
-				final int k = piv[p];
-				piv[p] = piv[j];
-				piv[j] = k;
-				pivsign = -pivsign;
-			}
-
-			// Compute multipliers.
-			if (j < DIM && l[j][j] != 0.0)
-			{
-				for (int i = j + 1; i < DIM; i++)
-				{
-					l[i][j] /= l[j][j];
-				}
-			}
+			double value = D.get(i, i);
+			D.set(i, i, Math.sqrt(value));
 		}
 
-		for (int i = 0; i < DIM; i++)
-		{
-			l[i][i] = 1.0;
-		}
+		a = V.times(D);
 	}
 }
