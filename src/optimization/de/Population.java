@@ -24,9 +24,9 @@ public class Population
 
 	public double[][] computeCovarianceMatrix()
 	{
-		for (int x = 0; x < DIM; x++)
+		for (int dim = 0; dim < DIM; dim++)
 		{
-			mean[x] = computeMean(x);
+			mean[dim] = computeMeanInDim(dim);
 		}
 		for (int y = 0; y < DIM; y++)
 		{
@@ -43,31 +43,6 @@ public class Population
 			}
 		}
 		return covarianceMatrix;
-	}
-
-	private double cov(int x, int y, double[] mean)
-	{
-		double cov = 0.0;
-		for (int i = 0; i < solutions.length; i++)
-		{
-			cov += (solutions[i].feat[x] - mean[x]) * (solutions[i].feat[y] - mean[y]);
-		}
-		return cov;
-	}
-
-	private double computeMean(int x)
-	{
-		double mean = 0.0;
-		for (int i = 0; i < solutions.length; i++)
-		{
-			mean += solutions[i].feat[x];
-		}
-		return mean / solutions.length;
-	}
-
-	public Solution computeMidpoint()
-	{
-		return computeSum().mul(1.0 / solutions.length);
 	}
 
 	/** @return Solutions in columns. */
@@ -89,7 +64,17 @@ public class Population
 		return solutions.length;
 	}
 
-	private Solution computeSum()
+	private double computeMeanInDim(int dim)
+	{
+		double mean = 0.0;
+		for (final Solution solution : solutions)
+		{
+			mean += solution.feat[dim];
+		}
+		return mean / solutions.length;
+	}
+
+	public Solution computeMidpoint()
 	{
 		final Solution sum = new Solution(solutions[0]);
 		for (int i = 1; i < solutions.length; i++)
@@ -99,6 +84,16 @@ public class Population
 				sum.feat[j] += solutions[i].feat[j];
 			}
 		}
-		return sum;
+		return sum.mul(solutions.length);
+	}
+
+	private double cov(int x, int y, double[] mean)
+	{
+		double cov = 0.0;
+		for (final Solution solution : solutions)
+		{
+			cov += (solution.feat[x] - mean[x]) * (solution.feat[y] - mean[y]);
+		}
+		return cov;
 	}
 }

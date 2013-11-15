@@ -25,7 +25,7 @@ public class MutationMidInf extends MutationRandInf
 			{
 				allocateArrays(pop.DIM);
 			}
-			computeL(pop);
+			computeA(pop);
 			midpoint = pop.computeMidpoint();
 		}
 		final Solution diffVector = computeDiffVector(pop, rand).mul(computeScalingFactor(pop.size()));
