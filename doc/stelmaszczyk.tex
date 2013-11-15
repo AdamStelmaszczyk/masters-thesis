@@ -16,6 +16,7 @@
 \renewcommand\refname{Referencje}
 
 \def\C{{\rm C}\,}
+\def\E{{\rm E}\,}
 
 \begin{document}
 \maketitle
@@ -36,13 +37,14 @@ u_i = P_{i_1} + \frac{F}{\sqrt{k}}\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}}
 i \neq i_1 \neq i_2 \neq \dots \neq i_{2k+1}
 \end{equation}
 
-$k \in \mathbb{N}$ to liczba wektorów różnic. $F\in\mathbb{R}$ to parametr skalujący dla DE/rand/1. \\
+$k \in \mathbb{N}$ to liczba wektorów różnic. $F\in\mathbb{R}$ to parametr skalujący dla DE/rand/1. 
+$i_1, i_2, \dots i_{2k+1}$ to losowe indeksy wybrane zgodnie z rozkładem jednostajnym.\\
 
 W DE/mid/k mutant powstaje w podobny sposób:
 
 \begin{equation} \label{eq:demid}
 u_i' = m + F_m\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}}), 
-i \neq i_1 \neq i_2 \neq \dots \neq i_{2k+1}, k \in \mathbb{N}
+i \neq i_2 \neq \dots \neq i_{2k+1}, k \in \mathbb{N}
 \end{equation}
 
 Jedyną różnicą jest $m$, czyli punkt środkowy populacji:
@@ -95,20 +97,20 @@ F_m\ = \sqrt{\frac{1 + 2F^2 - \frac{1}{n}}{2k}}
 Przyjmijmy $F=0.9$. Wówczas z (\ref{eq:a}) wynika, że: \\
 $F_m \approx 1.14$ dla $k=1$ i $n\to\infty$. \\
 
-W DE/mid/1, zamiast przesuwać losowo wybranego osobnika $P_i$, przesuwamy punkt środkowy.
+W DE/mid/1, zamiast przesuwać losowo wybranego osobnika $P_{i_1}$, przesuwamy punkt środkowy.
 Punkt środkowy jest mniej zmienny, 
 tzn. norma macierzy kowariancji punktu środkowego jest mniejsza niż norma macierzy kowariancji dowolnego osobnika.
-$\lim_{n\to\infty} \C[m] = 0$, natomiast $\C[P_i] = \C[P]$.
+$\lim_{n\to\infty} \C[m] = 0$, natomiast $\C[P_{i_1}] = \C[P]$.
 Dlatego DE/mid/1 potrzebuje większego współczynnika skalującego niż DE/rand/1. \\
 
-W przypadku $k\to\infty$, zgodnie z centralnym twierdzeniem granicznym, wyrażenie $\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})$ 
-można traktować jak zmienną losową $v_\infty$ o rozkładzie $\mathcal{N}(0, \C[P])$. 
-Wówczas równanie mutanta DE/rand/$\infty$ można zapisać jako:
+Zgodnie z centralnym twierdzeniem granicznym, $\frac{1}{{\sqrt{k}}}\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})$ 
+zbiega według rozkładu do $\mathcal{N}(0, \C[P])$ gdy $k \to \infty$. 
+Dzięki temu, równanie mutanta DE/rand/$\infty$ można zapisać jako:
 \begin{align*}
 u_i = P_{i_1} + F_\infty \cdot v_\infty
 \end{align*}
 
-Wyznaczmy $F_\infty$.
+Gdzie $v_\infty \sim \mathcal{N}(0, \C[P])$. Wyznaczmy $F_\infty$.
 \begin{align*}
 \C[u_i] = \C[P_{i_1} + F_\infty \cdot v_\infty] = \C[P] + 2F^2\C[P] \\
 \C[P] + \C[F_\infty \cdot v_\infty] = \C[P] + 2F^2\C[P] \\
