@@ -84,7 +84,7 @@ public class Population
 				sum.feat[j] += solutions[i].feat[j];
 			}
 		}
-		return sum.mul(solutions.length);
+		return sum.mul(1.0 / solutions.length);
 	}
 
 	private double cov(int x, int y, double[] mean)
