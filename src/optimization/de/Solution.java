@@ -39,18 +39,6 @@ public class Solution
 		initFitness();
 	}
 
-	public double cov(Solution other)
-	{
-		final double mean1 = computeFeatMean();
-		final double mean2 = other.computeFeatMean();
-		double sum = 0.0;
-		for (int i = 0; i < feat.length; i++)
-		{
-			sum += (feat[i] - mean1) * (other.feat[i] - mean2);
-		}
-		return sum / feat.length;
-	}
-
 	public Solution crossover(Solution other, Random rand)
 	{
 		final Solution result = new Solution(this);
@@ -118,21 +106,6 @@ public class Solution
 	public String toString()
 	{
 		return Arrays.toString(feat);
-	}
-
-	private double computeFeatMean()
-	{
-		return computeFeatSum() / feat.length;
-	}
-
-	private double computeFeatSum()
-	{
-		double sum = 0.0;
-		for (final double f : feat)
-		{
-			sum += f;
-		}
-		return sum;
 	}
 
 	private void initFitness()

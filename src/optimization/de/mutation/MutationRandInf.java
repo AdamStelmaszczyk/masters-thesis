@@ -14,6 +14,8 @@ public class MutationRandInf extends Mutation
 	private double[][] l;
 	private double[] z;
 	private double[] diffVector;
+	private int[] piv;
+	private double[] jCol;
 
 	@Override
 	public double computeScalingFactor(int NP)
@@ -26,15 +28,14 @@ public class MutationRandInf extends Mutation
 	{
 		if (i == 0)
 		{
-			computeL(pop);
 			if (z == null)
 			{
-				z = new double[pop.size()];
+				z = new double[pop.DIM];
+				diffVector = new double[pop.DIM];
+				piv = new int[pop.DIM];
+				jCol = new double[pop.DIM];
 			}
-			if (diffVector == null)
-			{
-				diffVector = new double[pop.size()];
-			}
+			computeL(pop);
 		}
 		final List<Integer> indices = new ArrayList<Integer>(2);
 		indices.add(i);
@@ -45,12 +46,12 @@ public class MutationRandInf extends Mutation
 
 	protected Solution computeDiffVector(Population pop, Random rand)
 	{
-		for (int x = 0; x < pop.size(); x++)
+		for (int x = 0; x < pop.DIM; x++)
 		{
 			z[x] = rand.nextGaussian();
 		}
 
-		for (int y = 0; y < pop.size(); y++)
+		for (int y = 0; y < pop.DIM; y++)
 		{
 			diffVector[y] = 0.0;
 			for (int x = 0; x <= y; x++)
@@ -67,54 +68,52 @@ public class MutationRandInf extends Mutation
 		l = pop.computeCovarianceMatrix();
 
 		// Use a "left-looking", dot-product, Crout/Doolittle algorithm.
-		final int NP = l.length;
+		final int DIM = l.length;
 
-		final int[] piv = new int[NP];
-		for (int i = 0; i < NP; i++)
+		for (int i = 0; i < DIM; i++)
 		{
 			piv[i] = i;
 		}
 		int pivsign = 1;
-		double[] LUrowi;
-		final double[] LUcolj = new double[NP];
+		double[] rowI;
 
 		// Outer loop.
-		for (int j = 0; j < NP; j++)
+		for (int j = 0; j < DIM; j++)
 		{
 			// Make a copy of the j-th column to localize references.
-			for (int i = 0; i < NP; i++)
+			for (int i = 0; i < DIM; i++)
 			{
-				LUcolj[i] = l[i][j];
+				jCol[i] = l[i][j];
 			}
 
 			// Apply previous transformations.
-			for (int i = 0; i < NP; i++)
+			for (int i = 0; i < DIM; i++)
 			{
-				LUrowi = l[i];
+				rowI = l[i];
 
 				// Most of the time is spent in the following dot product.
 				final int kmax = Math.min(i, j);
 				double s = 0.0;
 				for (int k = 0; k < kmax; k++)
 				{
-					s += LUrowi[k] * LUcolj[k];
+					s += rowI[k] * jCol[k];
 				}
 
-				LUrowi[j] = LUcolj[i] -= s;
+				rowI[j] = jCol[i] -= s;
 			}
 
 			// Find pivot and exchange if necessary.
 			int p = j;
-			for (int i = j + 1; i < NP; i++)
+			for (int i = j + 1; i < DIM; i++)
 			{
-				if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p]))
+				if (Math.abs(jCol[i]) > Math.abs(jCol[p]))
 				{
 					p = i;
 				}
 			}
 			if (p != j)
 			{
-				for (int k = 0; k < NP; k++)
+				for (int k = 0; k < DIM; k++)
 				{
 					final double t = l[p][k];
 					l[p][k] = l[j][k];
@@ -127,16 +126,16 @@ public class MutationRandInf extends Mutation
 			}
 
 			// Compute multipliers.
-			if (j < NP && l[j][j] != 0.0)
+			if (j < DIM && l[j][j] != 0.0)
 			{
-				for (int i = j + 1; i < NP; i++)
+				for (int i = j + 1; i < DIM; i++)
 				{
 					l[i][j] /= l[j][j];
 				}
 			}
 		}
 
-		for (int i = 0; i < NP; i++)
+		for (int i = 0; i < DIM; i++)
 		{
 			l[i][i] = 1.0;
 		}

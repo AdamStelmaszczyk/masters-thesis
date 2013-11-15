@@ -5,38 +5,64 @@ import java.util.Random;
 public class Population
 {
 	private final double[][] covarianceMatrix;
+	private final double[] mean;
 
 	public final Solution[] solutions;
 	public final int DIM;
 
-	public Population(int NP, int dim, Random rand, FunEvalsCounter funEvals)
+	public Population(int NP, int DIM, Random rand, FunEvalsCounter funEvals)
 	{
-		covarianceMatrix = new double[NP][NP];
+		covarianceMatrix = new double[DIM][DIM];
+		mean = new double[DIM];
 		solutions = new Solution[NP];
 		for (int i = 0; i < NP; i++)
 		{
-			solutions[i] = new Solution(dim, rand, funEvals);
+			solutions[i] = new Solution(DIM, rand, funEvals);
 		}
-		DIM = dim;
+		this.DIM = DIM;
 	}
 
 	public double[][] computeCovarianceMatrix()
 	{
-		for (int y = 0; y < solutions.length; y++)
+		for (int x = 0; x < DIM; x++)
+		{
+			mean[x] = computeMean(x);
+		}
+		for (int y = 0; y < DIM; y++)
 		{
 			for (int x = 0; x <= y; x++)
 			{
-				covarianceMatrix[x][y] = solutions[x].cov(solutions[y]);
+				covarianceMatrix[x][y] = cov(x, y, mean);
 			}
 		}
-		for (int y = 0; y < solutions.length; y++)
+		for (int y = 0; y < DIM; y++)
 		{
-			for (int x = y + 1; x < solutions.length; x++)
+			for (int x = y + 1; x < DIM; x++)
 			{
 				covarianceMatrix[x][y] = covarianceMatrix[y][x];
 			}
 		}
 		return covarianceMatrix;
+	}
+
+	private double cov(int x, int y, double[] mean)
+	{
+		double cov = 0.0;
+		for (int i = 0; i < solutions.length; i++)
+		{
+			cov += (solutions[i].feat[x] - mean[x]) * (solutions[i].feat[y] - mean[y]);
+		}
+		return cov;
+	}
+
+	private double computeMean(int x)
+	{
+		double mean = 0.0;
+		for (int i = 0; i < solutions.length; i++)
+		{
+			mean += solutions[i].feat[x];
+		}
+		return mean;
 	}
 
 	public Solution computeMidpoint()
