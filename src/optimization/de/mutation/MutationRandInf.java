@@ -11,11 +11,11 @@ import optimization.de.Solution;
 /** P[j] + sqrt(2) * F * v */
 public class MutationRandInf extends Mutation
 {
-	private double[][] l;
-	private double[] z;
-	private double[] diffVector;
-	private int[] piv;
-	private double[] jCol;
+	protected double[][] l;
+	protected double[] z;
+	protected double[] diffVector;
+	protected int[] piv;
+	protected double[] jCol;
 
 	@Override
 	public double computeScalingFactor(int NP)
@@ -30,10 +30,7 @@ public class MutationRandInf extends Mutation
 		{
 			if (z == null)
 			{
-				z = new double[pop.DIM];
-				diffVector = new double[pop.DIM];
-				piv = new int[pop.DIM];
-				jCol = new double[pop.DIM];
+				allocateArrays(pop.DIM);
 			}
 			computeL(pop);
 		}
@@ -42,6 +39,14 @@ public class MutationRandInf extends Mutation
 		indices.add(DE.getRandomIndex(rand, pop.size(), indices));
 		final Solution diffVector = computeDiffVector(pop, rand).mul(computeScalingFactor(pop.size()));
 		return pop.solutions[indices.get(1)].plus(diffVector);
+	}
+
+	protected void allocateArrays(int DIM)
+	{
+		z = new double[DIM];
+		diffVector = new double[DIM];
+		piv = new int[DIM];
+		jCol = new double[DIM];
 	}
 
 	protected Solution computeDiffVector(Population pop, Random rand)

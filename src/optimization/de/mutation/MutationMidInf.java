@@ -21,6 +21,10 @@ public class MutationMidInf extends MutationRandInf
 	{
 		if (i == 0)
 		{
+			if (z == null)
+			{
+				allocateArrays(pop.DIM);
+			}
 			computeL(pop);
 			midpoint = pop.computeMidpoint();
 		}
