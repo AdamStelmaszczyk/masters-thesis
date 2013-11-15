@@ -62,7 +62,7 @@ public class Population
 		{
 			mean += solutions[i].feat[x];
 		}
-		return mean;
+		return mean / solutions.length;
 	}
 
 	public Solution computeMidpoint()
