@@ -56,11 +56,16 @@ public class MutationRand extends Mutation
 
 	protected Solution computeSum(Population pop, List<Integer> indices)
 	{
-		final Solution sum = pop.solutions[indices.get(2)].minus(pop.solutions[indices.get(3)]);
+		final Solution sum = computeDiff(pop, indices.get(2), indices.get(3));
 		for (int j = 4; j < INDICES_SIZE; j += 2)
 		{
-			sum.plus(pop.solutions[indices.get(j)].minus(pop.solutions[indices.get(j + 1)]));
+			sum.plus(computeDiff(pop, indices.get(j), indices.get(j + 1)));
 		}
 		return sum;
+	}
+
+	protected Solution computeDiff(Population pop, int i, int j)
+	{
+		return pop.solutions[i].minus(pop.solutions[j]);
 	}
 }
