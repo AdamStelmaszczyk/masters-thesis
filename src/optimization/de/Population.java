@@ -45,6 +45,19 @@ public class Population
 		return covarianceMatrix;
 	}
 
+	public Solution computeMidpoint()
+	{
+		final Solution sum = new Solution(solutions[0]);
+		for (int i = 1; i < solutions.length; i++)
+		{
+			for (int j = 0; j < DIM; j++)
+			{
+				sum.feat[j] += solutions[i].feat[j];
+			}
+		}
+		return sum.mul(1.0 / solutions.length);
+	}
+
 	/** @return Solutions in columns. */
 	public double[][] getData()
 	{
@@ -72,19 +85,6 @@ public class Population
 			mean += solution.feat[dim];
 		}
 		return mean / solutions.length;
-	}
-
-	public Solution computeMidpoint()
-	{
-		final Solution sum = new Solution(solutions[0]);
-		for (int i = 1; i < solutions.length; i++)
-		{
-			for (int j = 0; j < solutions[i].feat.length; j++)
-			{
-				sum.feat[j] += solutions[i].feat[j];
-			}
-		}
-		return sum.mul(1.0 / solutions.length);
 	}
 
 	private double cov(int x, int y, double[] mean)
