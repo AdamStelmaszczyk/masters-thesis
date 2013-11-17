@@ -3,7 +3,7 @@ package optimization.de;
 import java.util.Arrays;
 import java.util.Random;
 
-import optimization.FunEvalsCounter;
+import optimization.Evaluator;
 import optimization.Solution;
 
 public class Population
@@ -14,14 +14,15 @@ public class Population
 	public final Solution[] solutions;
 	public final int DIM;
 
-	public Population(int NP, int DIM, Random rand, FunEvalsCounter funEvals)
+	/** Create random population. */
+	public Population(int NP, int DIM, Random rand)
 	{
 		covarianceMatrix = new double[DIM][DIM];
 		mean = new double[DIM];
 		solutions = new Solution[NP];
 		for (int i = 0; i < NP; i++)
 		{
-			solutions[i] = new Solution(DIM, rand, funEvals);
+			solutions[i] = new Solution(DIM, rand);
 		}
 		this.DIM = DIM;
 	}
@@ -100,7 +101,7 @@ public class Population
 		}
 		return cov / solutions.length;
 	}
-	
+
 	@Override
 	public String toString()
 	{
@@ -118,5 +119,18 @@ public class Population
 			}
 		}
 		return outsiders;
+	}
+
+	public Solution getBest(Evaluator evaluator)
+	{
+		Solution best = solutions[0];
+		for (int i = 1; i < solutions.length; i++)
+		{
+			if (solutions[i].isBetter(best, evaluator))
+			{
+				best = solutions[i];
+			}
+		}
+		return best;
 	}
 }

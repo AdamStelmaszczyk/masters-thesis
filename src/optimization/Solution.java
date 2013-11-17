@@ -3,35 +3,27 @@ package optimization;
 import java.util.Arrays;
 import java.util.Random;
 
-import optimization.de.DE;
-
 import javabbob.Experiment;
-import javabbob.JNIfgeneric;
+import optimization.de.DE;
 
 public class Solution
 {
-	public double fitness;
 	public final double feat[];
-	private final FunEvalsCounter funEvalsCounter;
 
 	/** No deep copy. */
-	public Solution(double feat[], FunEvalsCounter funEvals)
+	public Solution(double feat[])
 	{
 		this.feat = feat;
-		funEvalsCounter = funEvals;
-		initFitness();
 	}
 
-	/** Generate random solution. */
-	public Solution(int dim, Random rand, FunEvalsCounter funEvalsCounter)
+	/** Create random solution. */
+	public Solution(int dim, Random rand)
 	{
 		feat = new double[dim];
 		for (int i = 0; i < dim; i++)
 		{
 			feat[i] = (Experiment.DOMAIN_MAX - Experiment.DOMAIN_MIN) * rand.nextDouble() + Experiment.DOMAIN_MIN;
 		}
-		this.funEvalsCounter = funEvalsCounter;
-		initFitness();
 	}
 
 	/** Deep copy. */
@@ -39,8 +31,6 @@ public class Solution
 	{
 		feat = new double[other.feat.length];
 		System.arraycopy(other.feat, 0, feat, 0, feat.length);
-		funEvalsCounter = other.funEvalsCounter;
-		initFitness();
 	}
 
 	public Solution crossover(Solution other, Random rand)
@@ -54,26 +44,6 @@ public class Solution
 			}
 		}
 		return result;
-	}
-
-	public double getFitness(JNIfgeneric fgeneric)
-	{
-		if (fitness == Integer.MAX_VALUE)
-		{
-			fitness = fgeneric.evaluate(feat);
-			funEvalsCounter.increment();
-		}
-		return fitness;
-	}
-
-	public FunEvalsCounter getFunEvalsCounter()
-	{
-		return funEvalsCounter;
-	}
-
-	public boolean isBetter(Solution other, JNIfgeneric fgeneric)
-	{
-		return getFitness(fgeneric) < other.getFitness(fgeneric);
 	}
 
 	public Solution minus(Solution other)
@@ -112,11 +82,6 @@ public class Solution
 		return Arrays.toString(feat);
 	}
 
-	private void initFitness()
-	{
-		fitness = Integer.MAX_VALUE;
-	}
-
 	public boolean isOutside()
 	{
 		for (int i = 0; i < feat.length; i++)
@@ -127,5 +92,10 @@ public class Solution
 			}
 		}
 		return false;
+	}
+
+	public boolean isBetter(Solution other, Evaluator evaluator)
+	{
+		return evaluator.evaluate(this) < evaluator.evaluate(other);
 	}
 }

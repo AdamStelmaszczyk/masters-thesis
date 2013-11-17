@@ -24,4 +24,10 @@ public class FunEvalsCounter
 	{
 		return counter >= maxFunEvals;
 	}
+
+	@Override
+	public String toString()
+	{
+		return String.valueOf(counter);
+	}
 }

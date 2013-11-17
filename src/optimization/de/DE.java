@@ -4,13 +4,12 @@ import java.util.List;
 import java.util.Random;
 
 import javabbob.Experiment;
-import javabbob.JNIfgeneric;
-import optimization.FunEvalsCounter;
+import optimization.Evaluator;
 import optimization.Optimizer;
 import optimization.Solution;
 import optimization.de.mutation.Mutation;
 
-public class DE extends Optimizer
+public class DE implements Optimizer
 {
 	public final static double F = 0.9;
 	public final static double CR = 0.9;
@@ -34,40 +33,26 @@ public class DE extends Optimizer
 		return result;
 	}
 
-	public void optimize(JNIfgeneric fgeneric, int dim, int maxFunEvals, Random rand)
+	public void optimize(Evaluator evaluator, int dim, Random rand)
 	{
-		final FunEvalsCounter funEvals = new FunEvalsCounter(maxFunEvals);
 		final int NP = NP_TO_DIM_RATIO * dim;
-		final Population old = new Population(NP, dim, rand, funEvals);
-		final Population children = new Population(NP, dim, rand, funEvals);
+		final Population actual = new Population(NP, dim, rand);
+		final Population children = new Population(NP, dim, rand);
 		int outsiders = 0;
-
 		while (true)
 		{
-			outsiders += old.getNumberOfOutsiders();
-
-			if (funEvals.isEnough())
-			{
-				return;
-			}
-
 			for (int i = 0; i < NP; i++)
 			{
-				final Solution mutant = mutation.getMutant(old, rand, i);
-				children.solutions[i] = old.solutions[i].crossover(mutant, rand);
-				if (hasReachedTarget(fgeneric, children.solutions[i].getFitness(fgeneric)))
-				{
-					printOutsiders(outsiders, dim);
-					return;
-				}
-				if (funEvals.isEnough())
-				{
-					printOutsiders(outsiders, dim);
-					return;
-				}
+				final Solution mutant = mutation.getMutant(actual, rand, i);
+				children.solutions[i] = actual.solutions[i].crossover(mutant, rand);
 			}
-
-			succesion(old, children, fgeneric);
+			succesion(actual, children, evaluator);
+			if (evaluator.hasReachedTarget() || evaluator.hasReachedMaxFunEvals())
+			{
+				printOutsiders(outsiders, dim);
+				return;
+			}
+			outsiders += actual.getNumberOfOutsiders();
 		}
 	}
 
@@ -76,13 +61,13 @@ public class DE extends Optimizer
 		System.out.printf("%3.0f%% ", 100.0 * outsiders / (dim * Experiment.FUN_EVALS_TO_DIM_RATIO));
 	}
 
-	private void succesion(Population old, Population children, JNIfgeneric fgeneric)
+	private void succesion(Population actual, Population children, Evaluator evaluator)
 	{
 		for (int i = 0; i < children.solutions.length; i++)
 		{
-			if (children.solutions[i].isBetter(old.solutions[i], fgeneric))
+			if (children.solutions[i].isBetter(actual.solutions[i], evaluator))
 			{
-				old.solutions[i] = children.solutions[i];
+				actual.solutions[i] = new Solution(children.solutions[i]);
 			}
 		}
 	}

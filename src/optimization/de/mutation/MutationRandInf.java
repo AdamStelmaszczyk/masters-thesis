@@ -76,6 +76,6 @@ public class MutationRandInf extends Mutation
 				diffVector[y] += a.get(y, x) * z[x];
 			}
 		}
-		return new Solution(diffVector, pop.solutions[0].getFunEvalsCounter());
+		return new Solution(diffVector);
 	}
 }

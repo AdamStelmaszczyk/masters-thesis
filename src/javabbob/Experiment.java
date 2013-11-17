@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
+import optimization.Evaluator;
 import optimization.Optimizer;
 import optimization.de.DE;
 import optimization.de.mutation.MutationMid;
@@ -25,8 +26,8 @@ import org.apache.commons.cli.ParseException;
 public class Experiment
 {
 	public final static int FUNCTIONS[] =
-	{ 24, 110, 113, 116, 119, 122, 126 };
-	public final static int RUNS = 100;
+	{ 15, 16, 19, 20, 21, 22, 24 };
+	public final static int RUNS = 15;
 	public final static int FUN_EVALS_TO_DIM_RATIO = 100000;
 	public final static int SEED = 1;
 
@@ -130,13 +131,14 @@ public class Experiment
 				fgeneric.initBBOB(fun, run, dimension, filename, new JNIfgeneric.Params());
 
 				final int MAX_FUN_EVALS = FUN_EVALS_TO_DIM_RATIO * dimension;
-				optimizer.optimize(fgeneric, dimension, MAX_FUN_EVALS, rand);
+				final Evaluator evaluator = new Evaluator(fgeneric, MAX_FUN_EVALS);
+				optimizer.optimize(evaluator, dimension, rand);
 
 				final double distance = fgeneric.getBest() - fgeneric.getFtarget();
 				final int fes = (int) fgeneric.getEvaluations();
 				final int seconds = (int) ((System.currentTimeMillis() - startTime) / 1000);
-				System.out.printf("%dD f%d run %3d FEs = %d best-target = %15.8f %ds\n", dimension, fun, run, fes, distance,
-						seconds);
+				System.out.printf("%dD f%d run %3d FEs = %7d best-target = %15.8f %ds\n", dimension, fun, run, fes,
+						distance, seconds);
 
 				fgeneric.exitBBOB();
 			}
