@@ -11,9 +11,9 @@ public class MutationMid extends MutationRand
 {
 	protected Solution midpoint;
 
-	public MutationMid(int K)
+	public MutationMid(int k)
 	{
-		super(K);
+		super(k);
 	}
 
 	@Override

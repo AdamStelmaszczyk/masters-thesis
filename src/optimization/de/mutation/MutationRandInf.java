@@ -1,7 +1,5 @@
 package optimization.de.mutation;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import optimization.Solution;
@@ -10,12 +8,17 @@ import optimization.de.Population;
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
 
-/** P[j] + sqrt(2) * F * v */
+/** P[i1] + sqrt(2) * F * v */
 public class MutationRandInf extends Mutation
 {
 	protected Matrix a;
 	protected double[] z;
 	protected double[] diffVector;
+
+	public MutationRandInf()
+	{
+		super(0);
+	}
 
 	@Override
 	public double computeScalingFactor(int NP)
@@ -28,15 +31,13 @@ public class MutationRandInf extends Mutation
 	{
 		if (i == 0)
 		{
-			if (z == null)
+			if (a == null)
 			{
 				allocateArrays(pop.DIM);
 			}
 			computeA(pop);
 		}
-		final List<Integer> indices = new ArrayList<Integer>(2);
-		indices.add(i);
-		indices.add(DE.getRandomIndex(rand, pop.size(), indices));
+		computeIndices(pop, rand, i);
 		final Solution diffVector = computeDiffVector(pop, rand).mul(computeScalingFactor(pop.size()));
 		return pop.solutions[indices.get(1)].plus(diffVector);
 	}

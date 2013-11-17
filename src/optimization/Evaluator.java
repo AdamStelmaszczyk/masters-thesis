@@ -32,4 +32,9 @@ public class Evaluator
 	{
 		return (int) fgeneric.getEvaluations();
 	}
+
+	public double getTarget()
+	{
+		return fgeneric.getFtarget();
+	}
 }
