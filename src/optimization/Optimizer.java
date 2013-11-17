@@ -2,7 +2,6 @@ package optimization;
 
 import java.util.Random;
 
-import javabbob.Experiment;
 import javabbob.JNIfgeneric;
 
 abstract public class Optimizer
@@ -17,6 +16,6 @@ abstract public class Optimizer
 
 	public boolean hasReachedTarget(JNIfgeneric fgeneric, double fitness)
 	{
-		return Math.abs(fgeneric.getFtarget() - fitness) <= Experiment.TARGET_PRECISION;
+		return fitness < fgeneric.getFtarget();
 	}
 }

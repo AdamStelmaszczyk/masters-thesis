@@ -32,7 +32,6 @@ public class Experiment
 
 	public final static double DOMAIN_MIN = -5.0;
 	public final static double DOMAIN_MAX = 5.0;
-	public final static double TARGET_PRECISION = 1e-8;
 
 	private final static String ALGORITHM_FLAG = "a";
 	private final static String DIMENSION_FLAG = "d";
