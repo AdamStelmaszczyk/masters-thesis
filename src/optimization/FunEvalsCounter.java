@@ -1,4 +1,4 @@
-package optimization.de;
+package optimization;
 
 public class FunEvalsCounter
 {

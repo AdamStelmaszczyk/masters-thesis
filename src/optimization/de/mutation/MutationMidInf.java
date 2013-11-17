@@ -2,9 +2,9 @@ package optimization.de.mutation;
 
 import java.util.Random;
 
+import optimization.Solution;
 import optimization.de.DE;
 import optimization.de.Population;
-import optimization.de.Solution;
 
 /** midpoint + sqrt(1 + 2*F*F) * v */
 public class MutationMidInf extends MutationRandInf

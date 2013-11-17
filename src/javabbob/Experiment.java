@@ -11,6 +11,7 @@ import optimization.de.mutation.MutationMid;
 import optimization.de.mutation.MutationMidInf;
 import optimization.de.mutation.MutationRand;
 import optimization.de.mutation.MutationRandInf;
+import optimization.random.RandomOptimizer;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -23,11 +24,15 @@ import org.apache.commons.cli.ParseException;
 /** Wrapper class running an entire BBOB experiment. */
 public class Experiment
 {
-	final static int FUNCTIONS[] =
+	public final static int FUNCTIONS[] =
 	{ 24, 110, 113, 116, 119, 122, 126 };
-	final static int RUNS = 100;
-	final static int FUN_EVALS_TO_DIM_RATIO = 100000;
-	final static int SEED = 1;
+	public final static int RUNS = 100;
+	public final static int FUN_EVALS_TO_DIM_RATIO = 100000;
+	public final static int SEED = 1;
+
+	public final static double DOMAIN_MIN = -5.0;
+	public final static double DOMAIN_MAX = 5.0;
+	public final static double TARGET_PRECISION = 1e-8;
 
 	private final static String ALGORITHM_FLAG = "a";
 	private final static String DIMENSION_FLAG = "d";
@@ -83,6 +88,10 @@ public class Experiment
 		{
 			optimizer = new DE(new MutationMidInf());
 		}
+		else if (algorithm.equals("random"))
+		{
+			optimizer = new RandomOptimizer();
+		}
 		else
 		{
 			die();
@@ -127,8 +136,8 @@ public class Experiment
 				final double distance = fgeneric.getBest() - fgeneric.getFtarget();
 				final int fes = (int) fgeneric.getEvaluations();
 				final int seconds = (int) ((System.currentTimeMillis() - startTime) / 1000);
-				System.out.println("f" + fun + " in " + dimension + "-D, run " + run + ", FEs = " + fes
-						+ " fbest-ftarget = " + distance + ", " + seconds + "s");
+				System.out.printf("%dD f%d run %3d FEs = %d distance = %15.8f %ds\n", dimension, fun, run, fes, distance,
+						seconds);
 
 				fgeneric.exitBBOB();
 			}

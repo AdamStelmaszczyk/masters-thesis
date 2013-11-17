@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import optimization.Solution;
 import optimization.de.DE;
 import optimization.de.Population;
-import optimization.de.Solution;
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
 

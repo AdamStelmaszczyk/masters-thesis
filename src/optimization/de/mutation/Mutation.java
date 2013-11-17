@@ -2,8 +2,8 @@ package optimization.de.mutation;
 
 import java.util.Random;
 
+import optimization.Solution;
 import optimization.de.Population;
-import optimization.de.Solution;
 
 public abstract class Mutation
 {

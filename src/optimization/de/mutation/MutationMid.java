@@ -2,9 +2,9 @@ package optimization.de.mutation;
 
 import java.util.Random;
 
+import optimization.Solution;
 import optimization.de.DE;
 import optimization.de.Population;
-import optimization.de.Solution;
 
 /** DE/mid/k */
 public class MutationMid extends MutationRand

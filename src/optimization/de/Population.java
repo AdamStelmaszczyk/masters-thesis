@@ -1,6 +1,10 @@
 package optimization.de;
 
+import java.util.Arrays;
 import java.util.Random;
+
+import optimization.FunEvalsCounter;
+import optimization.Solution;
 
 public class Population
 {
@@ -95,5 +99,24 @@ public class Population
 			cov += (solution.feat[x] - mean[x]) * (solution.feat[y] - mean[y]);
 		}
 		return cov / solutions.length;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return Arrays.toString(solutions);
+	}
+
+	public int getNumberOfOutsiders()
+	{
+		int outsiders = 0;
+		for (int i = 0; i < solutions.length; i++)
+		{
+			if (solutions[i].isOutside())
+			{
+				outsiders++;
+			}
+		}
+		return outsiders;
 	}
 }

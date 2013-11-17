@@ -3,30 +3,24 @@ package optimization.de;
 import java.util.List;
 import java.util.Random;
 
+import javabbob.Experiment;
 import javabbob.JNIfgeneric;
+import optimization.FunEvalsCounter;
 import optimization.Optimizer;
-import optimization.de.midpoint.MidpointAction;
-import optimization.de.midpoint.MidpointActionDoNothing;
+import optimization.Solution;
 import optimization.de.mutation.Mutation;
 
-public class DE implements Optimizer
+public class DE extends Optimizer
 {
 	public final static double F = 0.9;
 	public final static double CR = 0.9;
 	public final static int NP_TO_DIM_RATIO = 10;
 
 	private final Mutation mutation;
-	private final MidpointAction midpointAction;
 
 	public DE(Mutation mutation)
 	{
-		this(mutation, new MidpointActionDoNothing());
-	}
-
-	public DE(Mutation mutation, MidpointAction midpointAction)
-	{
 		this.mutation = mutation;
-		this.midpointAction = midpointAction;
 	}
 
 	public static int getRandomIndex(Random rand, int NP, List<Integer> excluded)
@@ -43,15 +37,15 @@ public class DE implements Optimizer
 	public void optimize(JNIfgeneric fgeneric, int dim, int maxFunEvals, Random rand)
 	{
 		final FunEvalsCounter funEvals = new FunEvalsCounter(maxFunEvals);
-
 		final int NP = NP_TO_DIM_RATIO * dim;
 		final Population old = new Population(NP, dim, rand, funEvals);
 		final Population children = new Population(NP, dim, rand, funEvals);
-		final double target = fgeneric.getFtarget();
+		int outsiders = 0;
 
 		while (true)
 		{
-			midpointAction.isMidpointBetterThanTarget(old, fgeneric);
+			outsiders += old.getNumberOfOutsiders();
+
 			if (funEvals.isEnough())
 			{
 				return;
@@ -61,18 +55,25 @@ public class DE implements Optimizer
 			{
 				final Solution mutant = mutation.getMutant(old, rand, i);
 				children.solutions[i] = old.solutions[i].crossover(mutant, rand);
-				if (children.solutions[i].getFitness(fgeneric) <= target)
+				if (hasReachedTarget(fgeneric, children.solutions[i].getFitness(fgeneric)))
 				{
+					printOutsiders(outsiders, dim);
 					return;
 				}
 				if (funEvals.isEnough())
 				{
+					printOutsiders(outsiders, dim);
 					return;
 				}
 			}
 
 			succesion(old, children, fgeneric);
 		}
+	}
+
+	private void printOutsiders(int outsiders, int dim)
+	{
+		System.out.printf("%.1f%% ", 100.0 * outsiders / (dim * Experiment.FUN_EVALS_TO_DIM_RATIO));
 	}
 
 	private void succesion(Population old, Population children, JNIfgeneric fgeneric)

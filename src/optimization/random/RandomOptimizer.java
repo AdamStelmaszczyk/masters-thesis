@@ -3,28 +3,24 @@ package optimization.random;
 import java.util.Random;
 
 import javabbob.JNIfgeneric;
+import optimization.FunEvalsCounter;
 import optimization.Optimizer;
+import optimization.Solution;
 
-public class RandomOptimizer implements Optimizer
+public class RandomOptimizer extends Optimizer
 {
+	@Override
 	public void optimize(JNIfgeneric fgeneric, int dim, int maxFunEvals, Random rand)
 	{
-		final double[] solution = new double[dim];
-
-		// Obtain the target function value, which only use is termination
-		final double target = fgeneric.getFtarget();
-
-		for (int iter = 0; iter < maxFunEvals; iter++)
+		final FunEvalsCounter funEvalsCounter = new FunEvalsCounter(maxFunEvals);
+		while (true)
 		{
-			// Generate solution
-			for (int i = 0; i < dim; i++)
+			final Solution solution = new Solution(dim, rand, funEvalsCounter);
+			if (hasReachedTarget(fgeneric, solution.getFitness(fgeneric)))
 			{
-				solution[i] = 10 * rand.nextDouble() - 5;
+				break;
 			}
-
-			final double fitness = fgeneric.evaluate(solution);
-
-			if (fitness <= target)
+			if (funEvalsCounter.isEnough())
 			{
 				break;
 			}

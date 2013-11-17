@@ -1,8 +1,11 @@
-package optimization.de;
+package optimization;
 
 import java.util.Arrays;
 import java.util.Random;
 
+import optimization.de.DE;
+
+import javabbob.Experiment;
 import javabbob.JNIfgeneric;
 
 public class Solution
@@ -19,12 +22,13 @@ public class Solution
 		initFitness();
 	}
 
+	/** Generate random solution. */
 	public Solution(int dim, Random rand, FunEvalsCounter funEvalsCounter)
 	{
 		feat = new double[dim];
 		for (int i = 0; i < dim; i++)
 		{
-			feat[i] = 10 * rand.nextDouble() - 5; // because functions from BBOB are defined in [-5; 5] range
+			feat[i] = (Experiment.DOMAIN_MAX - Experiment.DOMAIN_MIN) * rand.nextDouble() + Experiment.DOMAIN_MIN;
 		}
 		this.funEvalsCounter = funEvalsCounter;
 		initFitness();
@@ -113,4 +117,15 @@ public class Solution
 		fitness = Integer.MAX_VALUE;
 	}
 
+	public boolean isOutside()
+	{
+		for (int i = 0; i < feat.length; i++)
+		{
+			if (feat[i] < Experiment.DOMAIN_MIN || feat[i] > Experiment.DOMAIN_MAX)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 }
