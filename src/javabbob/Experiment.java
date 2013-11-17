@@ -135,7 +135,7 @@ public class Experiment
 				final double distance = fgeneric.getBest() - fgeneric.getFtarget();
 				final int fes = (int) fgeneric.getEvaluations();
 				final int seconds = (int) ((System.currentTimeMillis() - startTime) / 1000);
-				System.out.printf("%dD f%d run %3d FEs = %d distance = %15.8f %ds\n", dimension, fun, run, fes, distance,
+				System.out.printf("%dD f%d run %3d FEs = %d best-target = %15.8f %ds\n", dimension, fun, run, fes, distance,
 						seconds);
 
 				fgeneric.exitBBOB();

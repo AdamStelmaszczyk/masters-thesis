@@ -73,7 +73,7 @@ public class DE extends Optimizer
 
 	private void printOutsiders(int outsiders, int dim)
 	{
-		System.out.printf("%.1f%% ", 100.0 * outsiders / (dim * Experiment.FUN_EVALS_TO_DIM_RATIO));
+		System.out.printf("%3.0f%% ", 100.0 * outsiders / (dim * Experiment.FUN_EVALS_TO_DIM_RATIO));
 	}
 
 	private void succesion(Population old, Population children, JNIfgeneric fgeneric)

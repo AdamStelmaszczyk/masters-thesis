@@ -40,7 +40,7 @@ if (!is.na(filename[6]))
 
 png(paste("pngs/", f_num, ".png", sep = ""))
 colors = c("black", "darkblue", "cyan", "darkred", "red", "magenta")
-plot(ecdf(data1), verticals = TRUE, do.points = FALSE, col = colors[1], main = f_num, xlab="Odległość od minimum", ylab="Prawdopodobieństwo")
+plot(ecdf(data1), verticals = TRUE, do.points = FALSE, col = colors[1], main = f_num, xlab="best - target", ylab="Prawdopodobieństwo", xlim=c(0, max(data1)), ylim=c(0,1))
 lines(ecdf(data2), verticals = TRUE, do.points = FALSE, col = colors[2])
 if (!is.na(filename[3])) 
 	lines(ecdf(data3), verticals = TRUE, do.points = FALSE, col = colors[3])
