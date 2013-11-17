@@ -40,7 +40,7 @@ public class Experiment
 
 	private final static String DEFAULT_ALGORITHM = "derand";
 	private final static int DEFAULT_K = 1;
-	private final static int DEFAULT_DIMENSION = 5;
+	private final static int DEFAULT_DIMENSION = 10;
 
 	/** Main method for running the whole BBOB experiment. */
 	public static void main(String[] args)

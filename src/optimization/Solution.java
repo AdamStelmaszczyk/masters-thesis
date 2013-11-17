@@ -10,7 +10,7 @@ public class Solution
 {
 	public final double feat[];
 
-	/** No deep copy. */
+	/** Shallow copy. */
 	public Solution(double feat[])
 	{
 		this.feat = feat;
