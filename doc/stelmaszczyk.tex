@@ -139,10 +139,9 @@ Tabela \ref{table:parametry} podsumowuje znalezione parametry skalujące.
 \centering
 \begin{tabular}{ l | c }
                  & parametr \\ \hline
-DE/rand/1        & $F$ \\ 
 DE/rand/k        & $\sqrt{\frac{2F^2}{2k}} = \frac{F}{\sqrt{k}}$ \\ 
-DE/mid/k         & $\sqrt{\frac{1 + 2F^2 - \frac{1}{n}}{2k}}$ \\
 DE/rand/$\infty$ & $\sqrt{2F^2} = \sqrt{2}F$ \\ 
+DE/mid/k         & $\sqrt{\frac{1 + 2F^2 - \frac{1}{n}}{2k}}$ \\
 DE/mid/$\infty$  & $\sqrt{1 + 2F^2 - \frac{1}{n}}$ \\
 \end{tabular}
 \caption{Parametry skalujące}
@@ -151,29 +150,34 @@ DE/mid/$\infty$  & $\sqrt{1 + 2F^2 - \frac{1}{n}}$ \\
 
 \section{Część praktyczna}
 
-Zbadano 4 algorytmy:
+Przetestowano 6 algorytmów:
 \begin{enumerate}
-\item DE/rand/1
-\item DE/mid/1 
-\item DE/rand/$\infty$ 
-\item DE/mid/$\infty$ 
+ \item DE/rand/1
+ \item DE/rand/6
+ \item DE/rand/$\infty$ 
+ \item DE/mid/1 
+ \item DE/mid/6 
+ \item DE/mid/$\infty$ 
 \end{enumerate}
 
-Ekperymenty przeprowadzono na 7 funkcjach testowych o numerach 24, 110, 113, 116, 119, 122, 126 z BBOB 2013 \cite{hansen}, zaimplementowanych w języku C.
+Eksperymenty przeprowadzono na 7 funkcjach testowych o numerach 15, 16, 19, 20, 21, 22, 24 z BBOB 2013 \cite{finck}, zaimplementowanych w języku C.
 Funkcje testowe są wywoływane z Javy, w której napisano algorytmy oraz procedurę testującą.
-Liczba wymiarów $D = 10$. Maksymalna liczba wywołań funkcji oceny $FEs = 10^6$. Rozmiar populacji $n = 100$. 
-Jeśli algorytm nie znajdował minimum, wówczas w jednym uruchomieniu, na jednej funkcji, generował $10^4$ pokoleń.
-Na każdej funkcji algorytm był niezależnie uruchamiany 100 razy, z każdego uruchomienia zapisywany był najlepszy wynik.
-Parametry skalujące zgodne z tabelą \ref{table:parametry_liczbowe}, $F = 0.9$. Prawdopodobieństwo krzyżowania $Cr = 0.9$. \\
+Liczba wymiarów $D \in \{20, 40\}$. Maksymalna liczba wywołań funkcji oceny $FEs = 10^5D$. Rozmiar populacji $n = 10D$. 
+Jeśli algorytm nie znajdował minimum, wówczas w jednym uruchomieniu, na jednej funkcji, generował $\frac{FEs}{n} = 10^4$ pokoleń.
+Na każdej funkcji algorytm był niezależnie uruchamiany 15 razy, z każdego uruchomienia zapisywany był najlepszy wynik.
+Parametry skalujące zgodne z tabelą \ref{table:parametry_liczbowe}, $F = 0.9$. Krzyżowanie wymieniające (DE/*/k/bin).
+Prawdopodobieństwo krzyżowania $Cr = 0.9$. \\
 
 \begin{table}[H]
 \centering
 \begin{tabular}{ l | c }
                  & wartość \\ \hline
 DE/rand/1        & $0.9$ \\ 
-DE/mid/1         & $1.14...$ \\
+DE/rand/6        & $0.37...$ \\ 
 DE/rand/$\infty$ & $1.27...$ \\ 
-DE/mid/$\infty$  & $1.62...$\\
+DE/mid/1         & $1.14...$ \\
+DE/mid/6         & $0.46...$ \\
+DE/mid/$\infty$  & $1.62...$ \\
 \end{tabular}
 \caption{Wartości parametrów skalujących użyte w eksperymentach}
 \label{table:parametry_liczbowe}
@@ -182,55 +186,124 @@ DE/mid/$\infty$  & $1.62...$\\
 W celu porównania, wykreślano dystrybuanty empiryczne najlepszych wyników z każdego uruchomienia 
 dla obu algorytmów na jednej funkcji. Wykresy przedstawiono poniżej.
 Najlepszym wynikiem była najmniejsza odległość funkcji oceny osobnika od minimum.
-Algorytm, którego dystrybuanta na wykresie przebiegała powyżej pozostałych, otrzymywał 3 punkty. 
-Za drugie miejsce algorytm dostawał 2 punkty, za trzecie 1, za ostatnie 0. 
+Algorytm, którego dystrybuanta na wykresie przebiegała powyżej pozostałych, otrzymywał 5 punktów. 
+Za drugie miejsce algorytm dostawał 4 punkty, za trzecie 3, za czwarte 2, za piąte 1, za ostatnie 0. 
 Jeśli dystrybuanty się przecinały, algorytmy zajmowały i-te miejsce ex aequo i dostawały punkty za i-te miejsce.
-Przykładowo, na 110 funkcji DE/mid/1 i DE+/mid/1 wygrały, a DE/rand/1 i DE+/rand/1 zajęły trzecie miejsce.
-Dostały następującą liczbę punktów, odpowiednio: 3, 3, 1, 1.
-Wyniki przedstawia tabela \ref{table:compare}. \\ 
+Przykładowo, na 16 funkcji w 20 wymiarach, DE/rand/6 i DE/mid/$\infty$ zajęły ex aequo drugie miejsce, dostając po 4 punkty.
+Kolejny, DE/rand/$\infty$, zajął 3 miejsce i dostał 2 punkty.
+Wyniki dla 20 wymiarów przedstawia tabela \ref{table:20d}, dla 40 wymiarów przedstawia tabela \ref{table:40d},
+dla 80 wymiarów tabela \ref{table:80d}. \\ 
 
-\begin{table}
+\begin{table}[H]
 \centering
 \begin{tabular}{ l | c | c | c | c | c | c | c | c}
-              & 24 & 110 & 113 & 116 & 119 & 122 & 126 & suma \\ \hline
-DE/rand/1     & 3  & 1   & 0   & 0   & 1   & 3   & 0   & 8    \\ 
-DE+/rand/1    & 3  & 1   & 1   & 1   & 1   & 3   & 3   & 13   \\ 
-DE/mid/1      & 3  & 3   & 3   & 3   & 3   & 3   & 1   & 19   \\ 
-DE+/mid/1     & 3  & 3   & 2   & 3   & 3   & 3   & 3   & 20   \\
+                 & 15 & 16 & 19 & 20 & 21 & 22 & 24 & suma \\ \hline
+DE/rand/1        & 1  & 0  & 0  & 1  & 1  & 5  & 0  & 8    \\ 
+DE/rand/6        & 4  & 4  & 3  & 5  & 5  & 5  & 5  & 31   \\ 
+DE/rand/$\infty$ & 2  & 2  & 2  & 4  & 5  & 5  & 1  & 21   \\ 
+DE/mid/1         & 5  & 1  & 1  & 2  & 5  & 5  & 2  & 21   \\
+DE/mid/6         & 0  & 5  & 5  & 0  & 0  & 0  & 5  & 15   \\ 
+DE/mid/$\infty$  & 3  & 4  & 4  & 4  & 2  & 1  & 5  & 23   \\
 \end{tabular}
-\caption{Porównanie algorytmów}
-\label{table:compare}
+\caption{Porównanie algorytmów w 20 wymiarze}
+\label{table:20d}
 \end{table}
 
-Para DE/mid/1 okazała się zdecydowanie lepsza niż DE/rand/1. Na 113, 116, 119, 122 i 126 funkcji DE/mid/1
-znalazł minimum, podczas gdy DE/rand/1 nigdy się to nie udało. Ocenianie punktu środkowego zazwyczaj pomagało,
-ale nie zawsze. DE+/rand/1 nigdy nie był gorszy niż DE/rand/1. Natomiast DE+/mid/1 przegrał
-na 113 funkcji z DE/mid/1. Na pozostałych zazwyczaj sprawował się podobnie, raz wygrywając na funkcji 126.
-Funkcje 24 oraz 122 okazały się nieprzydatne, ponieważ nie wykazały jednoznacznie przewagi żadnego z algorytmów. \\ 
+\begin{table}[H]
+\centering
+\begin{tabular}{ l | c | c | c | c | c | c | c | c}
+                 & 15 & 16 & 19 & 20 & 21 & 22 & 24 & suma \\ \hline
+DE/rand/1        & 0  & 0  & 0  & 0  & 0  & 0  & 0  & 0    \\ 
+DE/rand/6        & 5  & 4  & 3  & 4  & 5  & 5  & 5  & 31   \\ 
+DE/rand/$\infty$ & 2  & 2  & 1  & 4  & 5  & 5  & 2  & 21   \\ 
+DE/mid/1         & 5  & 1  & 2  & 2  & 2  & 2  & 1  & 15   \\
+DE/mid/6         & 1  & 5  & 5  & 1  & 2  & 2  & 3  & 19   \\ 
+DE/mid/$\infty$  & 3  & 4  & 4  & 5  & 3  & 3  & 5  & 27   \\
+\end{tabular}
+\caption{Porównanie algorytmów w 40 wymiarze}
+\label{table:40d}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ l | c | c | c | c | c | c | c | c}
+                 & 15 & 16 & 19 & 20 & 21 & 22 & 24 & suma \\ \hline
+DE/rand/1        & 0  & 0  & 0  & 0  & 2  & 2  & 2  & 6    \\ 
+DE/rand/6        & 5  & 3  & 3  & 3  & 5  & 5  & 5  & 29   \\ 
+DE/rand/$\infty$ & 1  & 2  & 1  & 1  & 2  & 2  & 2  & 11   \\ 
+DE/mid/1         & 4  & 2  & 2  & 4  & 2  & 2  & 2  & 18   \\
+DE/mid/6         & 2  & 5  & 5  & 2  & 3  & 3  & 3  & 23   \\ 
+DE/mid/$\infty$  & 3  & 4  & 4  & 5  & 4  & 4  & 4  & 28   \\
+\end{tabular}
+\caption{Porównanie algorytmów w 80 wymiarze}
+\label{table:80d}
+\end{table}
 
 \pagenumbering{gobble}
 
 \begin{figure}
 \centering
-\includegraphics[scale=0.75]{../pngs/24.png} 
-\includegraphics[scale=0.75]{../pngs/110.png}
+\includegraphics[scale=0.75]{../pngs/20/15.png} 
+\includegraphics[scale=0.75]{../pngs/20/16.png}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[scale=0.75]{../pngs/113.png}
-\includegraphics[scale=0.75]{../pngs/116.png}
+\includegraphics[scale=0.75]{../pngs/20/19.png} 
+\includegraphics[scale=0.75]{../pngs/20/20.png}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[scale=0.75]{../pngs/119.png}
-\includegraphics[scale=0.75]{../pngs/122.png}
+\includegraphics[scale=0.75]{../pngs/20/21.png} 
+\includegraphics[scale=0.75]{../pngs/20/22.png}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[scale=0.75]{../pngs/126.png}
+\includegraphics[scale=0.75]{../pngs/20/24.png} 
+\includegraphics[scale=0.75]{../pngs/40/15.png} 
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.75]{../pngs/40/16.png} 
+\includegraphics[scale=0.75]{../pngs/40/19.png} 
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.75]{../pngs/40/20.png} 
+\includegraphics[scale=0.75]{../pngs/40/21.png} 
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.75]{../pngs/40/22.png} 
+\includegraphics[scale=0.75]{../pngs/40/24.png} 
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.75]{../pngs/80/15.png} 
+\includegraphics[scale=0.75]{../pngs/80/16.png} 
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.75]{../pngs/80/19.png} 
+\includegraphics[scale=0.75]{../pngs/80/20.png} 
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.75]{../pngs/80/21.png} 
+\includegraphics[scale=0.75]{../pngs/80/22.png} 
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.75]{../pngs/80/24.png} 
 \end{figure}
 
 \bibliographystyle{plain}
