@@ -1,7 +1,5 @@
 package optimization.de.mutation;
 
-import java.util.Random;
-
 import optimization.Solution;
 import optimization.de.DE;
 import optimization.de.Population;
@@ -17,18 +15,17 @@ public class MutationMidInf extends MutationRandInf
 	}
 
 	@Override
-	public Solution getMutant(Population pop, Random rand, int i)
+	public Solution getMutant(Population pop, int i)
 	{
 		if (i == 0)
 		{
-			if (z == null)
+			if (a == null)
 			{
 				allocateArrays(pop.DIM);
 			}
 			computeA(pop);
 			midpoint = pop.computeMidpoint();
 		}
-		final Solution diffVector = computeDiffVector(pop, rand).mul(computeScalingFactor(pop.size()));
-		return midpoint.plus(diffVector);
+		return midpoint.plus(computeDiffVector(pop));
 	}
 }

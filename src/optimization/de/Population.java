@@ -1,8 +1,6 @@
 package optimization.de;
 
-import java.util.Arrays;
-import java.util.Random;
-
+import javabbob.Main;
 import optimization.Evaluator;
 import optimization.Solution;
 
@@ -15,14 +13,14 @@ public class Population
 	public final int DIM;
 
 	/** Create random population. */
-	public Population(int NP, int DIM, Random rand)
+	public Population(int NP, int DIM)
 	{
 		covarianceMatrix = new double[DIM][DIM];
 		mean = new double[DIM];
 		solutions = new Solution[NP];
 		for (int i = 0; i < NP; i++)
 		{
-			solutions[i] = new Solution(DIM, rand);
+			solutions[i] = new Solution(DIM);
 		}
 		this.DIM = DIM;
 	}
@@ -33,6 +31,7 @@ public class Population
 		{
 			mean[dim] = computeMeanInDim(dim);
 		}
+		// Calculate lower triangle
 		for (int y = 0; y < DIM; y++)
 		{
 			for (int x = 0; x <= y; x++)
@@ -40,6 +39,7 @@ public class Population
 				covarianceMatrix[x][y] = cov(x, y, mean);
 			}
 		}
+		// Fill upper triangle by symmetry
 		for (int y = 0; y < DIM; y++)
 		{
 			for (int x = y + 1; x < DIM; x++)
@@ -105,7 +105,14 @@ public class Population
 	@Override
 	public String toString()
 	{
-		return Arrays.toString(solutions);
+		final StringBuilder sb = new StringBuilder();
+		final String lineSeperator = System.getProperty("line.separator");
+		for (final Solution s : solutions)
+		{
+			sb.append(s);
+			sb.append(lineSeperator);
+		}
+		return sb.toString();
 	}
 
 	public int getNumberOfOutsiders()
@@ -132,5 +139,11 @@ public class Population
 			}
 		}
 		return best;
+	}
+
+	/** @return Deep copy of randomly chosen solution. */
+	public Solution getRandom()
+	{
+		return new Solution(solutions[Main.rand.nextInt(solutions.length)]);
 	}
 }

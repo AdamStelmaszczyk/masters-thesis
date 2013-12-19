@@ -1,9 +1,6 @@
 package optimization;
 
-import java.util.Arrays;
-import java.util.Random;
-
-import javabbob.Experiment;
+import javabbob.Main;
 import optimization.de.DE;
 
 public class Solution
@@ -17,12 +14,12 @@ public class Solution
 	}
 
 	/** Create random solution. */
-	public Solution(int dim, Random rand)
+	public Solution(int dim)
 	{
 		feat = new double[dim];
 		for (int i = 0; i < dim; i++)
 		{
-			feat[i] = (Experiment.DOMAIN_MAX - Experiment.DOMAIN_MIN) * rand.nextDouble() + Experiment.DOMAIN_MIN;
+			feat[i] = (Main.DOMAIN_MAX - Main.DOMAIN_MIN) * Main.rand.nextDouble() + Main.DOMAIN_MIN;
 		}
 	}
 
@@ -33,12 +30,13 @@ public class Solution
 		System.arraycopy(other.feat, 0, feat, 0, feat.length);
 	}
 
-	public Solution crossover(Solution other, Random rand)
+	/** Doesn't modify this object. */
+	public Solution crossover(Solution other)
 	{
 		final Solution result = new Solution(this);
 		for (int i = 0; i < feat.length; i++)
 		{
-			if (rand.nextDouble() < DE.CR)
+			if (Main.rand.nextDouble() < DE.CR)
 			{
 				result.feat[i] = other.feat[i];
 			}
@@ -46,6 +44,7 @@ public class Solution
 		return result;
 	}
 
+	/** Doesn't modify this object. */
 	public Solution minus(Solution other)
 	{
 		final Solution result = new Solution(this);
@@ -56,6 +55,7 @@ public class Solution
 		return result;
 	}
 
+	/** Doesn't modify this object. */
 	public Solution mul(double factor)
 	{
 		final Solution result = new Solution(this);
@@ -66,6 +66,7 @@ public class Solution
 		return result;
 	}
 
+	/** Doesn't modify this object. */
 	public Solution plus(Solution other)
 	{
 		final Solution result = new Solution(this);
@@ -79,14 +80,20 @@ public class Solution
 	@Override
 	public String toString()
 	{
-		return Arrays.toString(feat);
+		final StringBuilder sb = new StringBuilder();
+		for (final double f : feat)
+		{
+			sb.append(String.valueOf(f));
+			sb.append(" ");
+		}
+		return sb.toString();
 	}
 
 	public boolean isOutside()
 	{
 		for (int i = 0; i < feat.length; i++)
 		{
-			if (feat[i] < Experiment.DOMAIN_MIN || feat[i] > Experiment.DOMAIN_MAX)
+			if (feat[i] < Main.DOMAIN_MIN || feat[i] > Main.DOMAIN_MAX)
 			{
 				return true;
 			}

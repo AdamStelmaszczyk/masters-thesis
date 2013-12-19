@@ -1,7 +1,6 @@
 package optimization.de.mutation;
 
-import java.util.Random;
-
+import javabbob.Main;
 import optimization.Solution;
 import optimization.de.DE;
 import optimization.de.Population;
@@ -27,7 +26,7 @@ public class MutationRandInf extends Mutation
 	}
 
 	@Override
-	public Solution getMutant(Population pop, Random rand, int i)
+	public Solution getMutant(Population pop, int i)
 	{
 		if (i == 0)
 		{
@@ -37,9 +36,7 @@ public class MutationRandInf extends Mutation
 			}
 			computeA(pop);
 		}
-		computeIndices(pop, rand, i);
-		final Solution diffVector = computeDiffVector(pop, rand).mul(computeScalingFactor(pop.size()));
-		return pop.solutions[indices.get(1)].plus(diffVector);
+		return pop.getRandom().plus(computeDiffVector(pop));
 	}
 
 	protected void allocateArrays(int DIM)
@@ -55,6 +52,7 @@ public class MutationRandInf extends Mutation
 		final EigenvalueDecomposition eigen = new EigenvalueDecomposition(new Matrix(c));
 		final Matrix v = eigen.getV();
 		final Matrix d = eigen.getD();
+		// Inverse d - it is diagonal matrix, so we only need to take sqrt(diagonal)
 		for (int x = 0; x < pop.DIM; x++)
 		{
 			final double value = d.get(x, x);
@@ -63,11 +61,11 @@ public class MutationRandInf extends Mutation
 		a = v.times(d);
 	}
 
-	protected Solution computeDiffVector(Population pop, Random rand)
+	protected Solution computeDiffVector(Population pop)
 	{
 		for (int x = 0; x < pop.DIM; x++)
 		{
-			z[x] = rand.nextGaussian();
+			z[x] = Main.rand.nextGaussian();
 		}
 		for (int y = 0; y < pop.DIM; y++)
 		{
@@ -77,6 +75,7 @@ public class MutationRandInf extends Mutation
 				diffVector[y] += a.get(y, x) * z[x];
 			}
 		}
-		return new Solution(diffVector);
+		final Solution diffVectorSolution = new Solution(diffVector);
+		return diffVectorSolution.mul(computeScalingFactor(pop.size()));
 	}
 }

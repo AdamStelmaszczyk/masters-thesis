@@ -1,8 +1,5 @@
 package optimization.de.mutation;
 
-import java.util.List;
-import java.util.Random;
-
 import optimization.Solution;
 import optimization.de.DE;
 import optimization.de.Population;
@@ -22,31 +19,29 @@ public class MutationRand extends Mutation
 	}
 
 	@Override
-	public Solution getMutant(Population pop, Random rand, int i)
+	public Solution getMutant(Population pop, int i)
 	{
-		final Solution diffVector = computeDiffVector(pop, rand, i);
-		return pop.solutions[indices.get(1)].plus(diffVector);
+		final Solution diffVector = computeDiffVector(pop);
+		return pop.getRandom().plus(diffVector);
 	}
 
-	protected Solution computeDiff(Population pop, int i, int j)
+	protected Solution computeDiffVector(Population pop)
 	{
-		return pop.solutions[i].minus(pop.solutions[j]);
-	}
-
-	protected Solution computeDiffVector(Population pop, Random rand, int i)
-	{
-		computeIndices(pop, rand, i);
-		final Solution sum = computeSum(pop, indices);
+		final Solution sum = computeSum(pop);
 		return sum.mul(computeScalingFactor(pop.size()));
 	}
 
-	protected Solution computeSum(Population pop, List<Integer> indices)
+	protected Solution computeSum(Population pop)
 	{
-		final Solution sum = computeDiff(pop, indices.get(2), indices.get(3));
-		for (int j = 4; j < INDICES_SIZE; j += 2)
+		double sum[] = new double[pop.DIM];
+		for (int j = 0; j < K; j++)
 		{
-			sum.plus(computeDiff(pop, indices.get(j), indices.get(j + 1)));
+			final Solution diff = pop.getRandom().minus(pop.getRandom());
+			for (int i = 0; i < sum.length; i++)
+			{
+				sum[i] += diff.feat[i];
+			}
 		}
-		return sum;
+		return new Solution(sum);
 	}
 }

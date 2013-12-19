@@ -23,13 +23,14 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 /** Wrapper class running an entire BBOB experiment. */
-public class Experiment
+public class Main
 {
 	public final static int FUNCTIONS[] =
 	{ 15, 16, 19, 20, 21, 22, 24 };
 	public final static int RUNS = 15;
 	public final static int FUN_EVALS_TO_DIM_RATIO = 100000;
 	public final static int SEED = 1;
+	public final static Random rand = new Random(SEED);
 
 	public final static double DOMAIN_MIN = -5.0;
 	public final static double DOMAIN_MAX = 5.0;
@@ -40,7 +41,7 @@ public class Experiment
 
 	private final static String DEFAULT_ALGORITHM = "derand";
 	private final static int DEFAULT_K = 1;
-	private final static int DEFAULT_DIMENSION = 10;
+	private final static int DEFAULT_DIM = 10;
 
 	/** Main method for running the whole BBOB experiment. */
 	public static void main(String[] args)
@@ -62,10 +63,10 @@ public class Experiment
 			}
 		}
 
-		int dimension = DEFAULT_DIMENSION;
+		int dim = DEFAULT_DIM;
 		if (line.hasOption(DIMENSION_FLAG))
 		{
-			dimension = Integer.parseInt(line.getOptionValue("d"));
+			dim = Integer.parseInt(line.getOptionValue("d"));
 		}
 
 		Optimizer optimizer = null;
@@ -97,7 +98,7 @@ public class Experiment
 			die();
 		}
 
-		filename += "_" + dimension + "D";
+		filename += "_" + dim + "D";
 
 		// Sets default locale to always have 1.23 not 1,23 in files
 		Locale.setDefault(Locale.US);
@@ -116,10 +117,7 @@ public class Experiment
 			return;
 		}
 
-		final Random rand = new Random();
-		rand.setSeed(SEED);
 		fgeneric.setNoiseSeed(SEED);
-		System.out.println("Seed: " + SEED);
 
 		final long startTime = System.currentTimeMillis();
 		printDate();
@@ -128,23 +126,23 @@ public class Experiment
 		{
 			for (int run = 1; run <= RUNS; run++)
 			{
-				fgeneric.initBBOB(fun, run, dimension, filename, new JNIfgeneric.Params());
+				fgeneric.initBBOB(fun, run, dim, filename, new JNIfgeneric.Params());
 
-				final int MAX_FUN_EVALS = FUN_EVALS_TO_DIM_RATIO * dimension;
+				final int MAX_FUN_EVALS = FUN_EVALS_TO_DIM_RATIO * dim;
 				final Evaluator evaluator = new Evaluator(fgeneric, MAX_FUN_EVALS);
-				optimizer.optimize(evaluator, dimension, rand);
+				optimizer.optimize(evaluator, dim);
 
 				final double distance = fgeneric.getBest() - fgeneric.getFtarget();
 				final int fes = (int) fgeneric.getEvaluations();
 				final int seconds = (int) ((System.currentTimeMillis() - startTime) / 1000);
-				System.out.printf("%dD f%d run %3d FEs = %7d best-target = %15.8f %ds\n", dimension, fun, run, fes,
-						distance, seconds);
+				System.out.printf("%dD f%d run %3d FEs = %7d best-target = %15.8f %ds\n", dim, fun, run, fes, distance,
+						seconds);
 
 				fgeneric.exitBBOB();
 			}
 			printDate();
 		}
-		System.out.println("---- " + dimension + "-D done ----");
+		System.out.println("---- " + dim + "-D done ----");
 	}
 
 	private static void die()
