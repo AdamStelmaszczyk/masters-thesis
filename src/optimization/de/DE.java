@@ -32,13 +32,13 @@ public class DE implements Optimizer
 				final Solution mutant = mutation.getMutant(actual, i);
 				children.solutions[i] = actual.solutions[i].crossover(mutant);
 			}
-			 succesion(actual, children, evaluator);
-			 if (evaluator.hasReachedTarget() || evaluator.hasReachedMaxFunEvals())
-			 {
-			 printOutsiders(outsiders, dim);
-			 return;
-			 }
-			 outsiders += actual.getNumberOfOutsiders();
+			succesion(actual, children, evaluator);
+			if (evaluator.hasReachedTarget() || evaluator.hasReachedMaxFunEvals())
+			{
+				printOutsiders(outsiders, dim);
+				return;
+			}
+			outsiders += actual.getNumberOfOutsiders();
 		}
 	}
 

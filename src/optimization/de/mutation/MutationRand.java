@@ -33,7 +33,7 @@ public class MutationRand extends Mutation
 
 	protected Solution computeSum(Population pop)
 	{
-		double sum[] = new double[pop.DIM];
+		final double sum[] = new double[pop.DIM];
 		for (int j = 0; j < K; j++)
 		{
 			final Solution diff = pop.getRandom().minus(pop.getRandom());

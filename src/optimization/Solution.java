@@ -44,6 +44,23 @@ public class Solution
 		return result;
 	}
 
+	public boolean isBetter(Solution other, Evaluator evaluator)
+	{
+		return evaluator.evaluate(this) < evaluator.evaluate(other);
+	}
+
+	public boolean isOutside()
+	{
+		for (final double element : feat)
+		{
+			if (element < Main.DOMAIN_MIN || element > Main.DOMAIN_MAX)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/** Doesn't modify this object. */
 	public Solution minus(Solution other)
 	{
@@ -87,22 +104,5 @@ public class Solution
 			sb.append(" ");
 		}
 		return sb.toString();
-	}
-
-	public boolean isOutside()
-	{
-		for (int i = 0; i < feat.length; i++)
-		{
-			if (feat[i] < Main.DOMAIN_MIN || feat[i] > Main.DOMAIN_MAX)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean isBetter(Solution other, Evaluator evaluator)
-	{
-		return evaluator.evaluate(this) < evaluator.evaluate(other);
 	}
 }

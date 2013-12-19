@@ -18,16 +18,6 @@ public class Evaluator
 		return fgeneric.evaluate(solution.feat);
 	}
 
-	public boolean hasReachedTarget()
-	{
-		return fgeneric.getBest() < fgeneric.getFtarget();
-	}
-
-	public boolean hasReachedMaxFunEvals()
-	{
-		return fgeneric.getEvaluations() >= MAX_FUN_EVALS;
-	}
-
 	public int getFunEvals()
 	{
 		return (int) fgeneric.getEvaluations();
@@ -36,5 +26,15 @@ public class Evaluator
 	public double getTarget()
 	{
 		return fgeneric.getFtarget();
+	}
+
+	public boolean hasReachedMaxFunEvals()
+	{
+		return fgeneric.getEvaluations() >= MAX_FUN_EVALS;
+	}
+
+	public boolean hasReachedTarget()
+	{
+		return fgeneric.getBest() < fgeneric.getFtarget();
 	}
 }

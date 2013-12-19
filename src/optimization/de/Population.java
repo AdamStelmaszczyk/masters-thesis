@@ -63,6 +63,19 @@ public class Population
 		return sum.mul(1.0 / solutions.length);
 	}
 
+	public Solution getBest(Evaluator evaluator)
+	{
+		Solution best = solutions[0];
+		for (int i = 1; i < solutions.length; i++)
+		{
+			if (solutions[i].isBetter(best, evaluator))
+			{
+				best = solutions[i];
+			}
+		}
+		return best;
+	}
+
 	/** @return Solutions in columns. */
 	public double[][] getData()
 	{
@@ -77,9 +90,41 @@ public class Population
 		return data;
 	}
 
+	public int getNumberOfOutsiders()
+	{
+		int outsiders = 0;
+		for (final Solution solution : solutions)
+		{
+			if (solution.isOutside())
+			{
+				outsiders++;
+			}
+		}
+		return outsiders;
+	}
+
+	/** @return Deep copy of randomly chosen solution. */
+	public Solution getRandom()
+	{
+		return new Solution(solutions[Main.rand.nextInt(solutions.length)]);
+	}
+
 	public int size()
 	{
 		return solutions.length;
+	}
+
+	@Override
+	public String toString()
+	{
+		final StringBuilder sb = new StringBuilder();
+		final String lineSeperator = System.getProperty("line.separator");
+		for (final Solution s : solutions)
+		{
+			sb.append(s);
+			sb.append(lineSeperator);
+		}
+		return sb.toString();
 	}
 
 	private double computeMeanInDim(int dim)
@@ -100,50 +145,5 @@ public class Population
 			cov += (solution.feat[x] - mean[x]) * (solution.feat[y] - mean[y]);
 		}
 		return cov / solutions.length;
-	}
-
-	@Override
-	public String toString()
-	{
-		final StringBuilder sb = new StringBuilder();
-		final String lineSeperator = System.getProperty("line.separator");
-		for (final Solution s : solutions)
-		{
-			sb.append(s);
-			sb.append(lineSeperator);
-		}
-		return sb.toString();
-	}
-
-	public int getNumberOfOutsiders()
-	{
-		int outsiders = 0;
-		for (int i = 0; i < solutions.length; i++)
-		{
-			if (solutions[i].isOutside())
-			{
-				outsiders++;
-			}
-		}
-		return outsiders;
-	}
-
-	public Solution getBest(Evaluator evaluator)
-	{
-		Solution best = solutions[0];
-		for (int i = 1; i < solutions.length; i++)
-		{
-			if (solutions[i].isBetter(best, evaluator))
-			{
-				best = solutions[i];
-			}
-		}
-		return best;
-	}
-
-	/** @return Deep copy of randomly chosen solution. */
-	public Solution getRandom()
-	{
-		return new Solution(solutions[Main.rand.nextInt(solutions.length)]);
 	}
 }

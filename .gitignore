@@ -1,3 +1,7 @@
 *.class
+*.o
+*.so
+*.dylib
+*.dll
 ready/*
 pngs/*
