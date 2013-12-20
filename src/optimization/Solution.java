@@ -23,6 +23,16 @@ public class Solution
 		}
 	}
 
+	/** Create solution with repeated features value. */
+	public Solution(int dim, double featuresValue)
+	{
+		feat = new double[dim];
+		for (int i = 0; i < dim; i++)
+		{
+			feat[i] = featuresValue;
+		}
+	}
+
 	/** Deep copy. */
 	public Solution(Solution other)
 	{
@@ -30,7 +40,8 @@ public class Solution
 		System.arraycopy(other.feat, 0, feat, 0, feat.length);
 	}
 
-	/** Doesn't modify this object. */
+	/** Doesn't modify this object.
+	 * @return Child of this and other. */
 	public Solution crossover(Solution other)
 	{
 		final Solution result = new Solution(this);
@@ -61,7 +72,8 @@ public class Solution
 		return false;
 	}
 
-	/** Doesn't modify this object. */
+	/** Doesn't modify this object.
+	 * @return this - other */
 	public Solution minus(Solution other)
 	{
 		final Solution result = new Solution(this);
@@ -72,7 +84,8 @@ public class Solution
 		return result;
 	}
 
-	/** Doesn't modify this object. */
+	/** Doesn't modify this object.
+	 * @return this * factor */
 	public Solution mul(double factor)
 	{
 		final Solution result = new Solution(this);
@@ -83,14 +96,12 @@ public class Solution
 		return result;
 	}
 
-	/** Doesn't modify this object. */
+	/** Doesn't modify this object.
+	 * @return this + other */
 	public Solution plus(Solution other)
 	{
 		final Solution result = new Solution(this);
-		for (int i = 0; i < feat.length; i++)
-		{
-			result.feat[i] += other.feat[i];
-		}
+		result.plusEquals(other);
 		return result;
 	}
 
@@ -104,5 +115,14 @@ public class Solution
 			sb.append(" ");
 		}
 		return sb.toString();
+	}
+
+	/** this += other */
+	public void plusEquals(Solution other)
+	{
+		for (int i = 0; i < feat.length; i++)
+		{
+			feat[i] += other.feat[i];
+		}
 	}
 }

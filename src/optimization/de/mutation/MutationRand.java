@@ -13,7 +13,7 @@ public class MutationRand extends Mutation
 	}
 
 	@Override
-	public double computeScalingFactor(int NP)
+	public double computeScalingFactor()
 	{
 		return DE.F / Math.sqrt(K);
 	}
@@ -28,20 +28,16 @@ public class MutationRand extends Mutation
 	protected Solution computeDiffVector(Population pop)
 	{
 		final Solution sum = computeSum(pop);
-		return sum.mul(computeScalingFactor(pop.size()));
+		return sum.mul(F);
 	}
 
 	protected Solution computeSum(Population pop)
 	{
-		final double sum[] = new double[pop.DIM];
+		final Solution sum = new Solution(pop.DIM, 0);
 		for (int j = 0; j < K; j++)
 		{
-			final Solution diff = pop.getRandom().minus(pop.getRandom());
-			for (int i = 0; i < sum.length; i++)
-			{
-				sum[i] += diff.feat[i];
-			}
+			sum.plusEquals(pop.getRandom().minus(pop.getRandom()));
 		}
-		return new Solution(sum);
+		return sum;
 	}
 }

@@ -15,9 +15,9 @@ public class MutationMid extends MutationRand
 	}
 
 	@Override
-	public double computeScalingFactor(int NP)
+	public double computeScalingFactor()
 	{
-		return Math.sqrt((1 + 2 * DE.F * DE.F - 1.0 / NP) / (2 * K));
+		return Math.sqrt((1 + 2 * DE.F * DE.F) / (2 * K));
 	}
 
 	@Override

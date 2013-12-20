@@ -2,15 +2,15 @@ package optimization.de;
 
 import javabbob.Main;
 import optimization.Evaluator;
-import optimization.Optimizer;
+import optimization.OptimizerWithPopulation;
 import optimization.Solution;
 import optimization.de.mutation.Mutation;
+import Jama.Matrix;
 
-public class DE implements Optimizer
+public class DE implements OptimizerWithPopulation
 {
 	public final static double F = 0.9;
 	public final static double CR = 0.9;
-	public final static int NP_TO_DIM_RATIO = 10;
 
 	private final Mutation mutation;
 
@@ -21,13 +21,12 @@ public class DE implements Optimizer
 
 	public void optimize(Evaluator evaluator, int dim)
 	{
-		final int NP = NP_TO_DIM_RATIO * dim;
-		final Population actual = new Population(NP, dim);
-		final Population children = new Population(NP, dim);
+		final Population actual = new Population(dim);
+		final Population children = new Population(dim);
 		int outsiders = 0;
 		while (true)
 		{
-			for (int i = 0; i < NP; i++)
+			for (int i = 0; i < Main.NP; i++)
 			{
 				final Solution mutant = mutation.getMutant(actual, i);
 				children.solutions[i] = actual.solutions[i].crossover(mutant);
@@ -56,5 +55,16 @@ public class DE implements Optimizer
 				actual.solutions[i] = new Solution(children.solutions[i]);
 			}
 		}
+	}
+
+	public Matrix getCovarianceMatrixAfterMutation(int dim)
+	{
+		Population first = new Population(dim);
+		Population second = new Population(dim);
+		for (int i = 0; i < Main.NP; i++)
+		{
+			second.solutions[i] = mutation.getMutant(first, i);
+		}
+		return second.computeCovarianceMatrix();
 	}
 }

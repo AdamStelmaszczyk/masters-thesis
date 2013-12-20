@@ -9,7 +9,8 @@ public class MutationMidInf extends MutationRandInf
 {
 	private Solution midpoint;
 
-	public double computeScalingFactor(Population pop)
+	@Override
+	public double computeScalingFactor()
 	{
 		return Math.sqrt(1 + 2 * DE.F * DE.F);
 	}
@@ -26,6 +27,7 @@ public class MutationMidInf extends MutationRandInf
 			computeA(pop);
 			midpoint = pop.computeMidpoint();
 		}
-		return midpoint.plus(computeDiffVector(pop));
+		final Solution diffVector = computeDiffVector(pop);
+		return midpoint.plus(diffVector);
 	}
 }

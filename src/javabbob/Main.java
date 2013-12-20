@@ -7,6 +7,7 @@ import java.util.Random;
 
 import optimization.Evaluator;
 import optimization.Optimizer;
+import optimization.OptimizerWithPopulation;
 import optimization.de.DE;
 import optimization.de.mutation.MutationMid;
 import optimization.de.mutation.MutationMidInf;
@@ -22,6 +23,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import Jama.Matrix;
+
 /** Wrapper class running an entire BBOB experiment. */
 public class Main
 {
@@ -29,14 +32,19 @@ public class Main
 	{ 15, 16, 19, 20, 21, 22, 24 };
 	public final static int RUNS = 15;
 	public final static int FUN_EVALS_TO_DIM_RATIO = 100000;
+	public final static int NP_TO_DIM_RATIO = 10;
+	public static int NP;
 	public final static int SEED = 1;
 	public final static Random rand = new Random(SEED);
 
 	public final static double DOMAIN_MIN = -5.0;
 	public final static double DOMAIN_MAX = 5.0;
 
+	public final static int TEST_RUNS = 100000;
+
 	private final static String ALGORITHM_FLAG = "a";
 	private final static String DIMENSION_FLAG = "d";
+	private final static String TESTING_FLAG = "t";
 	private final static String HELP_FLAG = "help";
 
 	private final static String DEFAULT_ALGORITHM = "derand";
@@ -46,6 +54,9 @@ public class Main
 	/** Main method for running the whole BBOB experiment. */
 	public static void main(String[] args)
 	{
+		// Sets default locale to always have 1.23 not 1,23 in files
+		Locale.setDefault(Locale.US);
+
 		final CommandLine line = getCommandLine(args);
 
 		String algorithm = DEFAULT_ALGORITHM;
@@ -68,6 +79,7 @@ public class Main
 		{
 			dim = Integer.parseInt(line.getOptionValue("d"));
 		}
+		NP = NP_TO_DIM_RATIO * dim;
 
 		Optimizer optimizer = null;
 		String filename = algorithm;
@@ -98,13 +110,16 @@ public class Main
 			die();
 		}
 
-		filename += "_" + dim + "D";
-
-		// Sets default locale to always have 1.23 not 1,23 in files
-		Locale.setDefault(Locale.US);
+		if (line.hasOption(TESTING_FLAG))
+		{
+			test(optimizer, dim);
+			return;
+		}
 
 		// Loads the library cjavabbob at the core of JNIfgeneric. Throws runtime errors if the library is not found.
 		final JNIfgeneric fgeneric = new JNIfgeneric();
+
+		filename += "_" + dim + "D";
 
 		// Creates the folders for storing the experimental data.
 		if (JNIfgeneric.makeBBOBdirs(filename, false))
@@ -145,6 +160,19 @@ public class Main
 		System.out.println("---- " + dim + "-D done ----");
 	}
 
+	private static void test(Optimizer opt, int dim)
+	{
+		final OptimizerWithPopulation optimizer = (OptimizerWithPopulation) opt;
+		final Matrix mean = new Matrix(dim, dim);
+		for (int run = 1; run <= TEST_RUNS; run++)
+		{
+			final Matrix cov = optimizer.getCovarianceMatrixAfterMutation(dim);
+			mean.plusEquals(cov);
+		}
+		mean.timesEquals(1.0 / TEST_RUNS);
+		mean.print(4, 2);
+	}
+
 	private static void die()
 	{
 		throw new IllegalArgumentException();
@@ -159,10 +187,12 @@ public class Main
 				.argName("algorithm> <k").optionalArg(true).numberOfArgs(2).required().build();
 		final Option dim = Option.builder(DIMENSION_FLAG).desc("number of dimensions").argName("dimensions").hasArg()
 				.build();
+		final Option testing = new Option(TESTING_FLAG, "for testing");
 		final Option help = new Option(HELP_FLAG, "print this message");
 
 		options.addOption(alg);
 		options.addOption(dim);
+		options.addOption(testing);
 		options.addOption(help);
 
 		CommandLine line = null;

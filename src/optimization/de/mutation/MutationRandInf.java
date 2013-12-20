@@ -11,8 +11,9 @@ import Jama.Matrix;
 public class MutationRandInf extends Mutation
 {
 	protected Matrix a;
-	protected double[] z;
-	protected double[] diffVector;
+	protected Matrix z;
+	protected Matrix diffVector;
+	protected Solution diffVectorSolution;
 
 	public MutationRandInf()
 	{
@@ -20,7 +21,7 @@ public class MutationRandInf extends Mutation
 	}
 
 	@Override
-	public double computeScalingFactor(int NP)
+	public double computeScalingFactor()
 	{
 		return Math.sqrt(2) * DE.F;
 	}
@@ -36,24 +37,26 @@ public class MutationRandInf extends Mutation
 			}
 			computeA(pop);
 		}
-		return pop.getRandom().plus(computeDiffVector(pop));
+		final Solution diffVector = computeDiffVector(pop);
+		return pop.getRandom().plus(diffVector);
 	}
 
 	protected void allocateArrays(int DIM)
 	{
 		a = new Matrix(DIM, DIM);
-		z = new double[DIM];
-		diffVector = new double[DIM];
+		z = new Matrix(DIM, 1);
+		diffVector = new Matrix(DIM, 1);
+		diffVectorSolution = new Solution(DIM);
 	}
 
 	protected void computeA(Population pop)
 	{
-		final double[][] c = pop.computeCovarianceMatrix();
-		final EigenvalueDecomposition eigen = new EigenvalueDecomposition(new Matrix(c));
+		final Matrix cov = pop.computeCovarianceMatrix();
+		final EigenvalueDecomposition eigen = cov.eig();
 		final Matrix v = eigen.getV();
 		final Matrix d = eigen.getD();
-		// Inverse d - it is diagonal matrix, so we only need to take sqrt(diagonal)
-		for (int x = 0; x < pop.DIM; x++)
+		// Square root of a diagonal matrix = square roots on its diagonal
+		for (int x = 0; x < d.getColumnDimension(); x++)
 		{
 			final double value = d.get(x, x);
 			d.set(x, x, Math.sqrt(value));
@@ -63,19 +66,15 @@ public class MutationRandInf extends Mutation
 
 	protected Solution computeDiffVector(Population pop)
 	{
-		for (int x = 0; x < pop.DIM; x++)
-		{
-			z[x] = Main.rand.nextGaussian();
-		}
 		for (int y = 0; y < pop.DIM; y++)
 		{
-			diffVector[y] = 0.0;
-			for (int x = 0; x <= y; x++)
-			{
-				diffVector[y] += a.get(y, x) * z[x];
-			}
+			z.set(y, 0, Main.rand.nextGaussian());
 		}
-		final Solution diffVectorSolution = new Solution(diffVector);
-		return diffVectorSolution.mul(computeScalingFactor(pop.size()));
+		diffVector = a.times(z);
+		for (int x = 0; x < pop.DIM; x++)
+		{
+			diffVectorSolution.feat[x] = diffVector.get(x, 0) * F;
+		}
+		return diffVectorSolution;
 	}
 }

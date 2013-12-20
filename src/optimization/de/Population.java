@@ -3,6 +3,7 @@ package optimization.de;
 import javabbob.Main;
 import optimization.Evaluator;
 import optimization.Solution;
+import Jama.Matrix;
 
 public class Population
 {
@@ -13,19 +14,26 @@ public class Population
 	public final int DIM;
 
 	/** Create random population. */
-	public Population(int NP, int DIM)
+	public Population(int DIM)
 	{
+		this.DIM = DIM;
 		covarianceMatrix = new double[DIM][DIM];
 		mean = new double[DIM];
-		solutions = new Solution[NP];
-		for (int i = 0; i < NP; i++)
+		solutions = new Solution[Main.NP];
+		for (int i = 0; i < Main.NP; i++)
 		{
 			solutions[i] = new Solution(DIM);
 		}
-		this.DIM = DIM;
 	}
 
-	public double[][] computeCovarianceMatrix()
+	/** Deep copy. */
+	public Population(Population other)
+	{
+		this(other.DIM);
+		System.arraycopy(other.solutions, 0, solutions, 0, solutions.length);
+	}
+
+	public Matrix computeCovarianceMatrix()
 	{
 		for (int dim = 0; dim < DIM; dim++)
 		{
@@ -47,18 +55,15 @@ public class Population
 				covarianceMatrix[x][y] = covarianceMatrix[y][x];
 			}
 		}
-		return covarianceMatrix;
+		return new Matrix(covarianceMatrix);
 	}
 
 	public Solution computeMidpoint()
 	{
-		final Solution sum = new Solution(solutions[0]);
-		for (int i = 1; i < solutions.length; i++)
+		final Solution sum = new Solution(DIM, 0);
+		for (Solution solution : solutions)
 		{
-			for (int j = 0; j < DIM; j++)
-			{
-				sum.feat[j] += solutions[i].feat[j];
-			}
+			sum.plusEquals(solution);
 		}
 		return sum.mul(1.0 / solutions.length);
 	}
