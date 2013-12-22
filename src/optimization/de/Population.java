@@ -61,7 +61,7 @@ public class Population
 	public Solution computeMidpoint()
 	{
 		final Solution sum = new Solution(DIM, 0);
-		for (Solution solution : solutions)
+		for (final Solution solution : solutions)
 		{
 			sum.plusEquals(solution);
 		}

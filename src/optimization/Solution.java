@@ -105,6 +105,15 @@ public class Solution
 		return result;
 	}
 
+	/** this += other */
+	public void plusEquals(Solution other)
+	{
+		for (int i = 0; i < feat.length; i++)
+		{
+			feat[i] += other.feat[i];
+		}
+	}
+
 	@Override
 	public String toString()
 	{
@@ -115,14 +124,5 @@ public class Solution
 			sb.append(" ");
 		}
 		return sb.toString();
-	}
-
-	/** this += other */
-	public void plusEquals(Solution other)
-	{
-		for (int i = 0; i < feat.length; i++)
-		{
-			feat[i] += other.feat[i];
-		}
 	}
 }

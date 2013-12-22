@@ -19,6 +19,17 @@ public class DE implements OptimizerWithPopulation
 		this.mutation = mutation;
 	}
 
+	public Matrix getCovarianceMatrixAfterMutation(int dim)
+	{
+		final Population first = new Population(dim);
+		final Population second = new Population(dim);
+		for (int i = 0; i < Main.NP; i++)
+		{
+			second.solutions[i] = mutation.getMutant(first, i);
+		}
+		return second.computeCovarianceMatrix();
+	}
+
 	public void optimize(Evaluator evaluator, int dim)
 	{
 		final Population actual = new Population(dim);
@@ -55,16 +66,5 @@ public class DE implements OptimizerWithPopulation
 				actual.solutions[i] = new Solution(children.solutions[i]);
 			}
 		}
-	}
-
-	public Matrix getCovarianceMatrixAfterMutation(int dim)
-	{
-		Population first = new Population(dim);
-		Population second = new Population(dim);
-		for (int i = 0; i < Main.NP; i++)
-		{
-			second.solutions[i] = mutation.getMutant(first, i);
-		}
-		return second.computeCovarianceMatrix();
 	}
 }

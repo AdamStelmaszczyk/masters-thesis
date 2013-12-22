@@ -160,19 +160,6 @@ public class Main
 		System.out.println("---- " + dim + "-D done ----");
 	}
 
-	private static void test(Optimizer opt, int dim)
-	{
-		final OptimizerWithPopulation optimizer = (OptimizerWithPopulation) opt;
-		final Matrix mean = new Matrix(dim, dim);
-		for (int run = 1; run <= TEST_RUNS; run++)
-		{
-			final Matrix cov = optimizer.getCovarianceMatrixAfterMutation(dim);
-			mean.plusEquals(cov);
-		}
-		mean.timesEquals(1.0 / TEST_RUNS);
-		mean.print(4, 2);
-	}
-
 	private static void die()
 	{
 		throw new IllegalArgumentException();
@@ -224,5 +211,18 @@ public class Main
 	{
 		final HelpFormatter formatter = new HelpFormatter();
 		formatter.printHelp("./run.sh", options);
+	}
+
+	private static void test(Optimizer opt, int dim)
+	{
+		final OptimizerWithPopulation optimizer = (OptimizerWithPopulation) opt;
+		final Matrix mean = new Matrix(dim, dim);
+		for (int run = 1; run <= TEST_RUNS; run++)
+		{
+			final Matrix cov = optimizer.getCovarianceMatrixAfterMutation(dim);
+			mean.plusEquals(cov);
+		}
+		mean.timesEquals(1.0 / TEST_RUNS);
+		mean.print(4, 2);
 	}
 }
