@@ -56,7 +56,7 @@ public class MutationRandInf extends Mutation
 		final Matrix v = eigen.getV();
 		final Matrix d = eigen.getD();
 		// Square root of a diagonal matrix = square roots on its diagonal
-		for (int x = 0; x < d.getColumnDimension(); x++)
+		for (int x = 0; x < pop.DIM; x++)
 		{
 			final double value = d.get(x, x);
 			d.set(x, x, Math.sqrt(value));
