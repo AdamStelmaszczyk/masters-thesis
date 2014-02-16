@@ -1,6 +1,7 @@
 package optimization.de.mutation;
 
 import javabbob.Main;
+import optimization.Evaluator;
 import optimization.Solution;
 import optimization.de.DE;
 import optimization.de.Population;
@@ -27,7 +28,7 @@ public class MutationRandInf extends Mutation
 	}
 
 	@Override
-	public Solution getMutant(Population pop, int i)
+	public Solution getMutant(Population pop, int i, Evaluator evaluator)
 	{
 		if (i == 0)
 		{
@@ -37,8 +38,7 @@ public class MutationRandInf extends Mutation
 			}
 			computeA(pop);
 		}
-		final Solution diffVector = computeDiffVector(pop);
-		return pop.getRandom().plus(diffVector);
+		return pop.getRandom().plus(computeDiffVector(pop));
 	}
 
 	protected void allocateArrays(int DIM)

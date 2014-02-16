@@ -1,5 +1,6 @@
 package optimization.de.mutation;
 
+import optimization.Evaluator;
 import optimization.Solution;
 import optimization.de.DE;
 import optimization.de.Population;
@@ -16,7 +17,7 @@ public class MutationMidInf extends MutationRandInf
 	}
 
 	@Override
-	public Solution getMutant(Population pop, int i)
+	public Solution getMutant(Population pop, int i, Evaluator evaluator)
 	{
 		if (i == 0)
 		{
@@ -27,7 +28,6 @@ public class MutationMidInf extends MutationRandInf
 			computeA(pop);
 			midpoint = pop.computeMidpoint();
 		}
-		final Solution diffVector = computeDiffVector(pop);
-		return midpoint.plus(diffVector);
+		return midpoint.plus(computeDiffVector(pop));
 	}
 }

@@ -1,5 +1,6 @@
 package optimization.de.mutation;
 
+import optimization.Evaluator;
 import optimization.Solution;
 import optimization.de.DE;
 import optimization.de.Population;
@@ -19,16 +20,14 @@ public class MutationRand extends Mutation
 	}
 
 	@Override
-	public Solution getMutant(Population pop, int i)
+	public Solution getMutant(Population pop, int i, Evaluator evaluator)
 	{
-		final Solution diffVector = computeDiffVector(pop);
-		return pop.getRandom().plus(diffVector);
+		return pop.getRandom().plus(computeDiffVector(pop));
 	}
 
 	protected Solution computeDiffVector(Population pop)
 	{
-		final Solution sum = computeSum(pop);
-		return sum.mul(F);
+		return computeSum(pop).mul(F);
 	}
 
 	protected Solution computeSum(Population pop)

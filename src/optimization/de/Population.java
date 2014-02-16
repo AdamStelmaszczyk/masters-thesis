@@ -68,6 +68,7 @@ public class Population
 		return sum.mul(1.0 / solutions.length);
 	}
 
+	/** @return Deep copy of the best solution in the population. */
 	public Solution getBest(Evaluator evaluator)
 	{
 		Solution best = solutions[0];
@@ -78,7 +79,7 @@ public class Population
 				best = solutions[i];
 			}
 		}
-		return best;
+		return new Solution(best);
 	}
 
 	/** @return Solutions in columns. */

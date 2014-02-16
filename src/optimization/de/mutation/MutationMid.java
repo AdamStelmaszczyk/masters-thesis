@@ -1,5 +1,6 @@
 package optimization.de.mutation;
 
+import optimization.Evaluator;
 import optimization.Solution;
 import optimization.de.DE;
 import optimization.de.Population;
@@ -21,7 +22,7 @@ public class MutationMid extends MutationRand
 	}
 
 	@Override
-	public Solution getMutant(Population pop, int i)
+	public Solution getMutant(Population pop, int i, Evaluator evaluator)
 	{
 		if (i == 0)
 		{

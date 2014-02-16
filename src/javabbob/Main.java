@@ -9,6 +9,8 @@ import optimization.Evaluator;
 import optimization.Optimizer;
 import optimization.OptimizerWithPopulation;
 import optimization.de.DE;
+import optimization.de.mutation.MutationBest;
+import optimization.de.mutation.MutationBestInf;
 import optimization.de.mutation.MutationMid;
 import optimization.de.mutation.MutationMidInf;
 import optimization.de.mutation.MutationRand;
@@ -31,16 +33,14 @@ public class Main
 	public final static int FUNCTIONS[] =
 	{ 15, 16, 19, 20, 21, 22, 24 };
 	public final static int RUNS = 15;
-	public final static int FUN_EVALS_TO_DIM_RATIO = 100000;
-	public final static int NP_TO_DIM_RATIO = 10;
-	public static int NP;
-	public final static int SEED = 1;
-	public final static Random rand = new Random(SEED);
-
 	public final static double DOMAIN_MIN = -5.0;
 	public final static double DOMAIN_MAX = 5.0;
-
-	public final static int TEST_RUNS = 100000;
+	public final static int FUN_EVALS_TO_DIM_RATIO = 100000;
+	public final static int NP_TO_DIM_RATIO = 10;
+	public final static int TEST_RUNS = 10000;
+	public final static int SEED = 1;
+	public final static Random rand = new Random(SEED);
+	public static int NP;
 
 	private final static String ALGORITHM_FLAG = "a";
 	private final static String DIMENSION_FLAG = "d";
@@ -80,12 +80,23 @@ public class Main
 			dim = Integer.parseInt(line.getOptionValue("d"));
 		}
 		NP = NP_TO_DIM_RATIO * dim;
+		
+		// Loads the library cjavabbob at the core of JNIfgeneric. Throws runtime errors if the library is not found.
+		final JNIfgeneric fgeneric = new JNIfgeneric();
+
+		final int MAX_FUN_EVALS = FUN_EVALS_TO_DIM_RATIO * dim;
+		final Evaluator evaluator = new Evaluator(fgeneric, MAX_FUN_EVALS);
 
 		Optimizer optimizer = null;
 		String filename = algorithm;
 		if (algorithm.equals("derand"))
 		{
 			optimizer = new DE(new MutationRand(k));
+			filename += k;
+		}
+		else if (algorithm.equals("debest"))
+		{
+			optimizer = new DE(new MutationBest(k));
 			filename += k;
 		}
 		else if (algorithm.equals("demid"))
@@ -96,6 +107,10 @@ public class Main
 		else if (algorithm.equals("derandinf"))
 		{
 			optimizer = new DE(new MutationRandInf());
+		}
+		else if (algorithm.equals("debestinf"))
+		{
+			optimizer = new DE(new MutationBestInf());
 		}
 		else if (algorithm.equals("demidinf"))
 		{
@@ -109,15 +124,8 @@ public class Main
 		{
 			die();
 		}
-
-		if (line.hasOption(TESTING_FLAG))
-		{
-			test(optimizer, dim);
-			return;
-		}
-
-		// Loads the library cjavabbob at the core of JNIfgeneric. Throws runtime errors if the library is not found.
-		final JNIfgeneric fgeneric = new JNIfgeneric();
+		
+		final JNIfgeneric.Params params = new JNIfgeneric.Params();
 
 		filename += "_" + dim + "D";
 
@@ -131,8 +139,13 @@ public class Main
 			System.out.println("Error! BBOB data directory '" + filename + "' was NOT created, stopping");
 			return;
 		}
-
-		fgeneric.setNoiseSeed(SEED);
+		
+		if (line.hasOption(TESTING_FLAG))
+		{
+			fgeneric.initBBOB(15, 0, dim, filename, params);
+			test(evaluator, optimizer, dim);
+			return;
+		}
 
 		final long startTime = System.currentTimeMillis();
 		printDate();
@@ -141,10 +154,7 @@ public class Main
 		{
 			for (int run = 1; run <= RUNS; run++)
 			{
-				fgeneric.initBBOB(fun, run, dim, filename, new JNIfgeneric.Params());
-
-				final int MAX_FUN_EVALS = FUN_EVALS_TO_DIM_RATIO * dim;
-				final Evaluator evaluator = new Evaluator(fgeneric, MAX_FUN_EVALS);
+				fgeneric.initBBOB(fun, run, dim, filename, params);
 				optimizer.optimize(evaluator, dim);
 
 				final double distance = fgeneric.getBest() - fgeneric.getFtarget();
@@ -157,7 +167,6 @@ public class Main
 			}
 			printDate();
 		}
-		System.out.println("---- " + dim + "-D done ----");
 	}
 
 	private static void die()
@@ -170,7 +179,7 @@ public class Main
 		final CommandLineParser parser = new DefaultParser();
 		final Options options = new Options();
 
-		final Option alg = Option.builder(ALGORITHM_FLAG).desc("algorithm and k for derand and demid, i.e. derand 6")
+		final Option alg = Option.builder(ALGORITHM_FLAG).desc("algorithm and k for derand, debest and demid, i.e. derand 6")
 				.argName("algorithm> <k").optionalArg(true).numberOfArgs(2).required().build();
 		final Option dim = Option.builder(DIMENSION_FLAG).desc("number of dimensions").argName("dimensions").hasArg()
 				.build();
@@ -213,13 +222,13 @@ public class Main
 		formatter.printHelp("./run.sh", options);
 	}
 
-	private static void test(Optimizer opt, int dim)
+	private static void test(Evaluator evaluator, Optimizer opt, int dim)
 	{
 		final OptimizerWithPopulation optimizer = (OptimizerWithPopulation) opt;
 		final Matrix mean = new Matrix(dim, dim);
 		for (int run = 1; run <= TEST_RUNS; run++)
 		{
-			final Matrix cov = optimizer.getCovarianceMatrixAfterMutation(dim);
+			final Matrix cov = optimizer.getCovarianceMatrixAfterMutation(evaluator, dim);
 			mean.plusEquals(cov);
 		}
 		mean.timesEquals(1.0 / TEST_RUNS);
