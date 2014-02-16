@@ -1,347 +1,101 @@
-\documentclass[12pt, a4paper]{article}
-\usepackage[utf8]{inputenc}
-\usepackage{polski}
-\usepackage{hyperref}
-\usepackage{graphicx}
+\pdfoutput=1
+\pdfcompresslevel=9
+\documentclass[a4paper,onecolumn,oneside,11pt,wide,floatssmall]{mwrep}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{amsmath}
 \usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
 \usepackage{float}
 \usepackage{geometry}
-\title{\textbf{Porównanie klasycznej ewolucji różnicowej DE/rand z odmianą przesuwającą punkt środkowy DE/mid}}
-\author{Adam Stelmaszczyk}
-\date{\today}
-\setlength{\parindent}{0in}
-\renewcommand\refname{Referencje}
+\usepackage{listings}
+\usepackage[pdftex]{color,graphicx}
+\usepackage[polish]{babel}
+\usepackage[pdftex, bookmarks=false]{hyperref}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage[sort, compress]{cite}
 
+\def\url#1{{ \tt #1}}
 \def\C{{\rm C}\,}
 \def\E{{\rm E}\,}
 
+% marginesy
+\textwidth\paperwidth
+\advance\textwidth -55mm
+\oddsidemargin-0.9in
+\advance\oddsidemargin 33mm
+\evensidemargin-0.9in
+\advance\evensidemargin 33mm
+\topmargin -1in
+\advance\topmargin 25mm
+\setlength\textheight{48\baselineskip}
+\addtolength\textheight{\topskip}
+\marginparwidth15mm
+
+\clubpenalty=10000 % to kara za sierotki
+\widowpenalty=10000 % nie pozostawia wdów
+\brokenpenalty=10000 % nie dzieli wyrazów pomiędzy stronami
+\sloppy
+
+\tolerance4500
+\pretolerance250
+\hfuzz=1.5pt
+\hbadness1450
+
+% ŻYWA PAGINA
+\renewcommand{\chaptermark}[1]{\markboth{\scshape\small\bfseries \
+#1}{\small\bfseries \ #1}}
+\renewcommand{\sectionmark}[1]{\markboth{\scshape\small\bfseries\thesection.\
+#1}{\small\bfseries\thesection.\ #1}}
+\newcommand{\headrulewidth}{0.5pt}
+\newcommand{\footrulewidth}{0.pt}
+\pagestyle{uheadings}
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definicja}[section]
+\newtheorem{conj}{Teza}[section]
+\newtheorem{conjmain}{Teza}
+\newtheorem{exmp}{Przykład}[section]
+
+\theoremstyle{plain}% default
+\newtheorem{thm}{Twierdzenie}[section]
+\newtheorem{lem}[thm]{Lemat}
+\newtheorem{prop}[thm]{Hipoteza}
+\newtheorem*{cor}{Wniosek}
+
+\theoremstyle{remark}
+\newtheorem*{rem}{Uwaga}
+\newtheorem*{note}{Uwaga}
+\newtheorem{case}{Przypadek}
+
+\definecolor{ListingBackground}{rgb}{0.95,0.95,0.95}
+
 \begin{document}
-\maketitle
 
-\begin{abstract}
-W pracy porównano klasyczny algorytm ewolucji różnicowej DE/rand z jego odmianą DE/mid.
-W części teoretycznej wyprowadzono parametry skalujące dla obydwu algorytmów. W części praktycznej
-przeprowadzono szereg eksperymentów na 7 wybranych funkcjach z BBOB 2013 \cite{hansen}. DE/mid
-okazał się lepszy na większości z nich.
-\end{abstract}
+\renewcommand*\lstlistingname{Wydruk}
+\renewcommand*\lstlistlistingname{Spis wydruków}
 
-\section{Część teoretyczna}
+\pagenumbering{roman}
+\renewcommand{\baselinestretch}{1.0}
+\raggedbottom
+\input {title}
 
-Klasyczna ewolucja różnicowa DE/rand oraz jej odmiana DE/mid różnią się jedynie operatorem mutacji.
-W poniższych rozdziałach przedstawiono operatory mutacji dla DE/rand/k, DE/mid/k, DE/rand/$\infty$, DE/mid/$\infty$
-oraz wyprowadzono wzory na współczynniki skalujące.
+\tableofcontents
 
-\subsection{Mutacja w DE/rand}
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
 
-W DE/rand/1, mutant $i$-tego osobnika w populacji $P$~o~$n$~osobnikach powstaje w następujący sposób \cite{opara}:
-\begin{equation} \label{eq:derand1}
-u_i = P_{i_1} + F(P_{i_2} - P_{i_3})
-\end{equation}
+\input {chap1}
 
-$i_1, i_2, i_3$ to indeksy wylosowane zgodnie z rozkładem jednostajnym ze zbioru \\ 
-$\{0, 1, \dots, n-1\}$. Zatem $P_{i_1}, P_{i_2}, P_{i_3}$ to rozwiązania wylosowane zgodnie z rozkładem jednostajnym z populacji $P$.
-$F\in\mathbb{R_+}$ to współczynnik skalujący, w tej pracy ustalony na 0,9. \\
+\appendix
 
-DE/rand/1 można uogólnić na DE/rand/k, w którym to dodajemy
-$k \in \mathbb{N}$ wektorów różnicowych:
-\begin{equation} \label{eq:derand}
-u_i' = P_{i_1} + F_k\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})
-\end{equation}
+% tutaj załączniki
 
-Podobnie jak poprzednio, $i_1, i_2, \dots i_{2k+1}$ to indeksy wylosowane zgodnie z rozkładem jednostajnym ze zbioru 
-$\{0, 1, \dots, n-1\}$. Zatem $P_{i_1}, P_{i_2}, \dots, P_{2k+1}$ to rozwiązania wylosowane zgodnie z rozkładem 
-jednostajnym z populacji $P$. $F_k\in\mathbb{R_+}$ to współczynnik skalujący dla DE/rand/k. 
-Żeby macierz kowariancji populacji w DE/rand/k nie zmieniała się wraz z zmianą $k$, 
-macierz kowariancji mutanta $u_i'$ musi być taka sama jak macierz kowariancji mutanta $u_i$.
-Można to osiągnąć tak dobierając $F_k$, aby było spełnione równanie:
-\begin{equation} \label{eq:kowariancje}
-\C[u_i] = \C[u_i']
-\end{equation}
-
-Osobniki są liniowo niezależne od siebie, dlatego:
-\begin{align*}
-\C[u_i] \overset{(\ref{eq:derand1})}{=} \C[P_{i_1} + F(P_{i_2} - P_{i_3})] = \C[P_{i_1}] + F^2(\C[P_{i_2}] + \C[P_{i_3}])
-\end{align*}
-
-$\forall{i}\hspace{1mm}\C[P_i] = \C[P]$, ponieważ każdy osobnik ma taki sam rozkład prawdopodobieństwa. Zatem:
-\begin{equation} \label{eq:macierz_kow_mutanta}
-\C[u_i] = \C[P] + F^2(\C[P] + \C[P]) = \C[P](2F^2 + 1)
-\end{equation}
-
-Rozwijając prawą stronę równania (\ref{eq:kowariancje}):
-\begin{align*}
-\C[u_i'] \overset{(\ref{eq:derand})}{=} \C[P_{i_1} + F_k\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] 
-= \C[P_{i_1}] + F_k^2\C[\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] \\
-= \C[P_{i_1}] + F_k^2\C[\sum\limits_{j=2}^{2k+1} P_{i_{j}}] \\
-= \C[P](2kF_k^2 + 1)
-\end{align*}
-
-Podstawiając do (\ref{eq:kowariancje}):
-\begin{align*}
-\C[P](2F^2 + 1) = \C[P](2kF_k^2 + 1)
-\end{align*}
-
-Zakładając, że $\C[P] \neq \textbf{0}$:
-\begin{align*}
-F^2 = kF_k^2
-\end{align*}
-
-Obie strony są nieujemne, więc ostatecznie:
-\begin{align*}
-F_k = \frac{F}{\sqrt{k}}
-\end{align*}
-
-\subsection{Mutacja w DE/mid}
-
-W DE/mid/k mutant powstaje w następujący sposób:
-
-\begin{equation} \label{eq:demid}
-u_i'' = m + F_m\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})
-\end{equation}
-
-Jedyną różnicą w porównaniu do DE/rand/k jest $m$, czyli punkt środkowy populacji:
-\begin{equation} \label{eq:midpoint}
-m = \frac{1}{n}\sum\limits_{j=1}^n P_j
-\end{equation}
-
-$F_m\in\mathbb{R_+}$ jest współczynnikiem skalującym dla DE/mid/k, analogicznym do $F$ dla DE/rand/1. 
-Żeby macierz kowariancji populacji w DE/mid była taka sama jak w DE/rand/1, 
-macierz kowariancji mutanta $u_i''$ musi być taka sama jak macierz kowariancji mutanta $u_i$.
-Można to osiągnąć tak dobierając $F_m$, żeby było spełnione równanie:
-\begin{equation} \label{eq:rownanie}
-\C[u_i] = \C[u_i'']
-\end{equation}
-
-Rozwijając prawą stronę równania (\ref{eq:rownanie}):
-\begin{align*}
-\C[u_i''] \overset{(\ref{eq:demid})}{=} \C[m + F_m\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] \\
-\overset{(\ref{eq:midpoint})}{=} \C[\frac{1}{n}\sum\limits_{j=1}^n P_j] + F_m^2\C[\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] 
-= \frac{1}{n^2}n\C[P] + F_m^2\C[\sum\limits_{j=2}^{2k+1} P] = \C[P](2kF_m^2 + \frac{1}{n})
-\end{align*}
-
-Podstawiając do (\ref{eq:rownanie}):
-\begin{align*}
-\C[P](2F^2 + 1) = \C[P](2kF_m^2 + \frac{1}{n})
-\end{align*}
-
-Przy założeniu, że $\C[P] \neq \textbf{0}$:
-\begin{align*}
-2F^2 + 1 = 2kF_m^2 + \frac{1}{n} \\
-F_m^2 = \frac{2F^2 + 1 - \frac{1}{n}}{2k}
-\end{align*}
-
-Obie strony są nieujemne, więc:
-\begin{align} \label{eq:a}
-F_m\ = \sqrt{\frac{2F^2 + 1 - \frac{1}{n}}{2k}}
-\end{align}
-
-Przyjmując $F=0,9$ z (\ref{eq:a}) wynika, że: \\
-$F_m \approx 1,14$ dla $k=1$ i $n\to\infty$. \\
-
-W DE/mid przesuwany jest punkt środkowy $m$ zamiast losowo wybranego osobnika $P_{i_1}$.
-Punkt środkowy jest mniej zmienny, 
-tzn. norma macierzy kowariancji punktu środkowego jest mniejsza niż norma macierzy kowariancji dowolnego osobnika.
-$\lim_{n\to\infty} \C[m] = \textbf{0}$, natomiast $\C[P_{i_1}] = \C[P]$.
-Dlatego DE/mid/k potrzebuje większego współczynnika skalującego niż DE/rand/k. \\
-
-\subsection{Mutacja w DE/rand/$\infty$}
-
-Zgodnie z centralnym twierdzeniem granicznym, $\frac{1}{{\sqrt{k}}}\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})$ 
-zbiega według rozkładu do $\mathcal{N}(0, \C[P])$ gdy $k \to \infty$. 
-Dzięki temu, równanie mutanta DE/rand/$\infty$ można zapisać jako:
-\begin{align*}
-u_i = P_{i_1} + F_\infty \cdot v_\infty
-\end{align*}
-
-Gdzie $v_\infty \sim \mathcal{N}(0, \C[P])$. Wyznaczmy $F_\infty$.
-\begin{align*}
-\C[u_i] = \C[P_{i_1} + F_\infty \cdot v_\infty] \overset{(\ref{eq:macierz_kow_mutanta})}{=} \C[P](2F^2 + 1) \\
-\C[P] + \C[F_\infty \cdot v_\infty] = \C[P](2F^2 + 1) \\
-\C[F_\infty \cdot v_\infty] = 2F^2\C[P] \\
-F_\infty^2 \C[P] = 2F^2\C[P] \\
-F_\infty^2 = 2F^2 \\
-F_\infty = \sqrt{2}F
-\end{align*}
-
-\subsection{Mutacja w DE/mid/$\infty$}
-
-Równanie mutanta DE/mid/$\infty$ można zapisać podobnie:
-\begin{align*}
-u_i' = m + F_{\infty_m} \cdot v_\infty
-\end{align*}
-
-Wyznaczmy $F_{\infty_m}$.
-\begin{align*}
-\C[u_i'] = \C[m + F_{\infty_m} \cdot v_\infty] \overset{(\ref{eq:macierz_kow_mutanta})}{=} \C[P](2F^2 + 1) \\
-\C[m] + C[F_{\infty_m} \cdot v_\infty] = \C[P](2F^2 + 1) \\
-\frac{C[P]}{n} + F_{\infty_m}^2 C[P] = \C[P](2F^2 + 1) \\
-F_{\infty_m} = \sqrt{2F^2 + 1 - \frac{1}{n}}
-\end{align*}
-
-\subsection{Podsumowanie}
-
-Tabela \ref{table:parametry} podsumowuje znalezione współczynniki skalujące.
-
-\begin{table}[H]
-\centering
-\begin{tabular}{ l | l }
-algorytm         & współczynnik \\ \hline
-DE/rand/k        & $\sqrt{\frac{2F^2}{2k}} = \frac{F}{\sqrt{k}}$ \\ 
-DE/rand/$\infty$ & $\sqrt{2F^2} = \sqrt{2}F$ \\ \hline
-DE/mid/k         & $\sqrt{\frac{2F^2 + 1 - \frac{1}{n}}{2k}}$ \\
-DE/mid/$\infty$  & $\sqrt{2F^2 + 1 - \frac{1}{n}}$ \\
-\end{tabular}
-\caption{Współczynniki skalujące}
-\label{table:parametry}
-\end{table}
-
-\section{Część praktyczna}
-
-Przetestowano 6 algorytmów:
-\begin{enumerate}
- \item DE/rand/1
- \item DE/rand/6
- \item DE/rand/$\infty$ 
- \item DE/mid/1 
- \item DE/mid/6 
- \item DE/mid/$\infty$ 
-\end{enumerate}
-
-Eksperymenty przeprowadzono na 7 funkcjach testowych o numerach 15, 16, 19, 20, 21, 22, 24 z BBOB 2013 \cite{finck}, zaimplementowanych w języku C.
-Funkcje testowe są wywoływane z Javy, w której napisano algorytmy oraz procedurę testującą.
-Liczba wymiarów $D \in \{20, 40, 80\}$. Maksymalna liczba wywołań funkcji oceny $FEs = 10^5D$. Rozmiar populacji $n = 10D$. 
-Jeśli algorytm nie znajdował minimum, wówczas w jednym uruchomieniu, na jednej funkcji, generował $\frac{FEs}{n} = 10^4$ pokoleń.
-Na każdej funkcji algorytm był niezależnie uruchamiany 15 razy, z każdego uruchomienia zapisywany był najlepszy wynik.
-$F = 0.9$. Krzyżowanie wymieniające (DE/*/k/bin).
-Prawdopodobieństwo krzyżowania $Cr = 0.9$. \\
-
-W celu porównania, wykreślano dystrybuanty empiryczne najlepszych wyników z każdego uruchomienia 
-dla obu algorytmów na jednej funkcji. Wykresy przedstawiono poniżej.
-Najlepszym wynikiem była najmniejsza odległość funkcji oceny osobnika od minimum.
-Algorytm, którego dystrybuanta na wykresie przebiegała powyżej pozostałych, otrzymywał 5 punktów. 
-Za drugie miejsce algorytm dostawał 4 punkty, za trzecie 3, za czwarte 2, za piąte 1, za ostatnie 0. 
-Jeśli dystrybuanty się przecinały, algorytmy zajmowały i-te miejsce ex aequo i dostawały punkty za i-te miejsce.
-Przykładowo, na 16 funkcji w 20 wymiarach, DE/rand/6 i DE/mid/$\infty$ zajęły ex aequo drugie miejsce, dostając po 4 punkty.
-Kolejny, DE/rand/$\infty$, zajął 3 miejsce i dostał 2 punkty.
-Wyniki dla 20 wymiarów przedstawia tabela \ref{table:20d}, dla 40 wymiarów przedstawia tabela \ref{table:40d},
-dla 80 wymiarów tabela \ref{table:80d}. \\ 
-
-\begin{table}[H]
-\centering
-\begin{tabular}{ l | c | c | c | c | c | c | c | c}
-                 & 15 & 16 & 19 & 20 & 21 & 22 & 24 & suma \\ \hline
-DE/rand/1        & 1  & 0  & 0  & 1  & 1  & 5  & 0  & 8    \\ 
-DE/rand/6        & 4  & 4  & 3  & 5  & 5  & 5  & 5  & 31   \\ 
-DE/rand/$\infty$ & 2  & 2  & 2  & 4  & 5  & 5  & 1  & 21   \\ 
-DE/mid/1         & 5  & 1  & 1  & 2  & 5  & 5  & 2  & 21   \\
-DE/mid/6         & 0  & 5  & 5  & 0  & 0  & 0  & 5  & 15   \\ 
-DE/mid/$\infty$  & 3  & 4  & 4  & 4  & 2  & 1  & 5  & 23   \\
-\end{tabular}
-\caption{Porównanie algorytmów w 20 wymiarze}
-\label{table:20d}
-\end{table}
-
-\begin{table}[H]
-\centering
-\begin{tabular}{ l | c | c | c | c | c | c | c | c}
-                 & 15 & 16 & 19 & 20 & 21 & 22 & 24 & suma \\ \hline
-DE/rand/1        & 0  & 0  & 0  & 0  & 0  & 0  & 0  & 0    \\ 
-DE/rand/6        & 5  & 4  & 3  & 4  & 5  & 5  & 5  & 31   \\ 
-DE/rand/$\infty$ & 2  & 2  & 1  & 4  & 5  & 5  & 2  & 21   \\ 
-DE/mid/1         & 5  & 1  & 2  & 2  & 2  & 2  & 1  & 15   \\
-DE/mid/6         & 1  & 5  & 5  & 1  & 2  & 2  & 3  & 19   \\ 
-DE/mid/$\infty$  & 3  & 4  & 4  & 5  & 3  & 3  & 5  & 27   \\
-\end{tabular}
-\caption{Porównanie algorytmów w 40 wymiarze}
-\label{table:40d}
-\end{table}
-
-\begin{table}[H]
-\centering
-\begin{tabular}{ l | c | c | c | c | c | c | c | c}
-                 & 15 & 16 & 19 & 20 & 21 & 22 & 24 & suma \\ \hline
-DE/rand/1        & 0  & 0  & 0  & 0  & 2  & 2  & 2  & 6    \\ 
-DE/rand/6        & 5  & 3  & 3  & 3  & 5  & 5  & 5  & 29   \\ 
-DE/rand/$\infty$ & 1  & 2  & 1  & 1  & 2  & 2  & 2  & 11   \\ 
-DE/mid/1         & 4  & 2  & 2  & 4  & 2  & 2  & 2  & 18   \\
-DE/mid/6         & 2  & 5  & 5  & 2  & 3  & 3  & 3  & 23   \\ 
-DE/mid/$\infty$  & 3  & 4  & 4  & 5  & 4  & 4  & 4  & 28   \\
-\end{tabular}
-\caption{Porównanie algorytmów w 80 wymiarze}
-\label{table:80d}
-\end{table}
-
-\pagenumbering{gobble}
-
-\begin{figure}
-\centering
-\includegraphics[scale=0.75]{../pngs/20/15.png} 
-\includegraphics[scale=0.75]{../pngs/20/16.png}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[scale=0.75]{../pngs/20/19.png} 
-\includegraphics[scale=0.75]{../pngs/20/20.png}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[scale=0.75]{../pngs/20/21.png} 
-\includegraphics[scale=0.75]{../pngs/20/22.png}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[scale=0.75]{../pngs/20/24.png} 
-\includegraphics[scale=0.75]{../pngs/40/15.png} 
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[scale=0.75]{../pngs/40/16.png} 
-\includegraphics[scale=0.75]{../pngs/40/19.png} 
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[scale=0.75]{../pngs/40/20.png} 
-\includegraphics[scale=0.75]{../pngs/40/21.png} 
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[scale=0.75]{../pngs/40/22.png} 
-\includegraphics[scale=0.75]{../pngs/40/24.png} 
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[scale=0.75]{../pngs/80/15.png} 
-\includegraphics[scale=0.75]{../pngs/80/16.png} 
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[scale=0.75]{../pngs/80/19.png} 
-\includegraphics[scale=0.75]{../pngs/80/20.png} 
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[scale=0.75]{../pngs/80/21.png} 
-\includegraphics[scale=0.75]{../pngs/80/22.png} 
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[scale=0.75]{../pngs/80/24.png} 
-\end{figure}
-
-\bibliographystyle{plain}
+\nocite{*}
+\bibliographystyle{plplain}
 \bibliography{references}
 
 \end{document}
