@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ $# -lt 2 ]; then
-	echo "Usage: $0 results1 [results2] [results3] [results4] [results5] [results6] [results7] [results8]" 
+	echo "Usage: $0 results1 [results2] [results3] ..." 
 	return 65
 fi
 
@@ -11,30 +11,13 @@ fi
 
 for file in $1/*.info
 do
-	if [ $# -eq 2 ]; then
-		./png.r $file $2/${file#*/}
-	else
-		if [ $# -eq 3 ]; then
-			./png.r $file $2/${file#*/} $3/${file#*/}
-		else
-			if [ $# -eq 4 ]; then
-				./png.r $file $2/${file#*/} $3/${file#*/} $4/${file#*/}
-			else
-				if [ $# -eq 5 ]; then
-					./png.r $file $2/${file#*/} $3/${file#*/} $4/${file#*/} $5/${file#*/}
-				else
-					if [ $# -eq 5 ]; then
-						./png.r $file $2/${file#*/} $3/${file#*/} $4/${file#*/} $5/${file#*/} $6/${file#*/} 
-					else
-						if [ $# -eq 6 ]; then
-							./png.r $file $2/${file#*/} $3/${file#*/} $4/${file#*/} $5/${file#*/} $6/${file#*/} $7/${file#*/} 
-						else
-							./png.r $file $2/${file#*/} $3/${file#*/} $4/${file#*/} $5/${file#*/} $6/${file#*/} $7/${file#*/} $8/${file#*/} 
-						fi
-					fi
-				fi
-			fi
-		fi
-	fi
+	filename=${file#*/}
+	echo $filename
+	args=""
+	for i in "$@";
+	do
+		args=" $args $i/$filename"
+	done
+	./png.r $args
 done
 
