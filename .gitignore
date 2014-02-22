@@ -3,5 +3,13 @@
 *.so
 *.dylib
 *.dll
+*.tex~
+*.bbl
+*.aux
+*.blg
+*.log
+*.pdf
+*.toc
+*.backup
 ready/*
 pngs/*
