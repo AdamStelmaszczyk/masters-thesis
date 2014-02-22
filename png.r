@@ -8,7 +8,7 @@ xmax = 0
 xmin = +Inf
 for (i in 1:args)
 {
-	data[[i]] = scan(filename[i], sep=" ")
+	data[[i]] = scan(filename[i])
 	xmax = max(xmax, max(data[[i]]))
 	xmin = min(xmin, min(data[[i]]))
 }
