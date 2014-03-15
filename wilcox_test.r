@@ -1,6 +1,6 @@
 #!/usr/bin/Rscript
 
-algorithm = "debest1"
+algorithm = "derand1"
 outfile = paste("wilcox_test/", algorithm, sep = "")
 cat(file = outfile)
 for (dim in c(10, 20, 40, 80))
@@ -26,7 +26,7 @@ for (dim in c(10, 20, 40, 80))
 				cat(" & ", file = outfile, append = TRUE)
 				if (test$p.value < 0.05)
 				{
-					if (mean(data1) < mean(data2))
+					if (median(data1) < median(data2))
 						cat("+", file = outfile, append = TRUE)
 					else
 						cat("--", file = outfile, append = TRUE)

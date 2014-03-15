@@ -1,4 +1,4 @@
-DE/best/1	 & + & $\cdot$ & + & + & + & + & + \\
+DE/best/1	 & + & $\cdot$ & + & -- & + & + & + \\
 DE/best/2	 & + & $\cdot$ & + & -- & $\cdot$ & $\cdot$ & + \\
 DE/best/6	 & + & + & + & + & $\cdot$ & $\cdot$ & + \\
 DE/best/$\infty$	 & + & + & + & + & + & $\cdot$ & + \\
@@ -11,7 +11,7 @@ DE/rand/2	 & + & + & + & -- & $\cdot$ & $\cdot$ & + \\
 DE/rand/6	 & + & + & + & $\cdot$ & -- & $\cdot$ & + \\
 DE/rand/$\infty$	 & + & $\cdot$ & + & $\cdot$ & $\cdot$ & $\cdot$ & + \\
 
-DE/best/1	 & + & -- & + & + & + & + & + \\
+DE/best/1	 & + & -- & + & -- & + & + & + \\
 DE/best/2	 & + & + & + & + & + & + & + \\
 DE/best/6	 & + & + & + & + & + & + & + \\
 DE/best/$\infty$	 & + & + & + & + & + & + & + \\
