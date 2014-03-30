@@ -1,5 +1,3 @@
-\pdfoutput=1
-\pdfcompresslevel=9
 \documentclass[a4paper,onecolumn,oneside,11pt,wide,floatssmall]{mwrep}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -17,6 +15,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8x]{inputenc}
 \usepackage[sort, compress]{cite}
+\makeatletter\renewcommand{\ALG@name}{Algorytm}
 
 \def\url#1{{ \tt #1}}
 \def\C{{\rm C}\,}
@@ -92,33 +91,168 @@
 
 \chapter{Wstęp}
 
+Ewolucja różnicowa (ang. differential evolution, DE) należy do grupy algorytmów genetycznych. \cite{storn}
+Rozwiązania reprezentowane są jako tablice liczb rzeczywistych. 
+Przy optymalizacji funkcji celu o $D$ wymiarach, rozwiązanie to tablica długości $D$.
+Innymi słowy, mając do czynienia z modelem o $D$ parametrach, w procesie optymalizacji operujemy 
+rozwiązaniami wielkości $D$. 
+Algorytmy genetyczne należą do szerszej grupy tzw. algorytmów ewolucyjnych. \cite{jarabas} 
+Zatem ewolucja różnicowa jest algorytmem genetycznym, a to z kolei implikuje, 
+że jest również algorytmem ewolucjnym. DE znajduje zastosowanie zwłaszcza w optymalizacji globalnej 
+w przestrzeniach ciągłych. Optymalizacja globalna to zadania znalezienia ekstremum globalnego 
+(minimum bądź maksimum) pewnej nieznanej funkcji, zwanej funkcją celu, bądź funkcją oceny. 
+Funkcja ta jest ,,czarną skrzynką'', tzn. jej dokładna postać analityczna w ogólnym przypadku 
+jest nieznana. W związku z tym analityczne wyznaczenie ekstremów jest nieosiągalne. W przypadku 
+skomplikowanych, wielowymiarowych funkcji znalezienie optimum może być bardzo czasochłonne, 
+a w praktyce wręcz niewykonalne. Wówczas celem jest znalezienie możliwie najlepszego rozwiązania
+suboptymalnego.
+Algorytm optymalizujący wybiera pewne rozwiązanie, następnie poddaje to rozwiązanie 
+ocenie przez funkcję oceniająca, w wyniku czego otrzymuje liczbową wartość (dobroć) 
+podanego rozwiązania. 
+
+Przykładowo, ,,czarną skrzynką'' może być pewien program, symulator, który po podaniu 
+parametrów na wejście przeprowadza jeden eksperyment i zwraca np. liczbę watów wygenerowanych
+przez panele słoneczne. Parametrami wejściowymi są np. kąty nachylenia i prędkości obrotu paneli 
+słonecznych. Panele słoneczne umieszczone są na statku kosmicznym, który krąży po orbicie ziemskiej.
+Przez to niektóre panele rzucają cień na inne, jeśli są źle ustawione. Panele również nie mogą być 
+zbyt długo wystawione na działanie promeini słonecznych, ponieważ może dojść do uszkodzenia. 
+To wprowadza kłopotliwe ograniczenia w przestrzeni przeszukiwań.
+Symulator przeprowadza kosztowne obliczenia, żeby zwrócić całkowitą liczbę watów wygerenowanych
+przez panele w ciągu pełnego obiegu wokół Ziemi. 
+
+Przykład paneli słonecznych jest przykładem optymalizacji ciągłej, ponieważ parametry takie jak kąt,
+prędkość itp. są liczbami rzeczywistymi. Zupełnie innym rodzajem optymalizacji jest optymalizacja 
+dyskretna, w której to parametry są liczbami całkowitymi. Biorąc pod uwagę występujące ograniczenia,
+np. maksymalną prędkość, w optymalizacji dyskretnej zbiór możliwych rozwiązań jest skończony. 
+W optymalizacji ciągłej zbiór możliwych rozwiązań jest nieskończony. Zawsze można wskazać rozwiązanie 
+leżące pomiędzy dwoma innymi. Autorzy DE wskazali, że algorytm ten jest przeznaczony do 
+optymalizacji problemów ciągłych. \cite{storn}
+
+Podstawowym celem pracy była szczegółowa analiza oraz porównanie nowego wariantu ewolucji różnicowej 
+nazwanego DE/mid do dwóch znanych odmian -- DE/rand oraz DE/best. Eksperymenty wykazały przewagę
+DE/mid na 6 z 7 wielowymiarowych funkcji testowych.
+
 \section{Słownik pojęć i oznaczeń}
+
+\begin{itemize}
+ \item[] Osobnik, punkt, wektor, rozwiązanie -- podstawowy element przestrzeni przeszukiwań, 
+przetwarzany przez algorytm ewolucji różnicowej.
+ \item[] Populacja -- zbiór osobników, przetwarzany w pojedynczej iteracji algorytmu.
+ \item[] DE -- differential evolution, ewolucja różnicowa.
+ \item[] DE/rand -- klasyczny wariant DE przesuwający losowy punkt w mutacji.
+ \item[] DE/best -- popularny wariant DE przesuwający najlepszy punkt w mutacji.
+ \item[] DE/mid -- zaproponowany wariant DE przesuwający punkt środkowy w mutacji.
+ \item[] $k$ -- liczba wektorów różnicowych używanych w mutacji.
+ \item[] $\mu$ -- liczba osobników w populacji.
+ \item[] $D$ -- liczba cech osobnika, również wymiar optymalizowanej funkcji.
+ \item[] $P^t$ -- populacja o numerze $t$.
+ \item[] $P_i^t$ -- osobnik o indeksie $i$ w populacji $P^t$.
+ \item[] $F$ -- współczynnik skalujący, parametr ewolucji różnicowej.
+ \item[] $CR$ -- prawdopodobieństwo krzyżowania, parametr ewolucji różnicowej.
+ \item[] $u_i$ -- mutant osobnika o indeksie $i$ w populacji.
+ \item[] $o_i$ -- potomek osobnika o indeksie $i$ w populacji.
+ \item[] $f$ -- funkcja celu, funkcja przystosowania, optymalizowana funkcja, funkcja testowa.
+\end{itemize}
 
 \chapter{Ewolucja różnicowa}
 
-Klasyczna ewolucja różnicowa DE/rand oraz jej odmiana DE/mid różnią się jedynie operatorem mutacji.
-W poniższych rozdziałach przedstawiono operatory mutacji dla DE/rand/k, DE/mid/k, DE/rand/$\infty$, DE/mid/$\infty$
-oraz wyprowadzono wzory na współczynniki skalujące.
+Ewolucja różnicowa to algorytm ewolucyjny służący do optymalizacji
+w przestrzeniach ciągłych zaproponowany w 1995 roku. \cite{storn} Sposób działania algorytmu
+przedstawiono na listingu \ref{algorithm:de}.
+
+\begin{algorithm}[!htb]
+\caption{Ewolucja różnicowa}\label{bron1}
+\label{algorithm:de}
+\begin{algorithmic}[1]
+\State Inicjalizacja parametrów $CR, F, \mu$
+\State Inicjalizacja populacji początkowej $P^0 \gets \{P^0_1, P^0_2, \ldots, P^0_\mu\}$
+\State $t \gets 0$
+\While{kryterium stopu nie zostało spełnione}
+  \ForAll{$i \in \{ 1, 2, \ldots, \mu \}$}
+    \State $u_i \gets$ mutacja$(F, i, P^t)$
+    \State $o_i \gets$ krzy{\.z}owanie$(CR, P_i^t, u_i)$
+    \If{$f(o_i) \le f(P_i^t)$}
+      \State $P_i^{t+1} \gets o_i$     
+    \Else
+      \State $P_i^{t+1} \gets P_i^{t}$
+    \EndIf
+  \EndFor
+\EndWhile \\
+\Return arg min$_i f(P^t_i)$
+\end{algorithmic}
+\end{algorithm}
+
+Algorytm zaczyna się od inicjalizacji parametrów oraz populacji początkowej. 
+Populacja to zbiór $\mu$ rozwiązań. 
+Jeśli zupełnie nie wiadomo, gdzie może znajdować się optimum, 
+populację początkową generuje się w sposób losowy. 
+W przeciwnym przypadku, populację początkową można wzmocnić rozwiązaniami znajdującymi się 
+prawdopodobnie bliżej szukanego ekstremum. 
+Przykładowo, w problemie komiwojażera możemy najpierw szybko znaleźć kilka rozwiązań zbudowanych 
+zachłannie (tzn. łączymy zawsze dwa najbliższe miasta) i nimi zasilić populację początkową. 
+Może to znacząco poprawić wyniki uzyskane przez DE.
+
+W tym momencie warto zwrócić uwagę, że każdy algorytm ewolucyjny jest bardzo czuły na jakiekolwiek 
+zmiany w sposobie jego działania. 
+Najmniejszy błąd implementacyjny 
+(choćby np. zgrubne zaokrąglenia liczb rzeczywistych) 
+spowoduje znaczną zmianę otrzymywanych wyników. 
+Jest to sytuacja podobna do efektu motyla -- mała zmiana w populacji początkowej, 
+z biegiem czasu nawarstwia się i obarcza błędem kolejne populacje w coraz większym stopniu. 
+Po 10000 iteracji, populacja numer 10000 może zmienić się diametralnie.
+
+Po inicjalizacji populacji początkowej następuje główna pętla programu. 
+Generujemy kolejne populacje, dopóki nie zajdzie tzw. kryterium stopu. 
+Kryterium stopu może być np. maksymalna liczba iteracji lub wywołań funkcji oceny.
+ Algorytm możemy również zatrzymać wtedy, gdy znalezione rozwiązania jest zadowalające. 
+Innym kryterium stopu jest przerwanie algorytmu wtedy, gdy jesteśmy pewni, 
+że populacja ,,zatrzymała się''. 
+Od momentu, gdy np. wszystkie rozwiązania (punkty) zapadną się do jednego, 
+każda kolejna populacja w DE będzie taka sama. 
+W związku z tym nie ma sensu dalsze iterowanie, 
+można wówczas zakończyć algorytm i np. uruchomić go jeszcze raz z innego miejsca
+albo z innymi paramerami.
+W głównej pętli programu przetwarzana jest biężaca populacja. 
+Wykonywana jest kolejna pętla, tym razem iterująca kolejno po wszystkich osobnikach 
+(rozwiązaniach) z bieżącej populacji. 
+
+Operator krzyżowania na wejściu otrzymuje dwa rozwiązania rodzicielskie, a zwraca jedno potomne. 
+W DE jednym z rodziców jest mutant. Istnieje wiele rodzajów krzyżowania, do najpopularniejszych 
+wykorzystywanych w DE należą:
+\begin{itemize} 
+ \item[$\bullet$] Krzyżowanie uśredniające. 
+Potomkiem jest rozwiązanie znajdujące się dokładnie w połowie odległości pomiędzy rodzicami.
+ \item[$\bullet$]  Krzyżowanie wymieniające. 
+Część elementów w tablicy rozwiązania jest brana od jednego z rodziców, 
+pozostała część jest brana od drugiego. Ten sposób krzyżowania został wykorzystany w tej pracy.
+\end{itemize} 
+
+DE/rand oznacza ewolucję różnicową z losowym typem mutacji.
+Ten podstawowy wariant algorytmu jest również nazywany ,,klasyczną'' ewolucją różnicową. 
+Jej odmiany, DE/best oraz DE/mid, różnią się jedynie operatorem mutacji.
+Dodatkowo, jako trzeci człon nazwy podawana jest liczba wektorów różnicowych używanych w mutacji -- $k$.
+W poniższych podrozdziałach przedstawiono operatory mutacji dla DE/rand/k, DE/best/k, DE/mid/k 
+oraz wyprowadzono wzory na współczynniki skalujące $F$.
 
 \section{DE/rand}
 
-W DE/rand/1, mutant $i$-tego osobnika w populacji $P$~o~$n$~osobnikach powstaje w następujący sposób \cite{decomposition}:
+W DE/rand/1, mutant $i$-tego osobnika w populacji $P$~o~$\mu$~osobnikach powstaje w następujący sposób \cite{decomposition}:
 \begin{equation} \label{eq:derand1}
 u_i = P_{i_1} + F(P_{i_2} - P_{i_3})
 \end{equation}
 
 $i_1, i_2, i_3$ to indeksy wylosowane zgodnie z rozkładem jednostajnym ze zbioru \\ 
-$\{0, 1, \dots, n-1\}$. Zatem $P_{i_1}, P_{i_2}, P_{i_3}$ to rozwiązania wylosowane zgodnie z rozkładem jednostajnym z populacji $P$.
+$\{0, 1, \dots, \mu-1\}$. Zatem $P_{i_1}, P_{i_2}, P_{i_3}$ to rozwiązania wylosowane zgodnie z rozkładem jednostajnym z populacji $P$.
 $F\in\mathbb{R_+}$ to współczynnik skalujący, w tej pracy ustalony na 0,9. \\
 
-DE/rand/1 można uogólnić na DE/rand/k, w którym to dodajemy
+DE/rand/1 można uogólnić na DE/rand/k, w którym dodawanych jest
 $k \in \mathbb{N}$ wektorów różnicowych:
 \begin{equation} \label{eq:derand}
 u_i' = P_{i_1} + F_k\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})
 \end{equation}
 
 Podobnie jak poprzednio, $i_1, i_2, \dots i_{2k+1}$ to indeksy wylosowane zgodnie z rozkładem jednostajnym ze zbioru 
-$\{0, 1, \dots, n-1\}$. Zatem $P_{i_1}, P_{i_2}, \dots, P_{2k+1}$ to rozwiązania wylosowane zgodnie z rozkładem 
+$\{0, 1, \dots, \mu-1\}$. Zatem $P_{i_1}, P_{i_2}, \dots, P_{2k+1}$ to rozwiązania wylosowane zgodnie z rozkładem 
 jednostajnym z populacji $P$. $F_k\in\mathbb{R_+}$ to współczynnik skalujący dla DE/rand/k. 
 Żeby macierz kowariancji populacji w DE/rand/k nie zmieniała się wraz z zmianą $k$, 
 macierz kowariancji mutanta $u_i'$ musi być taka sama jak macierz kowariancji mutanta $u_i$.
@@ -160,14 +294,16 @@ Obie strony są nieujemne, więc ostatecznie:
 F_k = \frac{F}{\sqrt{k}}
 \end{align*}
 
+\subsection{DE/rand/$\infty$}
+
 Zgodnie z centralnym twierdzeniem granicznym, $\frac{1}{{\sqrt{k}}}\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})$ 
 zbiega według rozkładu do $\mathcal{N}(0, \C[P])$ gdy $k \to \infty$. 
 Dzięki temu, równanie mutanta DE/rand/$\infty$ można zapisać jako:
 \begin{align*}
-u_i = P_{i_1} + F_\infty \cdot v_\infty
+u_i^\infty = P_{i_1} + F_\infty \cdot v_\infty
 \end{align*}
 
-Gdzie $v_\infty \sim \mathcal{N}(0, \C[P])$. Wyznaczmy $F_\infty$.
+Gdzie $v_\infty \sim \mathcal{N}(0, \C[P])$. $F_\infty$ wynosi $\sqrt{2}F$:
 \begin{align*}
 \C[u_i] = \C[P_{i_1} + F_\infty \cdot v_\infty] \overset{(\ref{eq:macierz_kow_mutanta})}{=} \C[P](2F^2 + 1) \\
 \C[P] + \C[F_\infty \cdot v_\infty] = \C[P](2F^2 + 1) \\
@@ -176,8 +312,6 @@ F_\infty^2 \C[P] = 2F^2\C[P] \\
 F_\infty^2 = 2F^2 \\
 F_\infty = \sqrt{2}F
 \end{align*}
-
-\section{DE/best}
 
 \section{DE/mid}
 
@@ -189,7 +323,7 @@ u_i'' = m + F_m\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})
 
 Jedyną różnicą w porównaniu do DE/rand/k jest $m$, czyli punkt środkowy populacji:
 \begin{equation} \label{eq:midpoint}
-m = \frac{1}{n}\sum\limits_{j=1}^n P_j
+m = \frac{1}{\mu}\sum\limits_{j=1}^n P_j
 \end{equation}
 
 $F_m\in\mathbb{R_+}$ jest współczynnikiem skalującym dla DE/mid/k, analogicznym do $F$ dla DE/rand/1. 
@@ -203,51 +337,65 @@ Można to osiągnąć tak dobierając $F_m$, żeby było spełnione równanie:
 Rozwijając prawą stronę równania (\ref{eq:rownanie}):
 \begin{align*}
 \C[u_i''] \overset{(\ref{eq:demid})}{=} \C[m + F_m\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] \\
-\overset{(\ref{eq:midpoint})}{=} \C[\frac{1}{n}\sum\limits_{j=1}^n P_j] + F_m^2\C[\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] 
-= \frac{1}{n^2}n\C[P] + F_m^2\C[\sum\limits_{j=2}^{2k+1} P] = \C[P](2kF_m^2 + \frac{1}{n})
+\overset{(\ref{eq:midpoint})}{=} \C[\frac{1}{\mu}\sum\limits_{j=1}^n P_j] + F_m^2\C[\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] 
+= \frac{1}{\mu^2}\mu\C[P] + F_m^2\C[\sum\limits_{j=2}^{2k+1} P] = \C[P](2kF_m^2 + \frac{1}{\mu})
 \end{align*}
 
 Podstawiając do (\ref{eq:rownanie}):
 \begin{align*}
-\C[P](2F^2 + 1) = \C[P](2kF_m^2 + \frac{1}{n})
+\C[P](2F^2 + 1) = \C[P](2kF_m^2 + \frac{1}{\mu})
 \end{align*}
 
 Przy założeniu, że $\C[P] \neq \textbf{0}$:
 \begin{align*}
-2F^2 + 1 = 2kF_m^2 + \frac{1}{n} \\
-F_m^2 = \frac{2F^2 + 1 - \frac{1}{n}}{2k}
+2F^2 + 1 = 2kF_m^2 + \frac{1}{\mu} \\
+F_m^2 = \frac{2F^2 + 1 - \frac{1}{\mu}}{2k}
 \end{align*}
 
 Obie strony są nieujemne, więc:
 \begin{align} \label{eq:a}
-F_m\ = \sqrt{\frac{2F^2 + 1 - \frac{1}{n}}{2k}}
+F_m\ = \sqrt{\frac{2F^2 + 1 - \frac{1}{\mu}}{2k}}
 \end{align}
 
-Przyjmując $F=0,9$ z (\ref{eq:a}) wynika, że: \\
-$F_m \approx 1,14$ dla $k=1$ i $n\to\infty$. \\
-
-W DE/mid przesuwany jest punkt środkowy $m$ zamiast losowo wybranego osobnika $P_{i_1}$.
+Przyjmując $F=0,9$ z (\ref{eq:a}) bezpośrednio wynika, że $F_m \approx 1,14$ dla $k=1$ i $\mu\to\infty$.
+W~DE/mid przesuwany jest punkt środkowy $m$ zamiast losowo wybranego osobnika $P_{i_1}$.
 Punkt środkowy jest mniej zmienny, 
 tzn. norma macierzy kowariancji punktu środkowego jest mniejsza niż norma macierzy kowariancji dowolnego osobnika.
 $\lim_{n\to\infty} \C[m] = \textbf{0}$, natomiast $\C[P_{i_1}] = \C[P]$.
-Dlatego DE/mid/k potrzebuje większego współczynnika skalującego niż DE/rand/k. \\
+Dlatego DE/mid/k zawsze potrzebuje większego współczynnika skalującego niż DE/rand/k. \\
 
-Równanie mutanta DE/mid/$\infty$ można zapisać podobnie:
+\subsection{DE/mid/$\infty$}
+
+Równanie mutanta DE/mid/$\infty$ można zapisać w następujący sposób:
 \begin{align*}
-u_i' = m + F_{\infty_m} \cdot v_\infty
+u_i'^\infty = m + F_{\infty_m} \cdot v_\infty
 \end{align*}
 
-Wyznaczmy $F_{\infty_m}$.
+Gdzie $F_{\infty_m}$ jest równe $\sqrt{2F^2 + 1 - \frac{1}{\mu}}$:
+
 \begin{align*}
 \C[u_i'] = \C[m + F_{\infty_m} \cdot v_\infty] \overset{(\ref{eq:macierz_kow_mutanta})}{=} \C[P](2F^2 + 1) \\
 \C[m] + C[F_{\infty_m} \cdot v_\infty] = \C[P](2F^2 + 1) \\
-\frac{C[P]}{n} + F_{\infty_m}^2 C[P] = \C[P](2F^2 + 1) \\
-F_{\infty_m} = \sqrt{2F^2 + 1 - \frac{1}{n}}
+\frac{C[P]}{\mu} + F_{\infty_m}^2 C[P] = \C[P](2F^2 + 1) \\
+F_{\infty_m} = \sqrt{2F^2 + 1 - \frac{1}{\mu}}
 \end{align*}
+
+\section{DE/best}
+
+DE/best jest bardzo podobny do DE/mid. Jedyną różnicą jest przesuwanie najlepszego punktu
+w bieżącej populacji zamiast punktu środkowego. Obliczane są wartości
+funkcji oceny dla wszystkich osobników w populacji i punkt o najmniejszej wartości (przy minimalizacji)
+jest traktowany jako najlepszy.
+
+Współczynniki skalujące dla DE/best są identyczne jak dla DE/mid, ponieważ w obu tych wariantach,
+w iteracji dla bieżącej populacji, zawsze przesuwany jest ten sam, ustalony punkt. W DE/rand
+przesuwany punkt jest za każdym razem losowany, przez co jest bardziej zmienny (ma większą wariancję).
+Z tego powodu DE/mid oraz DE/best potrzebują większych współczynników skalujących niż DE/rand.
 
 \section{Podsumowanie}
 
-Tabela \ref{table:wspolczynniki} podsumowuje znalezione współczynniki skalujące.
+Tabela \ref{table:wspolczynniki} podsumowuje wyprowadzone współczynniki skalujące dla wszystkich
+wariantów algorytmów analizowanych w tej pracy.
 
 \begin{table}[H]
 \centering
@@ -255,14 +403,17 @@ Tabela \ref{table:wspolczynniki} podsumowuje znalezione współczynniki skalują
 algorytm         & współczynnik \\ \hline
 DE/rand/k        & $\sqrt{\frac{2F^2}{2k}} = \frac{F}{\sqrt{k}}$ \\ 
 DE/rand/$\infty$ & $\sqrt{2F^2} = \sqrt{2}F$ \\ \hline
-DE/mid/k         & $\sqrt{\frac{2F^2 + 1 - \frac{1}{n}}{2k}}$ \\
-DE/mid/$\infty$  & $\sqrt{2F^2 + 1 - \frac{1}{n}}$ \\
+DE/best/k        & $\sqrt{\frac{2F^2 + 1 - \frac{1}{\mu}}{2k}}$ \\
+DE/best/$\infty$ & $\sqrt{2F^2 + 1 - \frac{1}{\mu}}$ \\ \hline
+DE/mid/k         & $\sqrt{\frac{2F^2 + 1 - \frac{1}{\mu}}{2k}}$ \\
+DE/mid/$\infty$  & $\sqrt{2F^2 + 1 - \frac{1}{\mu}}$ \\
 \end{tabular}
 \caption{Współczynniki skalujące}
 \label{table:wspolczynniki}
 \end{table}
 
 \chapter{Metodyka testowania}
+\label{chap:metodyka}
 
 Twierdzenie No Free Lunch dla optymalizacji głosi, że nie istnieje najlepszy uniwersalny algorytm dla wszystkich zadań \cite{lunch}. 
 Niezależnie od miary jakości algorytmu optymalizacyjnego, po uśrednieniu dla wszystkich zadań optymalizacyjnych, 
@@ -270,7 +421,9 @@ dowolne dwa różne algorytmy będą osiągały taką samą jakość wyników. I
 nie czyniąc żadnych założeń na temat natury optymalizowanej funkcji celu $f$, 
 nigdy nie będziemy w stanie wykazać wyższości dowolnego algorytmu genetycznego nad np. błądzeniem losowym. 
 Zatem należy przyjąć pewne założenia na temat optymalizowanych funkcji, żeby móc wskazać algorytm najlepszy (dla danego zbioru funkcji).
-W tej pracy przyjęto zbiór 7 funkcji wybranych z zestawu BBOB2013 \cite{noiseless}, szczegółowo opisanych w poniższym rozdziale.
+W idealnym przypadku, funkcje testowe odpowiadałaby tym spotykanym w~rzeczywistych zadaniach optymalizacji.
+Nie wiadomo jednak jakie rodziny funkcji występują najczęściej w realnych problemach.
+Dlatego w tej pracy przyjęto zbiór 7 funkcji wybranych z~zestawu BBOB2013 \cite{noiseless}, szczegółowo opisanych w poniższym rozdziale.
 
 \section{Zestaw funkcji testowych BBOB2013}
 \label{sec:zestaw}
@@ -285,8 +438,8 @@ $$ f_{pen} : \mathbb{R}^D \rightarrow \mathbb{R},
 Zestaw BBOB2013 składa się z 54 funkcji, które dzielą się na dwie zasadnicze klasy:
 
 \begin{itemize}
- \item 24 funkcje bez szumów o numerach od 1 do 24 \cite{noiseless}. 
- \item 30 funkcji z szumami o numerach od 101 do 130 \cite{noisy}.
+ \item[$\bullet$] 24 funkcje bez szumów o numerach od 1 do 24 \cite{noiseless}. 
+ \item[$\bullet$] 30 funkcji z szumami o numerach od 101 do 130 \cite{noisy}.
 \end{itemize} 
 
 Funkcje bez szumów zwracają dokładną wartość funkcji celu w punkcie $x$. Funkcje z szumami wartość tą dodatkowo modyfikują używając 
@@ -294,11 +447,11 @@ losowej funkcji szumu $\xi$. W tej pracy skoncentrowano się na funkcjach bez sz
 na ich właściwości:
 
 \begin{itemize}
- \item Funkcje separowalne (numery od 1 do 5).
- \item Funkcje dobrze uwarunkowane numerycznie (od 6 do 9).
- \item Funkcje jednomodalne (z jednym ekstremum lokalnym), źle uwarunkowane numerycznie (od 10 do 14).
- \item Funkcje wielomodalne o regularnej strukturze (od 15 do 19).
- \item Funkcje wielomodalne o nieregularnej strukturze (od 20 do 24).
+ \item[$\bullet$] Funkcje separowalne (numery od 1 do 5).
+ \item[$\bullet$] Funkcje dobrze uwarunkowane numerycznie (od 6 do 9).
+ \item[$\bullet$] Funkcje jednomodalne (z jednym ekstremum lokalnym), źle uwarunkowane numerycznie (od 10 do 14).
+ \item[$\bullet$] Funkcje wielomodalne o regularnej strukturze (od 15 do 19).
+ \item[$\bullet$] Funkcje wielomodalne o nieregularnej strukturze (od 20 do 24).
 \end{itemize} 
 
 Na funkcjach separowalnych, dobrze uwarunkowanych albo unimodalnych ewolucja różnicowa na tyle często znajduje optimum, że kłopotliwe
@@ -313,9 +466,9 @@ Poniżej przedstawiono je dokładniej.
 Ekstrema w oryginalnej funkcji Rastrigina są rozmieszczone regularnie i symetryczne. W~BBOB2013 dzięki dwóm transformacjom
 zaburzono regularność oraz symetrię. Właściwości funkcji numer 15: 
 \begin{itemize}
- \item Około $10D$ minimów lokalnych.
- \item Wskaźnik uwarunkowania wynosi około 10.
- \item Globalnie duże zmiany wartości, lokalnie - małe.
+ \item[$\bullet$] Około $10D$ minimów lokalnych.
+ \item[$\bullet$] Wskaźnik uwarunkowania wynosi około 10.
+ \item[$\bullet$] Globalnie duże zmiany wartości, lokalnie - małe.
 \end{itemize} 
 
 \begin{figure}[H]
@@ -331,8 +484,8 @@ zaburzono regularność oraz symetrię. Właściwości funkcji numer 15:
 Funkcja 16 jest obrócona w stosunku do oryginalnej funkcji Weierstrassa. 
 Posiada powtarzalny, ale bardzo wyboisty przebieg oraz więcej niż jedno optimum globalne. Właściwości:
 \begin{itemize}
- \item Lokalnie nieregularna.
- \item Brak unikalnego optimum globalnego.
+ \item[$\bullet$] Globalnie regularna, lokalnie nieregularna.
+ \item[$\bullet$] Brak unikalnego optimum globalnego.
 \end{itemize} 
 
 \begin{figure}[H]
@@ -359,9 +512,9 @@ Funkcja 19 to złożenie funkcji Griewanka oraz Rosenbrocka, o ogromnej liczbie 
 
 Najlepsze $2^D$ minimów lokalnych jest położonych stosunkowo blisko narożników atrakcyjnej hiperpłaszczyzny. Właściwości:
 \begin{itemize}
- \item Częściowo separowalna.
- \item Charakterystyczna, obrócona struktura.
- \item Atrakcyjne obszary przeszukiwań znajdują się w narożnikach hiperpłaszczyzny.
+ \item[$\bullet$] Częściowo separowalna.
+ \item[$\bullet$] Charakterystyczna, obrócona struktura.
+ \item[$\bullet$] Atrakcyjne obszary przeszukiwań znajdują się w narożnikach hiperpłaszczyzny.
 \end{itemize} 
 
 \begin{figure}[H]
@@ -377,8 +530,8 @@ Najlepsze $2^D$ minimów lokalnych jest położonych stosunkowo blisko narożnik
 Funkcja posiada 101 ekstremów lokalnych, których położenie oraz wielkość są losowe i~niezależne od siebie.
 Właściwości:
 \begin{itemize}
- \item Wskaźnik uwarunkowania wynosi około 30.
- \item Analizowanie wyników na tej funkcji pomaga odpowiedź na następujące pytanie: Czy przeszukiwanie jest efektywne, gdy funkcja celu
+ \item[$\bullet$] Wskaźnik uwarunkowania wynosi około 30.
+ \item[$\bullet$] Analizowanie wyników na tej funkcji pomaga odpowiedź na następujące pytanie: Czy przeszukiwanie jest efektywne, gdy funkcja celu
 nie ma żadnej globalnej struktury?
 \end{itemize} 
 
@@ -395,8 +548,8 @@ nie ma żadnej globalnej struktury?
 Funkcja posiada 21 ekstremów lokalnych, których położenie oraz wielkość są losowe i~niezależne od siebie.
 Właściwości:
 \begin{itemize}
- \item Wskaźnik uwarunkowania wynosi około 1000.
- \item Analizowanie wyników na tej funkcji pomaga odpowiedź na następujące pytanie: W~porównaniu do funkcji 21, jak 
+ \item[$\bullet$] Wskaźnik uwarunkowania wynosi około 1000.
+ \item[$\bullet$] Analizowanie wyników na tej funkcji pomaga odpowiedź na następujące pytanie: W~porównaniu do funkcji 21, jak 
 wysoki wskaźnik uwarunkowania wpływa na efektywność przeszukiwania?
 \end{itemize} 
 
@@ -433,9 +586,9 @@ widoczne. Dlatego liczba wymiarów $D$ w testach wynosiła 10, 20, 40 oraz 80.
 
 W niektórych przypadkach znalezienie minimum trwałoby zbyt długo. Dlatego zastosowano kryterium stopu,
 jakim jest ograniczenie na maksymalną liczbę wywołań funkcji oceny ($FEs$), wynoszącą $10^5D$, 
-zgodnie z \cite{setup}. Rozmiar populacji $n$ dla każdego algorytmu był stały i wynosił $10D$. 
+zgodnie z \cite{setup}. Rozmiar populacji $\mu$ dla każdego algorytmu był stały i wynosił $10D$. 
 Jeśli algorytm nie znajdował 
-minimum, wówczas w jednym uruchomieniu, na jednej funkcji, generował $\frac{FEs}{n} = 10^4$ pokoleń.
+minimum, wówczas w jednym uruchomieniu, na jednej funkcji, generował $\frac{FEs}{\mu} = 10^4$ pokoleń.
 Początkowa populacja była inicjalizowana zgodnie z rozkładem jednostajnym w obszarze przeszukiwań tzn.
 w hipersześcianie $[-5; 5]^D$. Punkty, które w czasie optymalizacji wyjdą poza obszar
 przeszukiwań, nie są naprawiane. Zewnętrzna funkcja kary opisana w rodziale \ref{sec:zestaw}
@@ -445,7 +598,7 @@ Ze wzlędu na losowość procesu optymalizacji, na każdej funkcji algorytm był
 Z każdego uruchomienia zapisywany był 
 najlepszy wynik. Współczynnik skalujący algorytmu DE/rand/1 ($F$) wynosił $0,9$. 
 W każdym z algorytmów zostało wykorzystane krzyżowanie wymieniające (DE/*/k/bin) z
-prawdopodobieństwem krzyżowania $p_c = 0,9$.
+prawdopodobieństwem krzyżowania $CR = 0,9$.
 
 \section{Implementacja}
 
@@ -570,7 +723,7 @@ W każdym uruchomieniu zliczana była liczba osobników, których jakakolwiek ws
 obszar przeszukiwań zdefiniowany jako $[-5; 5]^D$. Następnie obliczany był stosunek liczby 
 osobników spoza obszaru przeszukiwań do liczby wszystkich wygenerowanych osobników. Jeśli algorytm
 nie znajdywał minimum, wówczas liczba wszystkich generowanych osobników była równa maksymalnej liczbie
-populacji razy $n$, czyli $\frac{FEs}{n} \cdot n = FEs = 10^5D$. W~przypadku nie odnalezienia minimum, 
+populacji razy $\mu$, czyli $\frac{FEs}{\mu} \cdot \mu = FEs = 10^5D$. W~przypadku nie odnalezienia minimum, 
 1\% w 10 wymiarach oznacza, że 
 w trakcie optymalizacji algorytm wygenerował i ocenił 10000 osobników, 
 które na pewno nie mogły być rozwiązaniami optymalnymi,
@@ -1026,9 +1179,30 @@ DE/mid/$\infty$	 & 28 & 26 & 3 & 19 & 0 & 0 & 0     \\ \hline
 
 \chapter{Wnioski}
 
+Biorąc pod uwagę najwyższy zbadany wymiar i wszystkie 7 funkcji testowych,
+końcowy ranking efektywności algorytmów przedstawia się 
+nastepująco:
+
+\begin{enumerate}
+ \item DE/mid/1
+ \item DE/rand/1
+ \item DE/best/1
+ \item DE/mid/2
+ \item DE/rand/2
+ \item DE/best/2
+ \item DE/mid/6, DE/mid/$\infty$, DE/rand/6, DE/rand/$\infty$, DE/best/6, DE/best/$\infty$
+\end{enumerate}
+
+Istnieje jednak nieskończenie wiele funkcji na których DE/mid/1 nie jest najlepszym wyborem, np. rodzina
+funkcji podobnych do funkcji numer 16 -- Weierstrassa. Na takich funkcjach lepiej sprawuje się 
+DE/best/1. Gdyby zbadać wszystkie możliwe funkcje (co nie jest możliwe, jest ich nieskończenie wiele),
+okazałoby się, że żadan algorytm nie jest
+najlepszy. Mówi o tym twierdzenie No Free Lunch, opisane w rozdziale \ref{chap:metodyka}.
+
 \section{Wpływ liczby wymiarów na jakość rozwiązań}
 
-Wraz ze wzrostem liczby wymiarów, algorytm DE/mid/1 sprawuje się coraz lepiej.
+Wraz ze wzrostem liczby wymiarów, algorytm DE/mid/1 sprawuje się coraz lepiej w porównaniu do
+pozostałych algorytmów.
 W~80~wymiarach jednoznacznie wygrywa ze wszystkimi pozostałymi algorytmami na 6~z~7~funkcji testowych.
 Jedynie na funkcji numer 16 przegrywa z DE/best/1 oraz remisuje z~DE/rand/1.
 W~40~wymiarach prowadzenie DE/mid/1 wygląda podobnie, jedynie różnica w~stosunku do DE/rand/1
@@ -1060,9 +1234,9 @@ Na funkcji 15 oraz 19 zawsze zwyciężał DE/mid/1 -- poza jednym remisem z DE/r
 \% osobników poza obszarem przeszukiwań na tych funkcjach dla DE/mid/1 zawsze był najniższy.
 
 Funkcja 16 była najgorsza dla DE/mid/1. W 10 i 20 wymiarach, zawsze wygrywał na niej DE/rand/1,
-zaś w 40 i 80 wymiarach -- DE/best/1. Spośród trójcy DE/rand/1, DE/best/1, DE/mid/1 
-zawsze najniższy \% osobników poza obszarem przeszukiwań miał DE/best/1, potem DE/rand/1, na końcu
-DE/mid/1. 
+zaś w 40 i 80 wymiarach -- DE/best/1. Spośród najlepszej trójki algorytmów (DE/mid/1, DE/best/1,
+DE/rand/1) zawsze najniższy \% osobników poza obszarem przeszukiwań miał DE/best/1, 
+potem DE/rand/1, na końcu DE/mid/1. 
 
 Na funkcji 20 w wymiarach niższych niż 80 zawsze wygrywał DE/rand/1. Dopiero w 80 wymiarze DE/mid/1
 objął prowadzenie. DE/mid/1 zawsze miał najniższy \% osobników poza obszarem przesukiwań.
@@ -1083,9 +1257,9 @@ przeszukiwania testowanych algorytmów. Ich kolejność w rankingu jakości zwra
 zmienia się.
 
 Na funkcji 24 DE/mid/1 przegrał tylko w wymiarze 20 z DE/rand/1, wszystkie pozostałe porównania 
-wygrał. Wszystkie algorytmy na tej funkcji miały niski \% osobników poza obszarem przesukiwań, 
-bliski zeru. Zatem przeszukiwanie w DE/mid/1 może mieć charakter lokalny w skali globalnej 
-oraz charakter globalny w skali lokalnej.
+wygrał. To pokazuje, że przeszukiwanie w DE/mid/1 może mieć charakter lokalny w skali globalnej 
+oraz charakter globalny w skali lokalnej. Wszystkie algorytmy na funkcji 24 miały niski
+\% osobników poza obszarem przesukiwań, bliski zeru. 
 
 \section{Wpływ liczby osobników poza obszarem przeszukiwań na jakość rozwiązań}
 
