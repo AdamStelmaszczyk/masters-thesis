@@ -17,6 +17,9 @@
 \usepackage[sort, compress]{cite}
 \makeatletter\renewcommand{\ALG@name}{Algorytm}
 
+% interlinia 1,5
+\linespread{1.3}
+
 \def\url#1{{ \tt #1}}
 \def\C{{\rm C}\,}
 \def\E{{\rm E}\,}
@@ -98,21 +101,22 @@ Innymi słowy, mając do czynienia z modelem o $D$ parametrach, w procesie optym
 rozwiązaniami wielkości $D$. 
 Algorytmy genetyczne należą do szerszej grupy tzw. algorytmów ewolucyjnych. \cite{jarabas} 
 Zatem ewolucja różnicowa jest algorytmem genetycznym, a to z kolei implikuje, 
-że jest również algorytmem ewolucjnym. DE znajduje zastosowanie zwłaszcza w optymalizacji globalnej 
+że jest również algorytmem ewolucyjnym. 
+
+DE znajduje zastosowanie zwłaszcza w optymalizacji globalnej 
 w przestrzeniach ciągłych. Optymalizacja globalna to zadania znalezienia ekstremum globalnego 
 (minimum bądź maksimum) pewnej nieznanej funkcji, zwanej funkcją celu, bądź funkcją oceny. 
 Funkcja ta jest ,,czarną skrzynką'', tzn. jej dokładna postać analityczna w ogólnym przypadku 
-jest nieznana. W związku z tym analityczne wyznaczenie ekstremów jest nieosiągalne. W przypadku 
-skomplikowanych, wielowymiarowych funkcji znalezienie optimum może być bardzo czasochłonne, 
+jest nieznana. W związku z tym analityczne wyznaczenie ekstremów często jest niemożliwe. W przypadku 
+skomplikowanych, wielowymiarowych funkcji znalezienie dokładnego optimum może być bardzo czasochłonne, 
 a w praktyce wręcz niewykonalne. Wówczas celem jest znalezienie możliwie najlepszego rozwiązania
-suboptymalnego.
-Algorytm optymalizujący wybiera pewne rozwiązanie, następnie poddaje to rozwiązanie 
-ocenie przez funkcję oceniająca, w wyniku czego otrzymuje liczbową wartość (dobroć) 
+suboptymalnego. Algorytm optymalizujący wybiera pewne rozwiązanie, następnie poddaje to rozwiązanie 
+ocenie przez funkcję oceniająca, w wyniku czego otrzymuje liczbową wartość (jakość, dobroć) 
 podanego rozwiązania. 
 
-Przykładowo, ,,czarną skrzynką'' może być pewien program, symulator, który po podaniu 
+Przykładowo, ,,czarną skrzynką'' może być program (symulator), który po podaniu 
 parametrów na wejście przeprowadza jeden eksperyment i zwraca np. liczbę watów wygenerowanych
-przez panele słoneczne. Parametrami wejściowymi są np. kąty nachylenia i prędkości obrotu paneli 
+przez panele słoneczne. Parametrami wejściowymi mogą być kąty nachylenia i prędkości obrotu paneli 
 słonecznych. Panele słoneczne umieszczone są na statku kosmicznym, który krąży po orbicie ziemskiej.
 Przez to niektóre panele rzucają cień na inne, jeśli są źle ustawione. Panele również nie mogą być 
 zbyt długo wystawione na działanie promeini słonecznych, ponieważ może dojść do uszkodzenia. 
@@ -152,6 +156,7 @@ przetwarzany przez algorytm ewolucji różnicowej.
  \item[] $u_i$ -- mutant osobnika o indeksie $i$ w populacji.
  \item[] $o_i$ -- potomek osobnika o indeksie $i$ w populacji.
  \item[] $f$ -- funkcja celu, funkcja przystosowania, optymalizowana funkcja, funkcja testowa.
+ \item[] $\C$ -- macierz kowariancji.
 \end{itemize}
 
 \chapter{Ewolucja różnicowa}
@@ -161,7 +166,7 @@ w przestrzeniach ciągłych zaproponowany w 1995 roku. \cite{storn} Sposób dzia
 przedstawiono na listingu \ref{algorithm:de}.
 
 \begin{algorithm}[!htb]
-\caption{Ewolucja różnicowa}\label{bron1}
+\caption{Ewolucja różnicowa}
 \label{algorithm:de}
 \begin{algorithmic}[1]
 \State Inicjalizacja parametrów $CR, F, \mu$
@@ -236,7 +241,8 @@ oraz wyprowadzono wzory na współczynniki skalujące $F$.
 
 \section{DE/rand}
 
-W DE/rand/1, mutant $i$-tego osobnika w populacji $P$~o~$\mu$~osobnikach powstaje w następujący sposób \cite{decomposition}:
+W DE/rand/1, mutant $i$-tego osobnika w populacji $P$~o~$\mu$~osobnikach powstaje w następujący sposób 
+\cite{decomposition}:
 \begin{equation} \label{eq:derand1}
 u_i = P_{i_1} + F(P_{i_2} - P_{i_3})
 \end{equation}
@@ -295,6 +301,7 @@ F_k = \frac{F}{\sqrt{k}}
 \end{align*}
 
 \subsection{DE/rand/$\infty$}
+\label{sub:de_rand_inf}
 
 Zgodnie z centralnym twierdzeniem granicznym, $\frac{1}{{\sqrt{k}}}\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})$ 
 zbiega według rozkładu do $\mathcal{N}(0, \C[P])$ gdy $k \to \infty$. 
@@ -1177,7 +1184,7 @@ DE/mid/$\infty$	 & 28 & 26 & 3 & 19 & 0 & 0 & 0     \\ \hline
 }
 \end{figure}
 
-\chapter{Wnioski}
+\section{Wnioski}
 
 Biorąc pod uwagę najwyższy zbadany wymiar i wszystkie 7 funkcji testowych,
 końcowy ranking efektywności algorytmów przedstawia się 
@@ -1199,7 +1206,7 @@ DE/best/1. Gdyby zbadać wszystkie możliwe funkcje (co nie jest możliwe, jest 
 okazałoby się, że żadan algorytm nie jest
 najlepszy. Mówi o tym twierdzenie No Free Lunch, opisane w rozdziale \ref{chap:metodyka}.
 
-\section{Wpływ liczby wymiarów na jakość rozwiązań}
+\subsection{Wpływ liczby wymiarów na jakość rozwiązań}
 
 Wraz ze wzrostem liczby wymiarów, algorytm DE/mid/1 sprawuje się coraz lepiej w porównaniu do
 pozostałych algorytmów.
@@ -1210,25 +1217,7 @@ jest mniejsza, z którym to wygrywa na 3 funkcjach, remisuje również na 3, a~n
 W~20~wymiarach zajmuje drugie miejsce, ustępując DE/rand/1.
 W~10~wymiarach było najwięcej remisów, DE/mid/1 był niepokonany na funkcjach numer 15, 19 oraz 24.
 
-\section{Wpływ liczby wymiarów na liczbę osobników poza obszarem przeszukiwań}
-
-Wraz ze wzrostem liczby wymiarów, początkowo średni \% osobników poza obszarem przeszukiwań również 
-wzrasta, będąc najwyższy dla 20 lub 40 wymiarów, w zależności od funkcji. Jednak wraz z dalszym
-wzrostem liczby wymiarów, \% osobników poza obszarem przeszukiwań spada. 
-
-\begin{table}[H]
-\centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-$D$ &f15& 16& 19& 20& 21& 22& 24 \\ \hline
-10              & 6 & 33 &  8 &  0 & 6 & 5 & 0 \\
-20              & 23 & 37 & 11&  5 & 19 & 17 & 0 \\
-40		& 32 & 33 & 18 & 25 & 7 & 6 & 0 \\
-80		& 26 & 28 & 6 & 16 & 3 & 3 & 0 \\
-\end{tabular}
-\caption{Wpływ liczby wymiarów na średni \% osobników poza obszarem przeszukiwań}
-\end{table}
-
-\section{Wpływ optymalizowanych funkcji}
+\subsection{Wpływ optymalizowanych funkcji}
 
 Na funkcji 15 oraz 19 zawsze zwyciężał DE/mid/1 -- poza jednym remisem z DE/rand/1 w 20 wymiarach.
 \% osobników poza obszarem przeszukiwań na tych funkcjach dla DE/mid/1 zawsze był najniższy.
@@ -1261,32 +1250,123 @@ wygrał. To pokazuje, że przeszukiwanie w DE/mid/1 może mieć charakter lokaln
 oraz charakter globalny w skali lokalnej. Wszystkie algorytmy na funkcji 24 miały niski
 \% osobników poza obszarem przesukiwań, bliski zeru. 
 
-\section{Wpływ liczby osobników poza obszarem przeszukiwań na jakość rozwiązań}
+\subsection{Wpływ liczby wymiarów na \% osobników poza obszarem przeszukiwań}
+
+Wraz ze wzrostem liczby wymiarów, początkowo średni \% osobników poza obszarem przeszukiwań również 
+wzrasta, będąc najwyższy dla 20 lub 40 wymiarów, w zależności od funkcji. Jednak wraz z dalszym
+wzrostem liczby wymiarów, \% osobników poza obszarem przeszukiwań spada. 
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ l | c | c | c | c | c | c | c }
+$D$ &f15& 16& 19& 20& 21& 22& 24 \\ \hline
+10              & 6 & 33 &  8 &  0 & 6 & 5 & 0 \\
+20              & 23 & 37 & 11&  5 & 19 & 17 & 0 \\
+40		& 32 & 33 & 18 & 25 & 7 & 6 & 0 \\
+80		& 26 & 28 & 6 & 16 & 3 & 3 & 0 \\
+\end{tabular}
+\caption{Wpływ liczby wymiarów na średni \% osobników poza obszarem przeszukiwań}
+\end{table}
+
+\subsection{Wpływ \% osobników poza obszarem przeszukiwań na jakość rozwiązań}
 
 Im algorytm miał mniejszą liczbę osobników poza obszarem przeszukiwania, tym lepsze osiągał wyniki.
 DE/mid/1 na 6 funkcjach, na których zwyciężył, zawsze miał najniższy \% osobników poza obszarem
 przeszukiwania. W przypadku funkcji 16 -- jedynej na której przegrał -- nie miał. Najniższy \% miał 
-wówczas DE/best/1 i to on zwyciężył w wysokich wymiarach. Istnieje zatem silna dodatnia korelacja
-pomiędzy jakością rozwiązań a zdolnością algorytmu do utrzymywania się w obszarze przeszukiwania.
-Liczba osobników poza obszarem przeszukiwania dochodziła do 47\%, na funkcji 16. To pokazuje,
-jak ważny jest sposób radzenia sobie z takimi punktami. W tej pracy nie 
-naprawiano osobników, stosowano zewnętrzną funkcję kary opisaną w rodziale \ref{sec:zestaw},
+wówczas DE/best/1 i to on zwyciężył w wysokich wymiarach. Istnieje zatem silna korelacja
+pomiędzy jakością rozwiązań a zdolnością algorytmu do utrzymywania się w obszarze przeszukiwań.
+W pracy \cite{boundary} porównano różne sposoby naprawiania rozwiązań i również zauważono, że im mniej
+osobników jest naprawianych, tym algorytm otrzymuje lepsze wyniki.
+
+W tej pracy, liczba osobników poza obszarem przeszukiwania dochodziła do 47\%, na funkcji 16. To pokazuje,
+jak ważny jest sposób radzenia sobie z takimi punktami. W eksperymentach nie 
+naprawiano osobników, stosowano natomiast zewnętrzną funkcję kary opisaną w rodziale \ref{sec:zestaw},
 zgodnie z wytycznymi BBOB2013. Wyniki na poziomie 47\% pokazują, że funkcja kary nie jest 
-skuteczną metodą. Prawdopodobnie efektywność wszystkich algorytmów możnaby znacząco poprawić 
-stosując sposoby naprawiania punktów opisane w \cite{boundary}.
- 
-\section{Wpływ symetryczności rozkładu mutantów}
+skuteczną metodą. Prawdopodobnie efektywność wszystkich algorytmów można znacząco poprawić 
+stosując sposoby naprawiania punktów opisane w \cite{boundary}, np. ponowne próbkowanie (resampling).
+
+\subsection{Wpływ symetryczności rozkładu mutantów}
 
 mid, best - symetryczny, rand - niesymetryczny.
 
-\section{Wpływ liczby par wektów różnicowych $k$}
+\subsection{Wpływ liczby par wektów różnicowych $k$}
 
-$k = 1$ najlepsze. Im wyższe, tym gorzej.
+Algorytmy dla $k = 6$ zachowywały się identycznie jak dla $k = \infty$. Jest to wynik zgodny
+z rozważaniami teoretycznymi przedstawionymi w \cite{decomposition}. 
+W przypadku $k = 6$ w mutacji sumujemy aż 12 wektorów różnicowych,
+czyli 12 niezależnych zmiennych. Na mocy centralnego twierdzenia granicznego,
+im większe $k$, tym rozkład sumy coraz bardziej przypomina wielowymiarowy rozkład normalny,
+a zatem przypadek $k=\infty$. Zostało to dokładnie opisane w rozdziale \ref{sub:de_rand_inf}.
+Wydajne losowanie zmiennych o rozkładzie wielowymiarowym normalnym, o zadanej
+macierzy kowariancji, było zadaniem trudnym do implementacji w Javie.
+Dla każdego populacji, najpierw trzeba wyznaczyć jej macierz kowariancji, a następnie macierz
+tą trzeba rozłożyć. Macierz kowariancji często nie była dodatnie określona, 
+dlatego dekompozycja Choleskiego nie mogła zostać użyta.
+Dlatego wykorzystano rozkład macierzy na wektory i wartości własne -- metodę ogólniejszą, jednak
+bardziej kosztowną obliczeniowo. Operator mutacji w DE/mid/$\infty$ wykonuje się o wiele
+wolniej od operatora mutacji w DE/mid/6, a ponieważ mutacja jest powtarzana miliony
+razy, ogólna wydajność DE/mid/$\infty$ prezentuje się zdecydowanie najgorzej na tle pozostałych.
+Z powodu braku różnic w jakości otrzymywanych rozwiązań, algorytmy z $k = 6$ są lepszym wyborem
+z praktycznego punktu widzenia.
 
-Algorytmy z $k = 6$ zachowują się tak samo jak dla $k = \infty$. Zgodność praktyki z teorią, 
-potwierdza poprawność implementacji.
+Natomiast ogólnie najlepszą wartością dla $k$ było 1. Im wyższe $k$, tym algorytm spisywał się gorzej.
+Relacja pomiędzy DE/mid, DE/rand oraz DE/best, dla większości funkcji pozostawała taka sama, 
+niezależnie od $k$. Tzn. DE/mid był zazwyczaj najlepszy, DE/rand drugi, zaś DE/best najgorszy
+dla takiego samego $k$. $k = 1$ nie przypomina rozkładu normalnego, natomiast $k = 6$ imituje go 
+niemal idealnie, zaobserwować to można na rysunku \ref{fig:10k}. Przedstawia on 10 tysięcy mutantów
+w dwóch wymiarach wygenerowanych z tej samej populacji początkowej, przedstawionej na rysunku 
+\ref{fig:10k_start}. Populacja początkowa zawierała 20 punktów, przy czym 18 z nich leżało 
+niemal w jednej linii na osi $y = 0$. Jedynie 2 punkty wprowadzały pewną różnorodność: jeden 
+o $y = 2.5$ oraz jeden o $y = -2.5$. Cenne są mutanty, które sięgają
+na tyle daleko, że umożliwiają wyjście z lokalnego optimum. Ciągłe próbkowanie okolicznych,
+już zbadanych obszarów, nie przynosi korzyści. Liczba mutantów,
+dla których $|y| > 5$, na rysunku \ref{fig:10k} znacznie się różni. Dla DE/rand/1
+wynosi ona 75, natomiast dla DE/rand/6 zaledwie y. Nie jest to kwestią przypadku, wyniki
+powtórzono i uśredniono wielokrotnie.
 
-\section{Kierunki dalszego rozwoju}
+\begin{figure}[H]
+\centering
+\includegraphics[width=.5\textwidth]{img/pop} 
+\caption{20 punktów populacji początkowej} 
+\label{fig:10k_start}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\mbox{
+\includegraphics[width=.5\textwidth]{img/pop_10000_r1}
+\includegraphics[width=.5\textwidth]{img/pop_10000_r6}  
+}
+\caption{Po lewej 10 tysięcy mutantów dla DE/rand/1. Po prawej 10 tysięcy mutantów dla DE/rand/6.} 
+\label{fig:10k}
+\end{figure}
+
+Podczas mutacji DE/rand/1 zazwyczaj powstawał jeden mutant, którego $y$~równało się aż 7.5. 
+Żeby tak się zdarzyło, najpierw wylosowany musi zostać osobnik o $y = 2.5$.
+Prawdopodobieństwo takiego zdarzenia wynosi $\frac{1}{20}$.
+Następnie musi zostać wylosowany wektor różnicowy o~długości 5. Tylko jedna para punktów 
+dawała taki wektor --
+pierwszy punkt o $y = 2.5$, drugi punkt o $y = -2.5$. 
+Prawdopodobieństwo wylosowania takiej pary wynosiło $\frac{1}{400}$. 
+Zatem łączne prawdopodobieństwo powstania mutanta 
+$y = 7.5$ dla DE/rand/1 wynosiło $\frac{1}{8000}$. 
+
+Rozkład prawdopodobieństwa mutantów dla DE/rand/6 jest bardzo zbliżony do DE/rand/$\infty$.
+Na początku również wylosowany musi zostać osobnik o $y = 2.5$. Następnie
+trzeba wygenerować zmienną losową o rozkładzie normalnym, której wartość w drugim wymiarze 
+przekroczy 5. Macierz kowariancji populacji początkowej  
+$\C[P]$ wynosiła $\left[ \begin{array}{ c c }
+  35.1798210 & -0.2902915 \\
+  -0.2902915 &  0.6719438
+\end{array} \right]$.
+Wektor średnich~$m=\left[ \begin{array}{ c c } 10.463749675 & 0.004673205 \end{array} \right]$.
+Szukanym prawdopodobieństwem jest $1 - F(\infty, 5) = 5.5 \cdot 10^{-10}$, gdzie $F$ to
+dystrybuanta wielowymiarowego rozkładu $\mathcal{N}(m, \C[P])$.\footnote{Wartość $5.5 \cdot 10^{-10}$
+wyznaczono przy pomocy funkcji \texttt{pmvnorm} języka R. Błąd oszacowania wynosił $2 \cdot 10^{-16}$.} 
+Prawdopodobieństwo $5.5 \cdot 10^{-10}$ jest rzędy wielkości mniejsze w porównaniu do
+$\frac{1}{8000} = 1.25 \cdot 10^{-4}$.
+
+\subsection{Kierunki dalszego rozwoju}
 
 \appendix
 
