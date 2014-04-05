@@ -132,9 +132,17 @@ W optymalizacji ciągłej zbiór możliwych rozwiązań jest nieskończony. Zaws
 leżące pomiędzy dwoma innymi. Autorzy DE wskazali, że algorytm ten jest przeznaczony do 
 optymalizacji problemów ciągłych. \cite{storn}
 
-Podstawowym celem pracy była szczegółowa analiza oraz porównanie nowego wariantu ewolucji różnicowej 
-nazwanego DE/mid do dwóch znanych odmian -- DE/rand oraz DE/best. Eksperymenty wykazały przewagę
+\section{Cel pracy}
+
+Podstawowym celem pracy była poprawa efektywności algorytmu ewolucji różnicowej.
+Wiązało się to ze szczegółową analizą i przetestowaniem istniejących wariantów -- DE/rand oraz DE/best,
+a następnie zapronowanie lepszej metody. Nowy wariant nazwany DE/mid został porównany 
+do znanych wariantów, eksperymenty wykazały znaczną przewagę
 DE/mid na 6 z 7 wielowymiarowych funkcji testowych.
+
+\section{Układ pracy}
+
+Co gdzie jest.
 
 \section{Słownik pojęć i oznaczeń}
 
@@ -158,6 +166,11 @@ przetwarzany przez algorytm ewolucji różnicowej.
  \item[] $f$ -- funkcja celu, funkcja przystosowania, optymalizowana funkcja, funkcja testowa.
  \item[] $\C$ -- macierz kowariancji.
 \end{itemize}
+
+\chapter{Algorytm ewolucyjny}
+
+Podprowadzenie pod DE, schemat, zasada działania, problem z parametrami, sposoby radzenia sobie z tym
+problemem - metody samoadaptacji 
 
 \chapter{Ewolucja różnicowa}
 
@@ -240,6 +253,7 @@ W poniższych podrozdziałach przedstawiono operatory mutacji dla DE/rand/k, DE/
 oraz wyprowadzono wzory na współczynniki skalujące $F$.
 
 \section{DE/rand}
+\label{chap:de_rand} 
 
 W DE/rand/1, mutant $i$-tego osobnika w populacji $P$~o~$\mu$~osobnikach powstaje w następujący sposób 
 \cite{decomposition}:
@@ -249,7 +263,7 @@ u_i = P_{i_1} + F(P_{i_2} - P_{i_3})
 
 $i_1, i_2, i_3$ to indeksy wylosowane zgodnie z rozkładem jednostajnym ze zbioru \\ 
 $\{0, 1, \dots, \mu-1\}$. Zatem $P_{i_1}, P_{i_2}, P_{i_3}$ to rozwiązania wylosowane zgodnie z rozkładem jednostajnym z populacji $P$.
-$F\in\mathbb{R_+}$ to współczynnik skalujący, w tej pracy ustalony na 0,9. \\
+$F\in\mathbb{R_+}$ to współczynnik skalujący zasięg mutacji. 
 
 DE/rand/1 można uogólnić na DE/rand/k, w którym dodawanych jest
 $k \in \mathbb{N}$ wektorów różnicowych:
@@ -320,7 +334,23 @@ F_\infty^2 = 2F^2 \\
 F_\infty = \sqrt{2}F
 \end{align*}
 
-\section{DE/mid}
+\section{DE/best}
+
+DE/best jest podobny do DE/mid, opisanego w rozdziale \ref{chap:de_mid}. 
+Jedyną różnicą jest przesuwanie najlepszego punktu
+w bieżącej populacji zamiast punktu środkowego. Obliczane są wartości
+funkcji oceny dla wszystkich osobników w populacji i punkt o najmniejszej wartości (przy minimalizacji)
+jest traktowany jako najlepszy.
+
+Współczynniki skalujące dla DE/best są identyczne jak dla DE/mid, ponieważ w obu tych wariantach,
+w iteracji dla bieżącej populacji, zawsze przesuwany jest ten sam, ustalony punkt. W DE/rand
+przesuwany punkt jest za każdym razem losowany, przez co jest bardziej zmienny (ma większą wariancję).
+Z tego powodu DE/mid oraz DE/best potrzebują większych współczynników skalujących niż DE/rand.
+
+\chapter{DE/mid -- nowy wariant ewolucji różnicowej}
+\label{chap:de_mid}
+
+Racjonalne uzasadnienie tego wariantu.
 
 W DE/mid/k mutant powstaje w następujący sposób:
 
@@ -328,13 +358,14 @@ W DE/mid/k mutant powstaje w następujący sposób:
 u_i'' = m + F_m\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})
 \end{equation}
 
-Jedyną różnicą w porównaniu do DE/rand/k jest $m$, czyli punkt środkowy populacji:
+Jedyną różnicą w porównaniu do DE/rand/k opisanego w rozdziale \ref{chap:de_rand} jest $m$, czyli punkt środkowy populacji:
 \begin{equation} \label{eq:midpoint}
 m = \frac{1}{\mu}\sum\limits_{j=1}^n P_j
 \end{equation}
 
-$F_m\in\mathbb{R_+}$ jest współczynnikiem skalującym dla DE/mid/k, analogicznym do $F$ dla DE/rand/1. 
-Żeby macierz kowariancji populacji w DE/mid była taka sama jak w DE/rand/1, 
+$F_m\in\mathbb{R_+}$ jest współczynnikiem skalującym dla DE/mid/k, analogicznym do $F$ 
+w przypadku DE/rand/1. 
+Żeby macierz kowariancji populacji w DE/mid była taka sama jak w~DE/rand/1, 
 macierz kowariancji mutanta $u_i''$ musi być taka sama jak macierz kowariancji mutanta $u_i$.
 Można to osiągnąć tak dobierając $F_m$, żeby było spełnione równanie:
 \begin{equation} \label{eq:rownanie}
@@ -369,17 +400,15 @@ W~DE/mid przesuwany jest punkt środkowy $m$ zamiast losowo wybranego osobnika $
 Punkt środkowy jest mniej zmienny, 
 tzn. norma macierzy kowariancji punktu środkowego jest mniejsza niż norma macierzy kowariancji dowolnego osobnika.
 $\lim_{n\to\infty} \C[m] = \textbf{0}$, natomiast $\C[P_{i_1}] = \C[P]$.
-Dlatego DE/mid/k zawsze potrzebuje większego współczynnika skalującego niż DE/rand/k. \\
+Dlatego DE/mid/k zawsze potrzebuje większego współczynnika skalującego niż DE/rand/k.
 
-\subsection{DE/mid/$\infty$}
-
-Równanie mutanta DE/mid/$\infty$ można zapisać w następujący sposób:
+Przechodząc z $k$ do nieskończoności, równanie mutanta DE/mid/$\infty$ można zapisać
+w następujący sposób:
 \begin{align*}
 u_i'^\infty = m + F_{\infty_m} \cdot v_\infty
 \end{align*}
 
-Gdzie $F_{\infty_m}$ jest równe $\sqrt{2F^2 + 1 - \frac{1}{\mu}}$:
-
+Gdzie $F_{\infty_m}$ jest równe $\sqrt{2F^2 + 1 - \frac{1}{\mu}}$, ponieważ:
 \begin{align*}
 \C[u_i'] = \C[m + F_{\infty_m} \cdot v_\infty] \overset{(\ref{eq:macierz_kow_mutanta})}{=} \C[P](2F^2 + 1) \\
 \C[m] + C[F_{\infty_m} \cdot v_\infty] = \C[P](2F^2 + 1) \\
@@ -387,19 +416,7 @@ Gdzie $F_{\infty_m}$ jest równe $\sqrt{2F^2 + 1 - \frac{1}{\mu}}$:
 F_{\infty_m} = \sqrt{2F^2 + 1 - \frac{1}{\mu}}
 \end{align*}
 
-\section{DE/best}
-
-DE/best jest bardzo podobny do DE/mid. Jedyną różnicą jest przesuwanie najlepszego punktu
-w bieżącej populacji zamiast punktu środkowego. Obliczane są wartości
-funkcji oceny dla wszystkich osobników w populacji i punkt o najmniejszej wartości (przy minimalizacji)
-jest traktowany jako najlepszy.
-
-Współczynniki skalujące dla DE/best są identyczne jak dla DE/mid, ponieważ w obu tych wariantach,
-w iteracji dla bieżącej populacji, zawsze przesuwany jest ten sam, ustalony punkt. W DE/rand
-przesuwany punkt jest za każdym razem losowany, przez co jest bardziej zmienny (ma większą wariancję).
-Z tego powodu DE/mid oraz DE/best potrzebują większych współczynników skalujących niż DE/rand.
-
-\section{Podsumowanie}
+\section{Współcznniki skalujące}
 
 Tabela \ref{table:wspolczynniki} podsumowuje wyprowadzone współczynniki skalujące dla wszystkich
 wariantów algorytmów analizowanych w tej pracy.
@@ -1302,27 +1319,30 @@ macierzy kowariancji, było zadaniem trudnym do implementacji w Javie.
 Dla każdego populacji, najpierw trzeba wyznaczyć jej macierz kowariancji, a następnie macierz
 tą trzeba rozłożyć. Macierz kowariancji często nie była dodatnie określona, 
 dlatego dekompozycja Choleskiego nie mogła zostać użyta.
-Dlatego wykorzystano rozkład macierzy na wektory i wartości własne -- metodę ogólniejszą, jednak
+Z tego powodu wykorzystano rozkład macierzy na wektory i wartości własne -- metodę ogólniejszą, jednak
 bardziej kosztowną obliczeniowo. Operator mutacji w DE/mid/$\infty$ wykonuje się o wiele
-wolniej od operatora mutacji w DE/mid/6, a ponieważ mutacja jest powtarzana miliony
-razy, ogólna wydajność DE/mid/$\infty$ prezentuje się zdecydowanie najgorzej na tle pozostałych.
-Z powodu braku różnic w jakości otrzymywanych rozwiązań, algorytmy z $k = 6$ są lepszym wyborem
-z praktycznego punktu widzenia.
+wolniej od operatora mutacji w DE/mid/6, a~ponieważ mutacja jest powtarzana miliony
+razy, ogólna wydajność DE/mid/$\infty$ prezentuje się zdecydowanie najgorzej na tle pozostałych
+algorytmów. Z powodu braku różnic w jakości otrzymywanych rozwiązań,
+ algorytmy z $k = 6$ są lepszym wyborem z praktycznego punktu widzenia.
 
 Natomiast ogólnie najlepszą wartością dla $k$ było 1. Im wyższe $k$, tym algorytm spisywał się gorzej.
 Relacja pomiędzy DE/mid, DE/rand oraz DE/best, dla większości funkcji pozostawała taka sama, 
-niezależnie od $k$. Tzn. DE/mid był zazwyczaj najlepszy, DE/rand drugi, zaś DE/best najgorszy
-dla takiego samego $k$. $k = 1$ nie przypomina rozkładu normalnego, natomiast $k = 6$ imituje go 
-niemal idealnie, zaobserwować to można na rysunku \ref{fig:10k}. Przedstawia on 10 tysięcy mutantów
-w dwóch wymiarach wygenerowanych z tej samej populacji początkowej, przedstawionej na rysunku 
-\ref{fig:10k_start}. Populacja początkowa zawierała 20 punktów, przy czym 18 z nich leżało 
-niemal w jednej linii na osi $y = 0$. Jedynie 2 punkty wprowadzały pewną różnorodność: jeden 
-o $y = 2.5$ oraz jeden o $y = -2.5$. Cenne są mutanty, które sięgają
-na tyle daleko, że umożliwiają wyjście z lokalnego optimum. Ciągłe próbkowanie okolicznych,
-już zbadanych obszarów, nie przynosi korzyści. Liczba mutantów,
-dla których $|y| > 5$, na rysunku \ref{fig:10k} znacznie się różni. Dla DE/rand/1
-wynosi ona 75, natomiast dla DE/rand/6 zaledwie y. Nie jest to kwestią przypadku, wyniki
-powtórzono i uśredniono wielokrotnie.
+niezależnie od $k$, tzn. DE/mid był zazwyczaj najlepszy, DE/rand drugi, zaś DE/best najgorszy
+dla takiego samego $k$. Rozkład mutantów dla $k = 1$ nie przypomina rozkładu normalnego, 
+natomiast dla $k = 6$ już upodabnia się do niego, zaobserwować to można na rysunkach \ref{fig:10k}. 
+Przedstawiają one 10 tysięcy mutantów wygenerowanych z tej samej, dwuwymiarowej populacji początkowej.
+Po lewej stronie użyto mutacji DE/rand/1, po prawej DE/rand/6. Wspołczynnik skalujący $F$ dla 
+DE/rand/1 wynosił 1, dla DE/rand/6 (zgodnie z tabelą \ref{table:wspolczynniki}) $\frac{1}{\sqrt{6}}$.
+Populacja początkowa przedstawiona na rysunku \ref{fig:10k_start} zawierała 20 punktów, 
+przy czym 18 z nich leżało niemal w jednej linii na osi $y = 0$. 
+Jedynie 2 punkty wprowadzały większą różnorodność 
+w wymiarze $y$: jeden o $y = 2.5$ oraz jeden o~$y = -2.5$. Liczba mutantów,
+dla których $|y| > 5$, znacznie się różniła. Dla DE/rand/1 było to 75 mutantów,
+natomiast dla DE/rand/6 -- 19. Obliczenia
+powtórzono i uśredniono wielokrotnie, aby wyelimonować czynnik losowy. Mutanty, które sięgają
+na tyle daleko, że umożliwiają wyjście z lokalnego optimum, są bardzo cenne. 
+Ciągłe próbkowanie okolicznych, już zbadanych obszarów, na ogół nie przynosi korzyści. 
 
 \begin{figure}[H]
 \centering
@@ -1341,32 +1361,44 @@ powtórzono i uśredniono wielokrotnie.
 \label{fig:10k}
 \end{figure}
 
-Podczas mutacji DE/rand/1 zazwyczaj powstawał jeden mutant, którego $y$~równało się aż 7.5. 
-Żeby tak się zdarzyło, najpierw wylosowany musi zostać osobnik o $y = 2.5$.
+Ponadto, podczas mutacji DE/rand/1 zazwyczaj powstawał jeden mutant o $y > 7.5$. 
+Żeby tak się zdarzyło, najpierw wylosowany musi zostać osobnik $P_{i_1}$ o $y = 2.5$.
 Prawdopodobieństwo takiego zdarzenia wynosi $\frac{1}{20}$.
 Następnie musi zostać wylosowany wektor różnicowy o~długości 5. Tylko jedna para punktów 
 dawała taki wektor --
 pierwszy punkt o $y = 2.5$, drugi punkt o $y = -2.5$. 
 Prawdopodobieństwo wylosowania takiej pary wynosiło $\frac{1}{400}$. 
-Zatem łączne prawdopodobieństwo powstania mutanta 
+Zatem łączne prawdopodobieństwo powstania mutanta o
 $y = 7.5$ dla DE/rand/1 wynosiło $\frac{1}{8000}$. 
 
-Rozkład prawdopodobieństwa mutantów dla DE/rand/6 jest bardzo zbliżony do DE/rand/$\infty$.
-Na początku również wylosowany musi zostać osobnik o $y = 2.5$. Następnie
-trzeba wygenerować zmienną losową o rozkładzie normalnym, której wartość w drugim wymiarze 
-przekroczy 5. Macierz kowariancji populacji początkowej  
+Dla DE/rand/6 prawdopodobieństwo powstania mutanta o $y > 7.5$ jest znacznie mniejsze.
+W celu oszacowania, przyjęto dla uproszczenia, że rozkład prawdopodobieństwa mutantów dla
+DE/rand/6 jest wystarczająco zbliżony do DE/rand/$\infty$.
+Zgodnie z opisem w rozdziale \ref{sub:de_rand_inf}, na początku wylosowany musi zostać osobnik 
+$P_{i_1}$ o $y = 2.5$. Następnie musi zostać wygenerowana zmienna losowa 
+$v_\infty$ o rozkładzie normalnym, której wartość w wymiarze $y$
+przekroczy $5\sqrt{6} \approx 12.25$. Macierz kowariancji populacji początkowej  
 $\C[P]$ wynosiła $\left[ \begin{array}{ c c }
   35.1798210 & -0.2902915 \\
   -0.2902915 &  0.6719438
 \end{array} \right]$.
 Wektor średnich~$m=\left[ \begin{array}{ c c } 10.463749675 & 0.004673205 \end{array} \right]$.
-Szukanym prawdopodobieństwem jest $1 - F(\infty, 5) = 5.5 \cdot 10^{-10}$, gdzie $F$ to
-dystrybuanta wielowymiarowego rozkładu $\mathcal{N}(m, \C[P])$.\footnote{Wartość $5.5 \cdot 10^{-10}$
-wyznaczono przy pomocy funkcji \texttt{pmvnorm} języka R. Błąd oszacowania wynosił $2 \cdot 10^{-16}$.} 
-Prawdopodobieństwo $5.5 \cdot 10^{-10}$ jest rzędy wielkości mniejsze w porównaniu do
-$\frac{1}{8000} = 1.25 \cdot 10^{-4}$.
+Prawdopodobieństwo wylosowania zmiennej o~$y > 5\sqrt{6}$ wynosi 
+$1 - F(\infty, 5\sqrt{6}) \approx 0$.\footnote{Wartość ta jest tak mała,
+że w reprezentacji liczb podwójnej precyzji użytych przy wywołaniu funkcji \texttt{pmvnorm} języka R
+została uznana za 0.} $F$ to
+dystrybuanta wielowymiarowego rozkładu $\mathcal{N}(m, \C[P])$.
+Całowite prawdopodobieństwo wylosowanie mutanta o $y > 7.5$ dla DE/rand/6 jest zatem 
+znacznie mniejsze w porównaniu do
+$\frac{1}{8000}$ dla DE/rand/1.
+Gdyby pierwszym wylosowanym punktem $P_{i_1}$ nie był ten o $y = 2.5$, tylko np. któryś 
+z leżący blisko osi $y = 0$, wówczas mutacja DE/rand/6 musiałaby wygenerować zmienną
+o wartości $y$ większej niż $7.5\sqrt{6} \approx 18.37$. 
+Prawdobieństwo takiego zdarzenia również jest bliskie zeru.
 
-\subsection{Kierunki dalszego rozwoju}
+\chapter{Podsumowanie}
+
+\section{Kierunki dalszego rozwoju}
 
 \appendix
 
