@@ -1,17 +1,88 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
-\bibitem{opara}
-Jaros{\l}aw Arabas and Karol Opara.
-\newblock Decomposition and metaoptimization of mutation operator in
-  differential evolution.
+\bibitem{jarabas}
+Jaros{\l}aw Arabas.
+\newblock {\em Wyk{\l}ady z algorytm{\'o}w ewolucyjnych}.
+\newblock WNT, Warszawa, 2001.
+
+\bibitem{decomposition}
+Jaros{\l}aw Arabas,  Karol Opara.
+\newblock \emph{Decomposition and Metaoptimization of Mutation Operator in
+  Differential Evolution}.
 \newblock {\em Swarm and Evolutionary Computation}, (LNCS 7269), 2012.
 
-\bibitem{hansen}
-Nikolaus Hansen, Anne Auger, Steffen Finck, and Raymond Ros.
-\newblock Real-parameter black-box optimization benchmarking: Experimental
-  setup.
+\bibitem{boundary}
+Jaros{\l}aw Arabas, Adam Szczepankiewicz, Tomasz Wroniak.
+\newblock \emph{Experimental Comparison of Methods to Handle Boundary
+  Constraints in Differential Evolution}.
+\newblock {\em Proceedings of the 11th International Conference on Parallel
+  Problem Solving from Nature: Part II}, PPSN'10, strony 411--420, Berlin,
+  Heidelberg, 2010. Springer-Verlag.
+
+\bibitem{noiseless}
+Anne Auger, Steffen Finck, Nikolaus Hansen, Raymond Ros.
+\newblock \emph{Real-Parameter Black-Box Optimization Benchmarking 2010:
+  Presentation of the Noiseless Functions}.
+\newblock 2013.
+\newblock
+  {\url{http://coco.lri.fr/downloads/download13.09/bbobdocfunctions.pdf}}.
+
+\bibitem{noisy}
+Anne Auger, Steffen Finck, Nikolaus Hansen, Raymond Ros.
+\newblock \emph{Real-Parameter Black-Box Optimization Benchmarking 2010:
+  Presentation of the Noisy Functions}.
+\newblock 2013.
+\newblock
+  {\url{http://coco.lri.fr/downloads/download13.09/bbobdocfunctions.pdf}}.
+
+\bibitem{setup}
+Anne Auger, Steffen Finck, Nikolaus Hansen, Raymond Ros.
+\newblock \emph{Real-Parameter Black-Box Optimization Benchmarking:
+  Experimental Setup}.
 \newblock 2013.
 \newblock
   {\url{http://coco.lri.fr/downloads/download13.09/bbobdocexperiment.pdf}}.
+
+\bibitem{brest}
+Janez Brest, Saso Greiner, Borko Boskovic, Marjan Mernik, Viljem Zumer.
+\newblock \emph{Self-Adapting Control Parameters in Differential Evolution: A
+  Comparative Study on Numerical Benchmark Problems}.
+\newblock wolumen~10, strony 646--657. IEEE Press, 2006.
+
+\bibitem{lowry}
+Richard Lowry.
+\newblock \emph{Concepts \& Applications of Inferential Statistics}.
+\newblock {\url{http://vassarstats.net/textbook/ch12a.html}}.
+
+\bibitem{mann}
+Henry~B. Mann,  Donald~R. Whitney.
+\newblock \emph{On a Test of Whether one of Two Random Variables is
+  Stochastically Larger than the Other}.
+\newblock {\em Annals of Mathematical Statistics}, wolumen~18, strony 50--60,
+  1947.
+
+\bibitem{storn}
+Rainer Storn,  Kenneth Price.
+\newblock \emph{Differential Evolution - A simple and efficient adaptive scheme
+  for global optimization over continuous spaces}.
+\newblock 1995.
+
+\bibitem{szarek}
+Tomasz Szarek.
+\newblock \emph{O wymiarze wykresu funkcji nigdzie nier{\'o}żniczkowalnej}.
+\newblock {\em Wiadomo{\'s}ci Matematyczne}, wolumen~42, Pozna{\'n}, 2006.
+  Polskie Towarzystwo Matematyczne.
+
+\bibitem{lunch}
+David~H. Wolpert,  William~G. Macready.
+\newblock \emph{No free lunch theorems for optimization}.
+\newblock {\em IEEE Transactions On Evolutionary Computation}, wolumen~1,
+  strony 67--82, 1997.
+
+\bibitem{zaharie}
+Daniela Zaharie.
+\newblock \emph{Differential Evolution: from Theoretical Analysis to Practical
+  Insights}.
+\newblock 2012.
 
 \end{thebibliography}
