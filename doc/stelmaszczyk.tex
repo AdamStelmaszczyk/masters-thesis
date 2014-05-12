@@ -12,6 +12,7 @@
 \usepackage{polski}
 \usepackage[pdftex, bookmarks=false]{hyperref}
 \usepackage[table]{xcolor}
+\usepackage{tikz}
 \usepackage[T1]{fontenc}
 \usepackage[utf8x]{inputenc}
 \usepackage[sort, compress]{cite}
@@ -95,8 +96,9 @@
 
 \chapter{Wstęp}
 
-Ewolucja różnicowa (ang. differential evolution, DE) to algorytm przeznaczony do optymalizacji globalnej 
-w przestrzeniach ciągłych \cite{storn}. Optymalizacja globalna to zadania znalezienia ekstremum 
+Ewolucja różnicowa (ang. differential evolution, DE) jest algorytmem przeznaczonym 
+do optymalizacji globalnej 
+w przestrzeniach ciągłych \cite{storn}. Optymalizacja globalna jest zadaniem znalezienia ekstremum 
 globalnego (minimum bądź maksimum) pewnej funkcji, zwanej funkcją celu, bądź funkcją oceny. 
 Funkcja ta jest ,,czarną skrzynką'', tzn. jej dokładna postać analityczna w ogólnym przypadku 
 jest nieznana. W związku z tym analityczne wyznaczenie ekstremów często jest niemożliwe. W przypadku 
@@ -116,14 +118,7 @@ To wprowadza kłopotliwe ograniczenia w przestrzeni przeszukiwań.
 Symulator przeprowadza kosztowne obliczenia, żeby zwrócić całkowitą liczbę watów wygerenowanych
 przez panele w ciągu pełnego obiegu wokół Ziemi. 
 
-Przykład paneli słonecznych jest przykładem optymalizacji ciągłej, ponieważ parametry takie jak kąt,
-prędkość itp. są liczbami rzeczywistymi. Zupełnie innym rodzajem optymalizacji jest optymalizacja 
-dyskretna, w której to parametry są liczbami całkowitymi, np. problem plecakowy.
-W optymalizacji dyskretnej, biorąc pod uwagę występujące ograniczenia,
-np. maksymalną pojemność, zbiór możliwych rozwiązań jest skończony. 
-W optymalizacji ciągłej zbiór możliwych rozwiązań jest nieskończony. Zawsze można wskazać rozwiązanie 
-leżące pomiędzy dwoma innymi. Autorzy DE wskazali, że algorytm ten jest przeznaczony do 
-optymalizacji problemów ciągłych. \cite{storn}
+
 
 Algorytm ewolucji różnicowej może mieć wiele postaci (wariantów), w zależności od używanych
 operatorów genetycznych -- mutacji oraz krzyżowania. 
@@ -134,7 +129,7 @@ tak aby jakość zwracanych wyników była jak największa.
 
 Podstawowym celem pracy była poprawa efektywności algorytmu ewolucji różnicowej.
 Wiązało się to ze szczegółową analizą i przetestowaniem istniejących wariantów algorytmu,
-a następnie zapronowanie lepszej metody. Nowy wariant nazwany DE/mid został porównany 
+a następnie zapronowaniem lepszej metody. Nowy wariant, nazwany DE/mid, został porównany 
 do dwóch znanych odmian -- DE/rand oraz DE/best. 
 Wyniki eksperymentów wskazały na znaczną przewagę DE/mid na 6 z 7 wielowymiarowych funkcji testowych.
 
@@ -178,31 +173,29 @@ się sposób ich testowania (opisany w rozdziale \ref{sec:zestaw}).
  \item[] $u_i$ -- mutant osobnika o indeksie $i$ w populacji.
  \item[] $o_i$ -- potomek osobnika o indeksie $i$ w populacji.
  \item[] $F$ (ang. Factor) -- współczynnik skalujący, parametr ewolucji różnicowej sterujący zasięgiem mutacji.
- \item[] $CR$ (ang. Crossover Rate) -- prawdopodobieństwo krzyżowania, parametr ewolucji różnicowej sterujący częstością krzyżowań.
+ \item[] $CR$ (ang. Crossover Rate) -- prawdopodobieństwo krzyżowania, parametr algorytmów ewolucyjnych sterujący częstością krzyżowań.
  \item[] $f$ -- funkcja celu, funkcja przystosowania, optymalizowana funkcja, funkcja testowa.
  \item[] $f_\text{opt}$ -- optymalna wartość $f$, tzn. minimum podczas minimalizacji lub maksimum podczas maksymalizacji.
- \item[] $\C[P]$ -- macierz kowariancji populacji $P$.
+ \item[] $\C[u]$ -- macierz kowariancji rozkładu zmiennej losowej $u$.
 \end{itemize}
 
-\chapter{Algorytm ewolucyjny}
+\chapter{Ewolucja różnicowa}
 
-W algorytmie ewolucyjnym rozwiązania reprezentowane są jako tablice liczb rzeczywistych \cite{jarabas}. 
-Przy optymalizacji funkcji celu o $D$ wymiarach, rozwiązanie to tablica długości $D$.
-Innymi słowy, mając do czynienia z modelem o $D$ parametrach, w procesie optymalizacji operujemy 
-rozwiązaniami wielkości $D$. 
-Podzbiorem algorytmów ewolucyjnych są algorytmy genetyczne.
-Ewolucja różnicowa jest algorytmem genetycznym, a zatem jest jest również algorytmem ewolucyjnym. 
+\section{Algorytm ewolucyjny}
+
+W algorytmie ewolucyjnym punkty przestrzeni przeszukiwań
+reprezentowane są jako tablice liczb rzeczywistych \cite{jarabas}. 
 Zasadę działania algorytmu ewolucyjnego przedstawiano na listingu \ref{algorithm:ea}.
 
-\begin{algorithm}[!htb]
+\begin{algorithm}[H]
 \caption{Algorytm ewolucyjny}
 \label{algorithm:ea}
 \begin{algorithmic}[1]
 \State Inicjalizacja parametrów $CR, \mu$
-\State Inicjalizacja populacji początkowej $P^0 \gets \{P^0_1, P^0_2, \ldots, P^0_\mu\}$
-\State $t \gets 0$
+\State Inicjalizacja populacji początkowej $P^1 \gets \{P^1_1, P^1_2, \ldots, P^1_{\mu}\}$
+\State $t \gets 1$
 \While{kryterium stopu nie zostało spełnione}
-  \ForAll{$i \in \{ 0, 1, \ldots, \mu - 1 \}$}
+  \ForAll{$i \in \{ 1, 2, \ldots, \mu \}$}
     \If{$\mathcal{U}(0, 1) < CR$}
       \State $O^t_i \gets$ mutacja(krzy{\.z}owanie(selekcja($P(t)$), selekcja($P(t)$)))
     \Else
@@ -217,29 +210,22 @@ Zasadę działania algorytmu ewolucyjnego przedstawiano na listingu \ref{algorit
 
 Algorytm ewolucyjny w podstawowej postaci ma dwa parametry wejściowe.
 Są nimi: $CR$~--~prawdopodobieństwo krzyżowania oraz $\mu$ -- liczba osobników w populacji.
-Po zaincjalizowaniu parametrów, następuja inicjalizacja populacji początkowej. 
-Populacja to zbiór rozwiązań o wielkości $\mu$. 
+Po nadaniu wartości początkowych parametrom, następuja inicjalizacja populacji początkowej. 
 Jeśli zupełnie nie wiadomo, gdzie może znajdować się poszukiwane optimum, 
-populację początkową generuje się w sposób losowy, np. zgodnie z jednostajnym rozkładem
-prawdopodobieństwa. 
-W przeciwnym przypadku, populację początkową można wzmocnić rozwiązaniami znajdującymi się 
-bliżej szukanego ekstremum. 
-Przykładowo, w problemie komiwojażera populację początkową można zasilić kilkoma
-szybko zbudowanymi rozwiązaniami zachłannymi (które to powstają poprzez łączenie dwóch najbliższych 
-miast). Może to znacząco poprawić wyniki uzyskane przez algorytm ewolucyjny.
+populację początkową generuje się w sposób losowy. 
 
-Po zainicjalizowaniu populacji początkowej następuje główna pętla programu. 
+Po inicjalizacji populacji początkowej następuje główna pętla programu. 
 Wykonywana jest ona dopóty, dopóki nie zajdzie tzw. kryterium stopu. 
 Kryterium stopu może być np. maksymalna liczba iteracji lub wywołań funkcji oceny.
-Algorytm można zatrzymać również wtedy, gdy znalezione rozwiązania jest zadowalające. 
-Innym kryterium stopu jest przerwanie algorytmu, gdy populacja ,,zatrzyma się''. 
-Od momentu, gdy np. wszystkie rozwiązania (punkty) zdegenerują się do jednego, 
+Algorytm można zatrzymać również wtedy, gdy znalezione rozwiązanie jest zadowalające. 
+Innym kryterium stopu jest przerwanie algorytmu, gdy wszystkie 
+punkty w populacji zdegenerują się do jednego. Wówczas
 każda kolejna populacja będzie bardzo podobna do poprzedniej. 
 W związku z tym nie ma sensu dalsze iterowanie, 
 można wówczas zakończyć algorytm i np. uruchomić go jeszcze raz z innego miejsca
 albo z innymi paramerami.
 
-W głównej pętli programu przetwarzana jest biężaca populacja. 
+W głównej pętli programu przetwarzana jest bieżaca populacja. 
 Wykonywana jest kolejna pętla, tym razem iterująca kolejno po wszystkich osobnikach 
 (rozwiązaniach) z bieżącej populacji. W niej losowana jest liczba od 0 do 1 i jeśli jest ona mniejsza
 od ustalonego $CR$ -- dokonywana jest selekcja dwóch punktów, ich krzyżowanie, a następnie mutacja.
@@ -249,82 +235,115 @@ do następnej populacji $P^{t+1}$. Zwiększany jest licznik populacji (czasu) $t
 sprawdzane jest kryterium stopu i jeśli nie jest spełnione --
 wykonywana jest kolejna pętla.
  
-Każdy algorytm ewolucyjny jest bardzo czuły na jakiekolwiek zmiany w sposobie jego działania. 
-Najmniejszy błąd implementacyjny może spowodować znaczną zmianę otrzymywanych wyników. 
-Jest to sytuacja podobna do efektu motyla -- mała zmiana w populacji początkowej, 
-z biegiem czasu nawarstwia się i obarcza błędem kolejne populacje w coraz to większym stopniu. 
-Nawet minimalne zmiany sposobu działania algorytmu, mogą spowodować, że populacje po tysiącach iteracji 
-będą się znacznie od siebie różnić.
-
-Kolejnym problemem jest optymalny dobór parametrów dla algorytmu ewolucyjnego. 
+Kolejnym problemem jest dobór parametrów dla algorytmu ewolucyjnego. 
 Istnieją pewne porady, np. stosowana w tej pracy reguła $\mu = 10D$, 
-jednak w ogólnym przypadku nie wiadomo jakie rozmiar populacji czy jakie prawdopodobieństwa dadzą
-najlepsze wyniki. Z pomocą przychodzą
-metody samoadaptacji, które same dostrajają parametry algorytmu w zależności od stanu w jakim się,
-np. w zależności od zawartości populacji \cite{brest}.
+jednak w ogólnym przypadku nie wiadomo jaki rozmiar populacji czy jakie prawdopodobieństwo
+krzyżowania $CR$ sprawdzi się najlepiej. Z pomocą przychodzą
+metody samoadaptacji, które same dostrajają parametry algorytmu w zależności od stanu w jakim się
+znajdują, np. w~zależności od zawartości populacji \cite{brest}.
+Niewątpliwą zaletą ewolucji różnicowej jest jej pewien rodzaj samoadaptacji, dzięki
+czemu posiada stosunkowo małą liczbę parametrów do strojenia w porównaniu do innych algorytmów
+optymalizacji.
 
-\chapter{Ewolucja różnicowa}
+\section{Metaheurystyki}
 
-Ewolucja różnicowa to algorytm ewolucyjny służący do optymalizacji
-w przestrzeniach ciągłych zaproponowany w 1995 roku. \cite{storn} Sposób działania algorytmu
+\section{Algorytm ewolucji różnicowej}
+
+Ewolucja różnicowa jest algorytmem ewolucyjnym służącym do optymalizacji
+w przestrzeniach ciągłych zaproponowanym w 1995 roku. \cite{storn} Sposób działania algorytmu
 przedstawiono na listingu \ref{algorithm:de}.
 
-\begin{algorithm}[!htb]
+Kolejność wykonywania operatorów genetycznych (mutacji oraz krzyżowania) w~ewolucji różnicowej
+jest inna niż w algorytmie ewolucyjnym.
+W algorytmie ewolucyjnym najpierw wykonywane jest krzyżowanie, potem mutacja.
+W ewolucji różnicowej -- na odwrót.
+
+\usetikzlibrary{decorations.pathreplacing,calc}
+\newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \node (#1) {};}
+
+\newcommand*{\AddNote}[4]{%
+    \begin{tikzpicture}[overlay, remember picture]
+        \draw [decoration={brace,amplitude=0.5em},decorate,thick]
+            ($(#3)!(#1.north)!($(#3)-(0,1)$)$) --  
+            ($(#3)!(#2.south)!($(#3)-(0,1)$)$)
+                node [align=center, text width=2.5cm, pos=0.5, anchor=west] {#4};
+    \end{tikzpicture}
+}%
+
+\begin{algorithm}[H]
 \caption{Ewolucja różnicowa}
 \label{algorithm:de}
 \begin{algorithmic}[1]
 \State Inicjalizacja parametrów $CR, F, \mu$
-\State Inicjalizacja populacji początkowej $P^0 \gets \{P^0_1, P^0_2, \ldots, P^0_\mu\}$
-\State $t \gets 0$
+\State Inicjalizacja populacji początkowej $P^1 \gets \{P^1_1, P^1_2, \ldots, P^1_\mu\}$
+\State $t \gets 1$
 \While{kryterium stopu nie zostało spełnione}
   \ForAll{$i \in \{ 1, 2, \ldots, \mu \}$}
-    \State $u_i \gets$ mutacja$(F, i, P^t)$
-    \State $o_i \gets$ krzy{\.z}owanie$(CR, P_i^t, u_i)$
-    \If{$f(o_i) \le f(P_i^t)$}
+    \State $v_i \gets$ selekcja$(P^t_i)$
+    \State $u_i \gets$ mutacja$(v_i, P^t_i, F)$ 
+    \State $o_i \gets$ krzy{\.z}owanie$(u_i, P_i^t, CR)$    
+    \If{$f(o_i) \le f(P_i^t)$}  \tikzmark{top} \tikzmark{right} 
       \State $P_i^{t+1} \gets o_i$     
-    \Else
+    \Else 
       \State $P_i^{t+1} \gets P_i^{t}$
-    \EndIf
+    \EndIf \tikzmark{bottom}
   \EndFor
 \EndWhile \\
-\Return arg min$_i f(P^t_i)$
+\Return arg min$_i f(P^t_i)$ \AddNote{top}{bottom}{right}{~~sukcesja}
 \end{algorithmic}
+
 \end{algorithm}
 
-Istotną różnicą w porównaniu do algorytmu ewolucyjnego jest kolejność wykonywania operatorów
-genetycznych (mutacji oraz krzyżowania).
-W algorytmie ewolucyjnym najpierw wykonywane jest krzyżowanie, potem mutacja.
-W ewolucji różnicowej -- na odwrót.
-
-Kolejną ważną różnicą jest konkretyzacja operatora sukcesji. Po wygenerowaniu potomka
+Kolejną różnicą jest konkretyzacja operatora sukcesji. Po wygenerowaniu potomka
 $o_i$ jest on od razu porównywany ze swoim rodzicem. Jeśli okaże się lepszy -- zastępuje go
 w~kolejnej populacji. Powoduje to silny nacisk selektywny -- dalej przechodzą jedynie dzieci
 lepiej przystosowane od swoich rodziców.
 
-Operator krzyżowania na wejściu otrzymuje dwa rozwiązania rodzicielskie, a zwraca jedno potomne. 
-W ewolucji różnicowej jednym z rodziców jest mutant. Istnieje wiele rodzajów krzyżowania, do najpopularniejszych 
-wykorzystywanych w DE należą:
-\begin{itemize} 
- \item[$\bullet$] Krzyżowanie uśredniające. 
-Potomkiem jest rozwiązanie znajdujące się dokładnie w połowie odległości pomiędzy rodzicami.
- \item[$\bullet$]  Krzyżowanie wymieniające. 
-Część elementów w tablicy rozwiązania jest brana od jednego z rodziców, 
-pozostała część jest brana od drugiego. Ten sposób krzyżowania został wykorzystany w tej pracy.
-\end{itemize} 
+\subsection{Selekcja}
 
-Operator mutacji na wejściu otrzymuje jedno rozwiązanie i zwraca również jedno.
+Operator selekcji na wejściu otrzymuje bieżącą populację i zwraca jedno rozwiązanie.
 W tej pracy zwrócono szczególną uwagę na właściwy dobór tego operatora.
-Skrót DE/rand oznacza ewolucję różnicową z losowym typem mutacji.
-Ten podstawowy wariant algorytmu jest również nazywany ,,klasyczną'' ewolucją różnicową. 
-Jej odmiany -- znany już wcześniej DE/best oraz zaproponowany w tej pracy DE/mid, 
-różnią się jedynie operatorem mutacji.
-Dodatkowo, jako trzeci człon nazwy podawana jest liczba wektorów różnicowych używanych w mutacji -- $k$.
-W poniższych podrozdziałach przedstawiono operatory mutacji dla DE/rand/k, DE/best/k, DE/mid/k 
-oraz wyprowadzono wzory na współczynniki skalujące $F$.
-Inne możliwe typy mutacji, np. rand-to-best, current-to-best, current-to-rand oraz either-or, 
+Skrót DE/rand oznacza ewolucję różnicową z losowym typem selekcji, tzn. wybierany jest jeden
+losowy punkt z całej populacji zgodnie z rozkładem jednostajnym.
+Inne warianty ewolucji różnicowej -- DE/best oraz zaproponowany w tej pracy DE/mid, 
+różnią się właśnie operatorem selekcji. Inne możliwe typy selekcji, 
+np. rand-to-best, current-to-best oraz current-to-rand,
 opisano w \cite{zaharie}.
 
-\section{DE/rand -- klasyczny wariant ewolucji różnicowej}
+\subsection{Mutacja}
+
+Operator mutacji na wejściu otrzymuje jedno rozwiązanie i zwraca również jedno.
+Jako trzeci człon skróconej nazwy algorytmy
+podawana jest liczba wektorów różnicowych używanych w mutacji -- $k$.
+Np. DE/rand/1 oznacza losową selekcję z jednym wektorem różnicowym w mutacji.
+Ten podstawowy wariant algorytmu nazywany jest również ,,klasyczną'' ewolucją różnicową. 
+
+\subsection{Krzyżowanie}
+
+Operator krzyżowania na wejściu otrzymuje dwa rozwiązania rodzicielskie, a zwraca jedno potomne. 
+W ewolucji różnicowej jednym z rodziców jest mutant. Istnieje wiele rodzajów krzyżowania, 
+przykładowe to:
+\begin{itemize} 
+ \item[$\bullet$]  Krzyżowanie wymieniające. 
+Część elementów w tablicy rozwiązania jest brana od jednego z rodziców, 
+pozostała część jest brana od drugiego. Ten sposób krzyżowania (w wariancie bin)
+został wykorzystany w tej pracy.
+ \item[$\bullet$] Krzyżowanie uśredniające. 
+Potomkiem jest rozwiązanie znajdujące się dokładnie w~połowie odległości pomiędzy rodzicami.
+\end{itemize} 
+
+\section{Techniki uwzględniania ograniczeń}
+
+\chapter{Algorytm DE/mid -- nowy wariant ewolucji różnicowej}
+
+\section{Analiza porównawcza macierzy kowariancji różnych wariantów ewolucji różnicowej}
+
+W poniższych podrozdziałach przedstawiono operatory mutacji dla DE/rand/k, DE/best/k, DE/mid/k 
+oraz wyprowadzono wzory na współczynniki skalujące $F$. We wzorach, dla zwiększenia
+czytelności, pomijano indeks górny $i$ dla populacji, np. stosowano zapis $P_{i_1}$ 
+zamiast $P_{i_1}^i$.
+
+\subsection{DE/rand -- klasyczny wariant ewolucji różnicowej}
 \label{chap:de_rand} 
 
 W DE/rand/1, mutant $i$-tego osobnika w populacji $P$~o~$\mu$~osobnikach powstaje w następujący sposób 
@@ -334,7 +353,7 @@ u_i = P_{i_1} + F(P_{i_2} - P_{i_3})
 \end{equation}
 
 $i_1, i_2, i_3$ to indeksy wylosowane zgodnie z rozkładem jednostajnym ze zbioru \\ 
-$\{0, 1, \dots, \mu-1\}$. Zatem $P_{i_1}, P_{i_2}, P_{i_3}$ to rozwiązania wylosowane zgodnie z 
+$\{1, 2, \dots, \mu\}$. Zatem $P_{i_1}, P_{i_2}, P_{i_3}$ to rozwiązania wylosowane zgodnie z 
 rozkładem jednostajnym z populacji $P$.
 $F\in\mathbb{R_+}$ to współczynnik skalujący zasięg mutacji. 
 
@@ -345,7 +364,7 @@ u_i' = P_{i_1} + F_k\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})
 \end{equation}
 
 Podobnie jak poprzednio, $i_1, i_2, \dots i_{2k+1}$ to indeksy wylosowane zgodnie z rozkładem jednostajnym ze zbioru 
-$\{0, 1, \dots, \mu-1\}$. Zatem $P_{i_1}, P_{i_2}, \dots, P_{2k+1}$ to rozwiązania wylosowane zgodnie z rozkładem 
+$\{1, 2, \dots, \mu\}$. Zatem $P_{i_1}, P_{i_2}, \dots, P_{2k+1}$ to rozwiązania wylosowane zgodnie z rozkładem 
 jednostajnym z populacji $P$. $F_k\in\mathbb{R_+}$ to współczynnik skalujący dla DE/rand/k. 
 
 Żeby zasięg mutacji nie zmieniał się wraz ze wzrostem $k$, 
@@ -355,25 +374,28 @@ Można to osiągnąć tak dobierając $F_k$, aby było spełnione równanie:
 \C[u_i] = \C[u_i']
 \end{equation}
 
-Rozwijając lewą stronę równania i korzystając z tego, że osobniki są liniowo niezależne od siebie:
+$\C[u_i]$ jest macierzą kowariancji rozkładu zmiennej losowej $u_i$.
+Rozwijając lewą stronę równania \eqref{eq:kowariancje} i korzystając z tego, że osobniki są niezależne od siebie:
 \begin{align*}
 \C[u_i] \overset{(\ref{eq:derand1})}{=} \C[P_{i_1} + F(P_{i_2} - P_{i_3})] = \C[P_{i_1}] + F^2(\C[P_{i_2}] + \C[P_{i_3}])
 \end{align*}
 
-$\forall{i}\hspace{1mm}\C[P_i] = \C[P]$, ponieważ każdy osobnik ma taki sam rozkład prawdopodobieństwa. Zatem:
+Każdy osobnik ma taki sam rozkład prawdopodobieństwa. 
+Macierz kowariancji punktów losowanych z $P$ ma teorytyczną wartość $\C[P]$,
+równej empirycznej macierzy kowariancji populacji $P$.
+Zatem dla DE/rand/1 macierz kowariancji mutanta wynosi:
 \begin{equation} \label{eq:macierz_kow_mutanta}
 \C[u_i] = \C[P] + F^2(\C[P] + \C[P]) = \C[P](2F^2 + 1)
 \end{equation}
 
-Rozwijając prawą stronę równania (\ref{eq:kowariancje}):
-\begin{align*}
+Rozwijając prawą stronę równania \eqref{eq:kowariancje}, w przypadku DE/rand/k macierz kowariancji mutanta wynosi:
+\begin{multline} \label{eq:macierz_kow_mutanta_prim}
 \C[u_i'] \overset{(\ref{eq:derand})}{=} \C[P_{i_1} + F_k\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] 
 = \C[P_{i_1}] + F_k^2\C[\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] \\
-= \C[P_{i_1}] + F_k^2\C[\sum\limits_{j=2}^{2k+1} P_{i_{j}}] \\
-= \C[P](2kF_k^2 + 1)
-\end{align*}
+= \C[P_{i_1}] + F_k^2\C[\sum\limits_{j=2}^{2k+1} P_{i_{j}}] = \C[P](2kF_k^2 + 1)
+\end{multline}
 
-Podstawiając do (\ref{eq:kowariancje}):
+Przyrównując \eqref{eq:macierz_kow_mutanta} oraz \eqref{eq:macierz_kow_mutanta_prim}:
 \begin{align*}
 \C[P](2F^2 + 1) = \C[P](2kF_k^2 + 1)
 \end{align*}
@@ -390,7 +412,7 @@ F_k = \frac{F}{\sqrt{k}}
 
 Zatem, dla zachowania zasięgu mutacji, współczynik skalowania dla DE/rand/k powinien być  
 $\sqrt{k}$ razy mniejszy od współczynnika skalowania dla DE/rand/1. Po wstawieniu powyższego wyniku
-do \ref{eq:derand}, wzór na mutanta dla DE/rand/k można zapisać nastepująco:
+do \eqref{eq:derand}, wzór na mutanta dla DE/rand/k można zapisać nastepująco:
 
 $$ u_i' = P_{i_1} + \frac{F}{\sqrt{k}}\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}}) $$
 
@@ -404,7 +426,9 @@ Dzięki temu, równanie mutanta DE/rand/$\infty$ można zapisać jako:
 u_i^\infty = P_{i_1} + F_\infty \cdot v_\infty
 \end{align*}
 
-Gdzie $v_\infty \sim \mathcal{N}(0, \C[P])$. $F_\infty$ wynosi $\sqrt{2}F$:
+gdzie $v_\infty \sim \mathcal{N}(0, \C[P])$. Współczynnik $F_\infty$ zapewniający
+równość macierzy kowariancji dla wariatnów DE/rand/1 oraz DE/rand/$\infty$
+można wyznaczyć następująco:
 \begin{align*}
 \C[u_i] = \C[P_{i_1} + F_\infty \cdot v_\infty] \overset{(\ref{eq:macierz_kow_mutanta})}{=} \C[P](2F^2 + 1) \\
 \C[P] + \C[F_\infty \cdot v_\infty] = \C[P](2F^2 + 1) \\
@@ -414,21 +438,163 @@ F_\infty^2 = 2F^2 \\
 F_\infty = \sqrt{2}F
 \end{align*}
 
-\section{DE/best}
+\subsection{DE/best}
 
-DE/best jest podobny do DE/mid, opisanego w rozdziale \ref{chap:de_mid}. 
-Jedyną różnicą jest przesuwanie najlepszego punktu
-w bieżącej populacji zamiast punktu środkowego. Obliczane są wartości
-funkcji oceny dla wszystkich osobników w populacji i punkt o najmniejszej wartości (przy minimalizacji)
+DE/best jest podobny do DE/rand, opisanego w poprzednich podrozdziałach.
+Jedyną różnicą jest wybieranie najlepszego punktu w selekcji zamiast losowego. Obliczane są wartości
+funkcji oceny dla wszystkich osobników w populacji i punkt o~najmniejszej wartości (przy minimalizacji)
 jest traktowany jako najlepszy.
 
-Współczynniki skalujące dla DE/best są identyczne jak dla DE/mid, ponieważ w obu tych wariantach,
-w iteracji dla bieżącej populacji, zawsze przesuwany jest ten sam, ustalony punkt. W DE/rand
-przesuwany punkt jest za każdym razem losowany, przez co jest bardziej zmienny (ma większą wariancję).
-Z tego powodu DE/mid oraz DE/best potrzebują większych współczynników skalujących niż DE/rand.
+\section{Analiza rozkładu mutantów różnych wariantów ewolucji różnicowej}
 
-\section{DE/mid -- nowy wariant ewolucji różnicowej}
+\subsection{Wpływ symetrii rozkładu mutantów}
+
+Wektor różnicowy dla każdego wariantu algorytmu ma postać
+$ F_k\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}}) $. Zmienna losowa o tej postaci
+ma symetryczny rozkład prawdopodobieństwa, dążacy do rozkładu Gaussa, gdy $k$ dąży do 
+nieskończoności. W przypadku DE/mid (rysunek \ref{fig:sym_mid}) 
+oraz DE/best (rysunek \ref{fig:sym_best}),
+przesuwany jest jeden ustalony punkt (środkowy albo najlepszy), 
+a więc rozkład mutanta dalej jest symetryczny.
+Natomiast w przypadku DE/rand (rysunek \ref{fig:sym_rand}) 
+przesuwany jest punkt losowy, co zaburza symetrię rozkładu mutanta.
+Wykresy przedstawiają histogram częstości występowania
+mutantów (zaznaczonych okręgami) w zależności od ich jedynej cechy $x$.
+Populację początkową przedstawiono na rysunku \ref{fig:sym_none}.
+Jest nią 6 punktów o wartościach $x$ równych kolejno $-0.5, -0.4, 0, 0.25, 0.3, 3$.
+Punkty te dobrano specjalnie w taki sposób, aby można było zaobserwować asymetrię
+rozkładu DE/rand -- pięć pierwszych punktów znajduje się w grupie po lewej stronie, 
+po prawej natomiast znajduje się tylko jeden punkt.
+Współczynnik skalujący $F$ wynosił 1, dla uproszczenia.
+Dla DE/best przyjęto, że najlepszym punktem był punkt o $x = 0$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.65\textwidth]{img/none}
+\caption{6 punktów populacji początkowej} 
+\label{fig:sym_none}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.65\textwidth]{img/rand}
+\caption{Histogram mutantów dla DE/rand/1} 
+\label{fig:sym_rand}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.65\textwidth]{img/mid}
+\caption{Histogram mutantów dla DE/mid/1} 
+\label{fig:sym_mid}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.65\textwidth]{img/best}
+\caption{Histogram mutantów dla DE/best/1} 
+\label{fig:sym_best}
+\end{figure}
+
+W ostatecznej klasyfikacji DE/mid (symetryczy) zajął pierwsze miejsce, 
+DE/rand (niesymetryczny) -- drugie, natomiast DE/best (symetryczny) -- trzecie.
+Dlatego na podstawie przeprowadzonych eksperymentów nie można określić czy symetria rozkładu 
+mutantów miała istotny wpływ na jakość otrzymywanych wyników. 
+
+\subsection{Wpływ liczby par wektów różnicowych $k$}
+
+Algorytmy dla $k = 6$ zachowywały się identycznie jak dla $k = \infty$. Jest to wynik zgodny
+z rozważaniami teoretycznymi przedstawionymi w \cite{decomposition}. 
+W przypadku $k = 6$ w mutacji sumujemy aż 12 wektorów różnicowych,
+czyli 12 niezależnych zmiennych. Na mocy centralnego twierdzenia granicznego,
+im większe $k$, tym rozkład sumy coraz bardziej przypomina wielowymiarowy rozkład normalny,
+a zatem przypadek $k=\infty$. Zostało to dokładnie opisane w rozdziale \ref{sub:de_rand_inf}.
+Wydajne losowanie zmiennych o rozkładzie wielowymiarowym normalnym, o zadanej
+macierzy kowariancji, było zadaniem trudnym do implementacji w Javie.
+Dla każdego populacji, najpierw trzeba wyznaczyć jej macierz kowariancji, a następnie macierz
+tą trzeba rozłożyć. Macierz kowariancji często nie była dodatnie określona, 
+dlatego dekompozycja Choleskiego nie mogła zostać użyta.
+Z tego powodu wykorzystano rozkład macierzy na wektory i wartości własne -- metodę ogólniejszą, jednak
+bardziej kosztowną obliczeniowo. Operator mutacji w DE/mid/$\infty$ wykonuje się o wiele
+wolniej od operatora mutacji w DE/mid/6, a~ponieważ mutacja jest powtarzana miliony
+razy, ogólna wydajność DE/mid/$\infty$ prezentuje się zdecydowanie najgorzej na tle pozostałych
+algorytmów. Z powodu braku różnic w jakości otrzymywanych rozwiązań,
+ algorytmy z $k = 6$ są lepszym wyborem z praktycznego punktu widzenia.
+
+Natomiast ogólnie najlepszą wartością dla $k$ było 1. Im wyższe $k$, tym algorytm spisywał się gorzej.
+Relacja pomiędzy DE/mid, DE/rand oraz DE/best, dla większości funkcji pozostawała taka sama, 
+niezależnie od $k$, tzn. DE/mid był zazwyczaj najlepszy, DE/rand drugi, zaś DE/best najgorszy
+dla takiego samego $k$. Rozkład mutantów dla $k = 1$ nie przypomina rozkładu normalnego, 
+natomiast dla $k = 6$ już upodabnia się do niego, zaobserwować to można na rysunkach \ref{fig:10k}. 
+Przedstawiają one 10 tysięcy mutantów wygenerowanych z tej samej, dwuwymiarowej populacji początkowej.
+Po lewej stronie użyto mutacji DE/rand/1, po prawej DE/rand/6. Wspołczynnik skalujący $F$ dla 
+DE/rand/1 wynosił 1, dla DE/rand/6 (zgodnie z tabelą \ref{table:wspolczynniki}) $\frac{1}{\sqrt{6}}$.
+Populacja początkowa przedstawiona na rysunku \ref{fig:10k_start} zawierała 20 punktów, 
+przy czym 18 z nich leżało niemal w jednej linii na osi $y = 0$. 
+Jedynie 2 punkty wprowadzały większą różnorodność 
+w wymiarze $y$: jeden o $y = 2.5$ oraz jeden o~$y = -2.5$. Liczba mutantów,
+dla których $|y| > 5$, znacznie się różniła. Dla DE/rand/1 było to 75 mutantów,
+natomiast dla DE/rand/6 -- 19. Obliczenia
+powtórzono i uśredniono wielokrotnie, aby wyelimonować czynnik losowy. Mutanty, które sięgają
+na tyle daleko, że umożliwiają wyjście z lokalnego optimum, są bardzo cenne. 
+Ciągłe próbkowanie okolicznych, już zbadanych obszarów, na ogół nie przynosi korzyści. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.5\textwidth]{img/pop} 
+\caption{20 punktów populacji początkowej} 
+\label{fig:10k_start}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\mbox{
+\includegraphics[width=.5\textwidth]{img/pop_10000_r1}
+\includegraphics[width=.5\textwidth]{img/pop_10000_r6}  
+}
+\caption{Po lewej 10 tysięcy mutantów dla DE/rand/1. Po prawej 10 tysięcy mutantów dla DE/rand/6.} 
+\label{fig:10k}
+\end{figure}
+
+Ponadto, podczas mutacji DE/rand/1 zazwyczaj powstawał jeden mutant o $y > 7.5$. 
+Żeby tak się zdarzyło, najpierw wylosowany musi zostać osobnik $P_{i_1}$ o~$y=2.5$.
+Prawdopodobieństwo takiego zdarzenia wynosi $\frac{1}{20}$.
+Następnie musi zostać wylosowany wektor różnicowy o~długości 5. Tylko jedna para punktów 
+dawała taki wektor --
+pierwszy punkt o $y = 2.5$, drugi punkt o $y = -2.5$. 
+Prawdopodobieństwo wylosowania takiej pary wynosiło $\frac{1}{400}$. 
+Zatem łączne prawdopodobieństwo powstania mutanta o~
+$y~=~7.5$ dla DE/rand/1 wynosiło $\frac{1}{8000}$. 
+
+Dla DE/rand/6 prawdopodobieństwo powstania mutanta o $y > 7.5$ jest znacznie mniejsze.
+W celu oszacowania, przyjęto dla uproszczenia, że rozkład prawdopodobieństwa mutantów dla
+DE/rand/6 jest wystarczająco zbliżony do DE/rand/$\infty$.
+Zgodnie z opisem w rozdziale \ref{sub:de_rand_inf}, na początku wylosowany musi zostać osobnik 
+$P_{i_1}$ o $y = 2.5$. Następnie musi zostać wygenerowana zmienna losowa 
+$v_\infty$ o rozkładzie normalnym, której wartość w wymiarze $y$
+przekroczy $5\sqrt{6} \approx 12.25$. Macierz kowariancji populacji początkowej  
+$\C[P]$ wynosiła $\left[ \begin{array}{ c c }
+  35.1798210 & -0.2902915 \\
+  -0.2902915 &  0.6719438
+\end{array} \right]$.
+Wektor średnich~$m=\left[ \begin{array}{ c c } 10.463749675 & 0.004673205 \end{array} \right]$.
+Prawdopodobieństwo wylosowania zmiennej o~$y > 5\sqrt{6}$ wynosi 
+$1 - F(\infty, 5\sqrt{6}) \approx 0$.\footnote{Wartość ta jest tak mała,
+że w reprezentacji liczb podwójnej precyzji użytych przy wywołaniu funkcji \texttt{pmvnorm} języka R
+została uznana za 0.} $F$ to
+dystrybuanta wielowymiarowego rozkładu $\mathcal{N}(m, \C[P])$.
+Całkowite prawdopodobieństwo wylosowanie mutanta o $y > 7.5$ dla DE/rand/6 jest zatem 
+znacznie mniejsze w porównaniu do
+$\frac{1}{8000}$ dla DE/rand/1.
+Gdyby pierwszym wylosowanym punktem $P_{i_1}$ nie był ten o $y = 2.5$, tylko np. któryś 
+z punktów leżących blisko osi $y = 0$, wówczas mutacja DE/rand/6 musiałaby wygenerować zmienną
+o wartości $y$ większej niż $7.5\sqrt{6} \approx 18.37$. 
+Prawdobieństwo takiego zdarzenia również jest bliskie zeru.
+
+\section{Algorytm DE/mid -- nowy wariant ewolucji różnicowej}
 \label{chap:de_mid}
+
+\subsection{Schemat algorytmu}
 
 W DE/mid/k mutant powstaje w następujący sposób:
 
@@ -443,6 +609,9 @@ m = \frac{1}{\mu}\sum\limits_{j=1}^n P_j
 
 $F_m\in\mathbb{R_+}$ jest współczynnikiem skalującym dla DE/mid/k, analogicznym do $F$ 
 w przypadku DE/rand/1. 
+
+\subsection{Rozład generowanych mutantów}
+
 Żeby macierz kowariancji populacji w DE/mid była taka sama jak w~DE/rand/1, 
 macierz kowariancji mutanta $u_i''$ musi być taka sama jak macierz kowariancji mutanta $u_i$.
 Można to osiągnąć tak dobierając $F_m$, żeby było spełnione równanie:
@@ -452,8 +621,8 @@ Można to osiągnąć tak dobierając $F_m$, żeby było spełnione równanie:
 
 Rozwijając prawą stronę równania (\ref{eq:rownanie}):
 \begin{align*}
-\C[u_i''] \overset{(\ref{eq:demid})}{=} \C[m + F_m\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] \\
-\overset{(\ref{eq:midpoint})}{=} \C[\frac{1}{\mu}\sum\limits_{j=1}^n P_j] + F_m^2\C[\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] 
+\C[u_i''] \overset{\eqref{eq:demid}}{=} \C[m + F_m\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] \\
+\overset{(\ref{eq:midpoint})}{=} \C[\frac{1}{\mu}\sum\limits_{j=1}^\mu P_j] + F_m^2\C[\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] 
 = \frac{1}{\mu^2}\mu\C[P] + F_m^2\C[\sum\limits_{j=2}^{2k+1} P] = \C[P](2kF_m^2 + \frac{1}{\mu})
 \end{align*}
 
@@ -474,13 +643,14 @@ F_m\ = \sqrt{\frac{2F^2 + 1 - \frac{1}{\mu}}{2k}}
 \end{align}
 
 Przyjmując $F=0.9$ z (\ref{eq:a}) bezpośrednio wynika, że $F_m \approx 1.14$ dla $k=1$ i $\mu\to\infty$.
-W~DE/mid przesuwany jest punkt środkowy $m$ zamiast losowo wybranego osobnika $P_{i_1}$.
-Punkt środkowy jest mniej zmienny, 
-tzn. norma macierzy kowariancji punktu środkowego jest mniejsza niż norma macierzy kowariancji dowolnego osobnika.
-$\lim_{n\to\infty} \C[m] = \textbf{0}$, natomiast $\C[P_{i_1}] = \C[P]$.
+W~DE/mid w selekcji wybierany jest punkt środkowy $m$ zamiast losowo wybranego osobnika $P_{i_1}$.
+Punkt środkowy jest mniej zmienny niż losowy, 
+tzn. norma macierzy kowariancji punktu środkowego jest mniejsza niż norma macierzy kowariancji 
+losowego osobnika. Przy liczbie osobników dążacej do nieskończoności, macierz kowariancji
+punktu środkowego dąży do macierzy wypełnionej samymi zerami, natomiast macierz kowariancji
+losowego punktu dąży do macierzy kowariancji populacji. Formalnie: 
+$\lim_{n\to\infty} \C[m] = \textbf{0}$, natomiast $\lim_{n\to\infty} \C[P_{i_1}] = \C[P]$.
 Dlatego DE/mid/k zawsze potrzebuje większego współczynnika skalującego niż DE/rand/k.
-
-\subsection{DE/mid/$\infty$}
 
 Przechodząc z $k$ do nieskończoności, równanie mutanta DE/mid/$\infty$ można zapisać
 w następujący sposób:
@@ -488,7 +658,7 @@ w następujący sposób:
 u_i'^\infty = m + F_{\infty_m} \cdot v_\infty
 \end{align*}
 
-Gdzie $F_{\infty_m}$ jest równe $\sqrt{2F^2 + 1 - \frac{1}{\mu}}$, ponieważ:
+Gdzie współczynnik skalujący $F_{\infty_m}$ jest równy $\sqrt{2F^2 + 1 - \frac{1}{\mu}}$, ponieważ:
 \begin{align*}
 \C[u_i'] = \C[m + F_{\infty_m} \cdot v_\infty] \overset{(\ref{eq:macierz_kow_mutanta})}{=} \C[P](2F^2 + 1) \\
 \C[m] + C[F_{\infty_m} \cdot v_\infty] = \C[P](2F^2 + 1) \\
@@ -499,7 +669,13 @@ F_{\infty_m} = \sqrt{2F^2 + 1 - \frac{1}{\mu}}
 \section{Współczynniki skalujące}
 
 Tabela \ref{table:wspolczynniki} podsumowuje wyprowadzone współczynniki skalujące dla wszystkich
-wariantów algorytmów analizowanych w tej pracy.
+wariantów algorytmów analizowanych w tej pracy. Używając tych współczynników macierz kowariancji
+mutantów dla każdego z algorytmów będzie równa macierzy kowariancji mutantów dla DE/rand/1.
+
+Współczynniki skalujące dla DE/best są identyczne jak dla DE/mid, ponieważ w obu tych wariantach,
+w iteracji dla bieżącej populacji, zawsze przesuwany jest ten sam, ustalony punkt. W DE/rand
+przesuwany punkt jest za każdym razem losowany, przez co jest bardziej zmienny (ma większą wariancję).
+Z tego powodu DE/mid oraz DE/best potrzebują większych współczynników skalujących niż DE/rand.
 
 \begin{table}[H]
 \centering
@@ -512,7 +688,7 @@ DE/best/$\infty$ & $\sqrt{2F^2 + 1 - \frac{1}{\mu}}$ \\ \hline
 DE/mid/k         & $\sqrt{\frac{2F^2 + 1 - \frac{1}{\mu}}{2k}}$ \\
 DE/mid/$\infty$  & $\sqrt{2F^2 + 1 - \frac{1}{\mu}}$ \\
 \end{tabular}
-\caption{Współczynniki skalujące dla algorytmów testowanych w tej pracy}
+\caption{Współczynniki skalujące dla algorytmów analizowanych w tej pracy}
 \label{table:wspolczynniki}
 \end{table}
 
@@ -745,16 +921,6 @@ $$ \mu_0 = 2.5, \mu_1 = -\sqrt{\frac{\mu_0^2-d}{s}}, s = 1 - \frac{1}{2\sqrt{D+2
 \caption{Dwuwymiarowa funkcja Lunačka, strzałka wskazuje minimum \cite{noiseless}}
 \end{figure}
 
-\section{Parametry eksperymentów}
-
-Dla funkcji o małej liczbie wymiarów trudno dostrzec różnicę pomiędzy algorytmami. Im wyższy wymiar,
-tym trudniejszy problem i dłuższy czas obliczeń, ale różnice pomiędzy algorytmami stają się bardziej 
-widoczne. Dlatego liczba wymiarów $D$ w testach wynosiła 10, 20, 40 oraz 80. 
-
-Współczynnik skalujący algorytmu DE/rand/1 ($F$) wynosił $0.9$. 
-W każdym z algorytmów zostało wykorzystane krzyżowanie wymieniające (DE/*/k/bin) z
-prawdopodobieństwem krzyżowania $CR = 0.9$.
-
 \section{Porównywanie wyników}
 
 Duża liczba wariantów algorytmów wymaga systematycznego i wiarygodnego sposobu porównywania
@@ -835,6 +1001,22 @@ populacji razy $\mu$, czyli $\frac{FEs}{\mu} \cdot \mu = FEs = 10^5D$.
 Dla jednego algorytmu i jednej funkcji, procent osobników
 poza obszarem przeszukiwań uśredniano z 15 niezależnych uruchomień.
 
+
+
+\chapter{Wyniki eksperymentów}
+
+\section{Parametry eksperymentów}
+
+Dla funkcji o małej liczbie wymiarów trudno dostrzec różnicę pomiędzy algorytmami. Im wyższy wymiar,
+tym trudniejszy problem i dłuższy czas obliczeń, ale różnice pomiędzy algorytmami stają się bardziej 
+widoczne. Dlatego liczba wymiarów $D$ w testach wynosiła 10, 20, 40 oraz 80. 
+
+Współczynnik skalujący algorytmu DE/rand/1 ($F$) wynosił $0.9$. 
+Dla pozostałych algorytmów współczynnik skalujący był obliczany zgodnie z tabelą
+\ref{table:wspolczynniki}.
+W każdym z algorytmów zostało wykorzystane krzyżowanie wymieniające (DE/*/k/bin) z
+prawdopodobieństwem krzyżowania $CR = 0.9$ \cite{ronkkonen}.
+
 \section{Implementacja}
 
 Zestaw BBOB 2013 dostarcza implementację wszystkich funkcji testowych w języku C. Funkcje te obliczane
@@ -890,147 +1072,6 @@ $\frac{(b - a)^2}{12}$. $F$ było równe 0.9, zatem
 $\C[u_i] = \C[P](2 \cdot 0.9^2 + 1) = \C[P] \cdot 2.62 \approx \bold{\Lambda_{10}} \cdot 8.3 \cdot 2.62 \approx \bold{\Lambda_{10}} \cdot 21.7$, gdzie $\bold{\Lambda_{10}}$
 to 10-wymiarowa macierz diagonalna. 
 
-\chapter{Wyniki eksperymentów}
-
-W notacji stosowanej w tabelach brak statystycznej różnicy oznaczono znakiem ,,$\cdotp$''.
-Jeśli test istotności (opisany w rozdziale \ref{section:testy_istotnosci})
-odrzucał hipotezę zerową, uznawano, że algorytmy A i B dają różne wyniki.
-Wówczas porówywane były mediany obu zbiorów. Algorytm, którego mediana wyników była niższa,
-uznawany był za lepszy i oznaczany znakiem ,,+''. Algorytm istotnie gorszy był oznaczany znakiem ,,--''.
-
-W tabeli \ref{table:bbob2013} porównano DE/mid/1 z algorytmami startującymi w konkursie BBOB 2013, w 20 wymiarach.
-Wyniki dla 20 wymiarów i niższych dostarczyli wszyscy członkowie konkursu, ponieważ było to obowiązkowe. 
-Dla 40 wymiarów -- nieliczni, ponieważ było to opcjonalne.
-Dla 80 wymiarów -- nikt, ponieważ nie było to wymaganiem.
-Wybrano zatem maksymalną liczbę wymiarów z pełnymi danymi -- 20.
-
-DE/mid/1 okazał się gorszy od 17 z 26 algorytmów z BBOB 2013 dla 20 wymiarów. DE/mid/1 w małej liczbie wymiarów
-jeszcze ,,nie rozwija skrzydeł'' i nawet DE/rand/1 jest od niego lepszy. Dlatego do algorytmów z BBOB 2013 porównano również
-DE/rand/1 -- okazał się gorszy od 9 algorytmów.
-
-\begin{table}[H]
-\centering
-\begin{tabular}{ l | c | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c|}{Numer funkcji testowej}  \\  \hline
-Algorytm         &15& 16& 19& 20& 21& 22& 24 & Suma \\  \hline
-BIPOP-aCMA-STEP	 & -- & -- & -- & -- & -- & -- & -- & -7 \\ 
-BIPOP-saACM-k	 & -- & -- & -- & -- & -- & -- & -- & -7 \\
-CGA-grid100	 & + & -- & + & -- & + & + & + & 3 \\
-CGA-grid16	 & + & -- & + & -- & + & + & + & 3 \\ 
-CMAES\_Hutter	 & + & -- & + & -- & + & $\cdot$ & + & 2 \\
-DE\_Pal	 & + & $\cdot$ & + & -- & $\cdot$ & $\cdot$ & + & 2\\
-fmincon	 & + & -- & -- & -- & -- & -- & + & -3 \\
-fminunc	 & + & + & -- & -- & -- & -- & + & -1 \\
-GA-100	 & $\cdot$ & -- & $\cdot$ & -- & + & $\cdot$ & -- & -2 \\
-HCMA	 & -- & -- & -- & -- & -- & -- & -- & -7 \\
-HILL	 & + & -- & + & -- & + & $\cdot$ & + & 2\\
-HMLSL	 & $\cdot$ & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -4 \\
-IP	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5 \\
-IP-10DDr	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6 \\
-IP-500	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5 \\
-MEMPSODE	 & $\cdot$ & -- & -- & -- & -- & -- & -- & -6 \\
-MLSL	 & + & -- & -- & -- & -- & -- & + & -3 \\
-OQNLP	 & + & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -3 \\
-P-DCN	 & + & -- & + & -- & + & $\cdot$ & + & 2 \\
-P-zero	 & + & -- & + & -- & + & $\cdot$ & + & 2\\
-PRCGA	 & $\cdot$ & -- & -- & -- & + & $\cdot$ & -- & -3 \\
-Simplex	 & + & -- & -- & -- & $\cdot$ & $\cdot$ & + & -1\\
-tany	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6 \\
-texp	 & -- & -- & -- & -- & -- & -- & -- & -7 \\
-U-DCN	 & + & -- & $\cdot$ & -- & + & + & + & 2\\
-U-zero	 & + & -- & $\cdot$ & -- & + & + & + & 2\\ \hline
-Suma	 & 6 & -23 & -9 & -26 & 0 & -4 & 0 & -56
-
-\end{tabular}
-\caption{Porównanie DE/mid/1 do 26 algorytmów z BBOB 2013 w 20 wymiarach}
-\label{table:bbob2013mid20}
-\end{table}
-
-\begin{table}[H]
-\centering
-\begin{tabular}{ l | c | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c|}{Numer funkcji testowej}  \\  \hline
-Algorytm         &15& 16& 19& 20& 21& 22& 24 & Suma \\  \hline
-BIPOP-aCMA-STEP	 & -- & -- & -- & -- & -- & -- & -- & -7\\
-BIPOP-saACM-k	 & -- & -- & -- & -- & -- & -- & -- & -7\\
-CGA-grid100	 & + & + & + & + & + & + & + & 7\\
-CGA-grid16	 & + & + & $\cdot$ & + & + & + & + & 6\\
-CMAES\_Hutter	 & + & + & + & + & + & $\cdot$ & + & 6\\
-DE\_Pal	 & + & + & + & $\cdot$ & $\cdot$ & $\cdot$ & + & 4\\
-fmincon	 & + & + & -- & + & -- & -- & + & 1\\
-fminunc	 & + & + & -- & + & -- & -- & + & 1\\
-GA-100	 & + & + & -- & + & + & $\cdot$ & $\cdot$ & 3\\
-HCMA	 & -- & -- & -- & -- & -- & -- & -- & -7 \\
-HILL	 & + & + & $\cdot$ & + & + & $\cdot$ & + & 5\\
-HMLSL	 & + & + & -- & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & 1\\
-IP	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5 \\
-IP-10DDr	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6\\
-IP-500	 & -- & -- & -- & + & $\cdot$ & $\cdot$ & -- & -3\\
-MEMPSODE	 & -- & $\cdot$ & -- & $\cdot$ & -- & -- & -- & -5\\
-MLSL	 & + & + & -- & + & -- & -- & + & 1\\
-OQNLP	 & + & + & -- & + & $\cdot$ & $\cdot$ & $\cdot$ & 2\\
-P-DCN	 & + & + & + & + & + & + & + & 7\\
-P-zero	 & + & + & + & + & + & $\cdot$ & + & 6\\
-PRCGA	 & + & + & -- & + & + & $\cdot$ & -- & 2\\
-Simplex	 & + & + & -- & + & $\cdot$ & $\cdot$ & + & 3\\
-tany	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6\\
-texp	 & -- & -- & -- & $\cdot$ & -- & -- & -- & -6\\
-U-DCN	 & + & + & -- & + & + & + & + & 5 \\
-U-zero	 & + & + & $\cdot$ & + & + & + & + & 6\\ \hline
-Suma     & 8 & 9 & -13 & 10 & 0 & -3 & 3 & 14
-\end{tabular}
-\caption{Porównanie DE/rand/1 do 26 algorytmów z BBOB 2013}
-\end{table}
-
-\begin{table}[H]
-\centering
-\begin{tabular}{ l | c | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c|}{Numer funkcji testowej}  \\  \hline
-Algorytm         &15& 16& 19& 20& 21& 22& 24 & Suma \\  \hline
-IPOP-aCMA-STEP	 & -- & -- & -- & -- & -- & -- & -- & -7\\
-BIPOP-saACM-k	 & -- & -- & -- & -- & -- & -- & -- & -7\\
-CGA-grid100	 & + & -- & + & -- & + & $\cdot$ & + & 2 \\
-CGA-grid16	 & + & -- & + & -- & $\cdot$ & $\cdot$ & + & 1 \\
-CMAES	 & $\cdot$ & -- & + & -- & + & $\cdot$ & + & 1  \\
-GA-100	 & $\cdot$ & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -4 \\
-HILL	 & + & -- & + & -- & $\cdot$ & $\cdot$ & + & 1\\
-IP	 & -- & -- & -- & -- & $\cdot$ & -- & -- & -6 \\
-IP-10Dr	 & -- & -- & -- & -- & $\cdot$ & -- & -- & -6 \\
-IP-500	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5 \\
-MEMPSODE	 & $\cdot$ & -- & -- & -- & -- & -- & -- & -6 \\
-PRCGA	 & $\cdot$ & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -4 \\
-tany	 & -- & -- & -- & -- & -- & -- & -- & -7 \\
-texp	 & -- & -- & -- & -- & -- & -- & -- & -7 \\ \hline
-Suma	 & -4 & -14 & -6 & -14& -3 & -7 & -6 & -54
-
-\end{tabular}
-\caption{Porównanie DE/mid/1 do 14 algorytmów z BBOB 2013 w 40 wymiarach}
-\end{table}
-
-\begin{table}[H]
-\centering
-\begin{tabular}{ l | c | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c|}{Numer funkcji testowej}  \\  \hline
-Algorytm         &15& 16& 19& 20& 21& 22& 24 & Suma \\  \hline
-BIPOP-aCMA-STEP	 & -- & -- & -- & -- & -- & -- & -- & -7 \\
-BIPOP-saACM-k	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6 \\
-CGA-grid100	 & + & -- & + & -- & + & $\cdot$ & + & 2 \\
-CGA-grid16	 & + & -- & + & -- & $\cdot$ & + & + & 2\\
-CMAES	 & $\cdot$ & -- & + & -- & + & $\cdot$ & + & 1 \\
-GA-100	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5 \\
-HILL	 & + & -- & + & -- & $\cdot$ & + & + & 2 \\
-IP	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5 \\
-IP-10Dr	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6 \\
-IP-500	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5\\
-MEMPSODE	 & -- & -- & -- & -- & -- & -- & -- & -7 \\
-PRCGA	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5\\
-tany	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6 \\
-texp	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6 \\ \hline
-Suma     & -7 & -14 & -6 & -14 & -4 & 0 & -6 & -51
-\end{tabular}
-\caption{Porównanie DE/rand/1 do 14 algorytmów z BBOB 2013 w 40 wymiarach}
-\end{table}
-
 \section{Wnioski}
 
 Biorąc pod uwagę najwyższy zbadany wymiar i wszystkie 7 funkcji testowych,
@@ -1052,6 +1093,12 @@ funkcji podobnych do funkcji numer 16 -- Weierstrassa. Na takich funkcjach lepie
 DE/best/1. Gdyby zbadać wszystkie możliwe funkcje (co nie jest możliwe, jest ich nieskończenie wiele),
 okazałoby się, że żadan algorytm nie jest
 najlepszy. Mówi o tym twierdzenie No Free Lunch, opisane w rozdziale \ref{chap:metodyka}.
+
+W notacji stosowanej w tabelach brak statystycznej różnicy oznaczono znakiem ,,$\cdotp$''.
+Jeśli test istotności (opisany w rozdziale \ref{section:testy_istotnosci})
+odrzucał hipotezę zerową, uznawano, że algorytmy A i B dają różne wyniki.
+Wówczas porówywane były mediany obu zbiorów. Algorytm, którego mediana wyników była niższa,
+uznawany był za lepszy i oznaczany znakiem ,,+''. Algorytm istotnie gorszy był oznaczany znakiem ,,--''.
 
 \subsection{Wpływ liczby wymiarów na jakość rozwiązań}
 
@@ -1130,149 +1177,138 @@ zgodnie z wytycznymi BBOB 2013. Wyniki na poziomie 47\% pokazują, że funkcja k
 skuteczną metodą. Prawdopodobnie efektywność wszystkich algorytmów można znacząco poprawić 
 stosując sposoby naprawiania punktów opisane w \cite{boundary}, np. ponowne próbkowanie (resampling).
 
-\subsection{Wpływ symetri rozkładu mutantów}
+\section{Porównanie z algorytmami biorącymi udział w konkursie BBOB 2013}
 
-Wektor różnicowy dla każdego wariantu algorytmu ma postać
-$ F_k\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}}) $. Zmienna losowa o tej postaci
-ma symetryczny rozkład prawdopodobieństwa, dążacy do rozkładu Gaussa, gdy $k$ dąży do 
-nieskończoności. W przypadku DE/mid (rysunek \ref{fig:sym_mid}) 
-oraz DE/best (rysunek \ref{fig:sym_best}),
-przesuwany jest jeden ustalony punkt (środkowy albo najlepszy), 
-a więc rozkład mutanta dalej jest symetryczny.
-Natomiast w przypadku DE/rand (rysunek \ref{fig:sym_rand}) 
-przesuwany jest punkt losowy, co zaburza symetrię rozkładu mutanta.
-Wykresy przedstawiają histogram częstości występowania
-mutantów (zaznaczonych okręgami) w zależności od ich jedynej cechy $x$.
-Populację początkową przedstawiono na rysunku \ref{fig:sym_none}.
-Jest nią 6 punktów o wartościach $x$ równych kolejno $-0.5, -0.4, 0, 0.25, 0.3, 3$.
-Punkty te dobrano specjalnie w taki sposób, aby można było zaobserwować asymetryczność
-rozkładu DE/rand -- pięć pierwszych punktów znajduje się w grupie po lewej stronie, 
-po prawej natomiast znajduje się tylko jeden punkt.
-Współczynnik skalujący $F$ wynosił 1, dla uproszczenia.
-Dla DE/best przyjęto, że najlepszym punktem był punkt o $x = 0$.
+W tabeli \ref{table:bbob2013mid20} porównano DE/mid/1 z algorytmami startującymi w konkursie BBOB 2013
+w 20 wymiarach.
+Wyniki dla 20 wymiarów i niższych dostarczyli wszyscy członkowie konkursu. 
+Dla 40 wymiarów -- nieliczni, ponieważ było to opcjonalne.
+Dla 80 wymiarów -- nikt, ponieważ nie było to wymaganiem.
+DE/mid/1 okazał się gorszy od 17 z 26 algorytmów z BBOB 2013 dla 20 wymiarów. DE/mid/1 w małej liczbie wymiarów
+jeszcze ,,nie rozwija skrzydeł'' i nawet DE/rand/1 jest od niego lepszy. Dlatego do algorytmów z BBOB 2013 porównano również
+DE/rand/1 -- okazał się gorszy od 9 algorytmów.
 
-\begin{figure}[H]
+\begin{table}[H]
 \centering
-\includegraphics[width=.65\textwidth]{img/none}
-\caption{6 punktów populacji początkowej} 
-\label{fig:sym_none}
-\end{figure}
+\begin{tabular}{ | l | c | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c|}{Numer funkcji testowej} & \\  \hline
+Algorytm         &15& 16& 19& 20& 21& 22& 24 & Suma \\  \hline
+BIPOP-aCMA-STEP	 & -- & -- & -- & -- & -- & -- & -- & -7 \\ 
+BIPOP-saACM-k	 & -- & -- & -- & -- & -- & -- & -- & -7 \\
+CGA-grid100	 & + & -- & + & -- & + & + & + & 3 \\
+CGA-grid16	 & + & -- & + & -- & + & + & + & 3 \\ 
+CMAES\_Hutter	 & + & -- & + & -- & + & $\cdot$ & + & 2 \\
+DE\_Pal	 & + & $\cdot$ & + & -- & $\cdot$ & $\cdot$ & + & 2\\
+fmincon	 & + & -- & -- & -- & -- & -- & + & -3 \\
+fminunc	 & + & + & -- & -- & -- & -- & + & -1 \\
+GA-100	 & $\cdot$ & -- & $\cdot$ & -- & + & $\cdot$ & -- & -2 \\
+HCMA	 & -- & -- & -- & -- & -- & -- & -- & -7 \\
+HILL	 & + & -- & + & -- & + & $\cdot$ & + & 2\\
+HMLSL	 & $\cdot$ & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -4 \\
+IP	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5 \\
+IP-10DDr	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6 \\
+IP-500	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5 \\
+MEMPSODE	 & $\cdot$ & -- & -- & -- & -- & -- & -- & -6 \\
+MLSL	 & + & -- & -- & -- & -- & -- & + & -3 \\
+OQNLP	 & + & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -3 \\
+P-DCN	 & + & -- & + & -- & + & $\cdot$ & + & 2 \\
+P-zero	 & + & -- & + & -- & + & $\cdot$ & + & 2\\
+PRCGA	 & $\cdot$ & -- & -- & -- & + & $\cdot$ & -- & -3 \\
+Simplex	 & + & -- & -- & -- & $\cdot$ & $\cdot$ & + & -1\\
+tany	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6 \\
+texp	 & -- & -- & -- & -- & -- & -- & -- & -7 \\
+U-DCN	 & + & -- & $\cdot$ & -- & + & + & + & 2\\
+U-zero	 & + & -- & $\cdot$ & -- & + & + & + & 2\\ \hline
+Suma	 & 6 & -23 & -9 & -26 & 0 & -4 & 0 & -56 \\ \hline
 
-\begin{figure}[H]
+\end{tabular}
+\caption{Porównanie DE/mid/1 do 26 algorytmów z BBOB 2013 w 20 wymiarach}
+\label{table:bbob2013mid20}
+\end{table}
+
+\begin{table}[H]
 \centering
-\includegraphics[width=.65\textwidth]{img/rand}
-\caption{Histogram mutantów dla DE/rand/1} 
-\label{fig:sym_rand}
-\end{figure}
+\begin{tabular}{ | l | c | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c|}{Numer funkcji testowej} & \\  \hline
+Algorytm         &15& 16& 19& 20& 21& 22& 24 & Suma \\  \hline
+BIPOP-aCMA-STEP	 & -- & -- & -- & -- & -- & -- & -- & -7\\
+BIPOP-saACM-k	 & -- & -- & -- & -- & -- & -- & -- & -7\\
+CGA-grid100	 & + & + & + & + & + & + & + & 7\\
+CGA-grid16	 & + & + & $\cdot$ & + & + & + & + & 6\\
+CMAES\_Hutter	 & + & + & + & + & + & $\cdot$ & + & 6\\
+DE\_Pal	 & + & + & + & $\cdot$ & $\cdot$ & $\cdot$ & + & 4\\
+fmincon	 & + & + & -- & + & -- & -- & + & 1\\
+fminunc	 & + & + & -- & + & -- & -- & + & 1\\
+GA-100	 & + & + & -- & + & + & $\cdot$ & $\cdot$ & 3\\
+HCMA	 & -- & -- & -- & -- & -- & -- & -- & -7 \\
+HILL	 & + & + & $\cdot$ & + & + & $\cdot$ & + & 5\\
+HMLSL	 & + & + & -- & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & 1\\
+IP	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5 \\
+IP-10DDr	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6\\
+IP-500	 & -- & -- & -- & + & $\cdot$ & $\cdot$ & -- & -3\\
+MEMPSODE	 & -- & $\cdot$ & -- & $\cdot$ & -- & -- & -- & -5\\
+MLSL	 & + & + & -- & + & -- & -- & + & 1\\
+OQNLP	 & + & + & -- & + & $\cdot$ & $\cdot$ & $\cdot$ & 2\\
+P-DCN	 & + & + & + & + & + & + & + & 7\\
+P-zero	 & + & + & + & + & + & $\cdot$ & + & 6\\
+PRCGA	 & + & + & -- & + & + & $\cdot$ & -- & 2\\
+Simplex	 & + & + & -- & + & $\cdot$ & $\cdot$ & + & 3\\
+tany	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6\\
+texp	 & -- & -- & -- & $\cdot$ & -- & -- & -- & -6\\
+U-DCN	 & + & + & -- & + & + & + & + & 5 \\
+U-zero	 & + & + & $\cdot$ & + & + & + & + & 6\\ \hline
+Suma     & 8 & 9 & -13 & 10 & 0 & -3 & 3 & 14 \\ \hline
+\end{tabular}
+\caption{Porównanie DE/rand/1 do 26 algorytmów z BBOB 2013}
+\end{table}
 
-\begin{figure}[H]
+\begin{table}[H]
 \centering
-\includegraphics[width=.65\textwidth]{img/mid}
-\caption{Histogram mutantów dla DE/mid/1} 
-\label{fig:sym_mid}
-\end{figure}
+\begin{tabular}{ | l | c | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c|}{Numer funkcji testowej} & \\  \hline
+Algorytm         &15& 16& 19& 20& 21& 22& 24 & Suma \\  \hline
+IPOP-aCMA-STEP	 & -- & -- & -- & -- & -- & -- & -- & -7\\
+BIPOP-saACM-k	 & -- & -- & -- & -- & -- & -- & -- & -7\\
+CGA-grid100	 & + & -- & + & -- & + & $\cdot$ & + & 2 \\
+CGA-grid16	 & + & -- & + & -- & $\cdot$ & $\cdot$ & + & 1 \\
+CMAES	 & $\cdot$ & -- & + & -- & + & $\cdot$ & + & 1  \\
+GA-100	 & $\cdot$ & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -4 \\
+HILL	 & + & -- & + & -- & $\cdot$ & $\cdot$ & + & 1\\
+IP	 & -- & -- & -- & -- & $\cdot$ & -- & -- & -6 \\
+IP-10Dr	 & -- & -- & -- & -- & $\cdot$ & -- & -- & -6 \\
+IP-500	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5 \\
+MEMPSODE	 & $\cdot$ & -- & -- & -- & -- & -- & -- & -6 \\
+PRCGA	 & $\cdot$ & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -4 \\
+tany	 & -- & -- & -- & -- & -- & -- & -- & -7 \\
+texp	 & -- & -- & -- & -- & -- & -- & -- & -7 \\ \hline
+Suma	 & -4 & -14 & -6 & -14& -3 & -7 & -6 & -54 \\ \hline
+\end{tabular}
+\caption{Porównanie DE/mid/1 do 14 algorytmów z BBOB 2013 w 40 wymiarach}
+\end{table}
 
-\begin{figure}[H]
+\begin{table}[H]
 \centering
-\includegraphics[width=.65\textwidth]{img/best}
-\caption{Histogram mutantów dla DE/best/1} 
-\label{fig:sym_best}
-\end{figure}
-
-W ostatecznej klasyfikacji DE/mid (symetryczy) zajął pierwsze miejsce, 
-DE/rand (niesymetryczny) -- drugie, natomiast DE/best (symetryczny) -- trzecie.
-Dlatego na podstawie przeprowadzonych eksperymentów nie można określić czy symetria rozkładu 
-mutantów miała istotny wpływ na jakość otrzymywanych wyników. 
-
-\subsection{Wpływ liczby par wektów różnicowych $k$}
-
-Algorytmy dla $k = 6$ zachowywały się identycznie jak dla $k = \infty$. Jest to wynik zgodny
-z rozważaniami teoretycznymi przedstawionymi w \cite{decomposition}. 
-W przypadku $k = 6$ w mutacji sumujemy aż 12 wektorów różnicowych,
-czyli 12 niezależnych zmiennych. Na mocy centralnego twierdzenia granicznego,
-im większe $k$, tym rozkład sumy coraz bardziej przypomina wielowymiarowy rozkład normalny,
-a zatem przypadek $k=\infty$. Zostało to dokładnie opisane w rozdziale \ref{sub:de_rand_inf}.
-Wydajne losowanie zmiennych o rozkładzie wielowymiarowym normalnym, o zadanej
-macierzy kowariancji, było zadaniem trudnym do implementacji w Javie.
-Dla każdego populacji, najpierw trzeba wyznaczyć jej macierz kowariancji, a następnie macierz
-tą trzeba rozłożyć. Macierz kowariancji często nie była dodatnie określona, 
-dlatego dekompozycja Choleskiego nie mogła zostać użyta.
-Z tego powodu wykorzystano rozkład macierzy na wektory i wartości własne -- metodę ogólniejszą, jednak
-bardziej kosztowną obliczeniowo. Operator mutacji w DE/mid/$\infty$ wykonuje się o wiele
-wolniej od operatora mutacji w DE/mid/6, a~ponieważ mutacja jest powtarzana miliony
-razy, ogólna wydajność DE/mid/$\infty$ prezentuje się zdecydowanie najgorzej na tle pozostałych
-algorytmów. Z powodu braku różnic w jakości otrzymywanych rozwiązań,
- algorytmy z $k = 6$ są lepszym wyborem z praktycznego punktu widzenia.
-
-Natomiast ogólnie najlepszą wartością dla $k$ było 1. Im wyższe $k$, tym algorytm spisywał się gorzej.
-Relacja pomiędzy DE/mid, DE/rand oraz DE/best, dla większości funkcji pozostawała taka sama, 
-niezależnie od $k$, tzn. DE/mid był zazwyczaj najlepszy, DE/rand drugi, zaś DE/best najgorszy
-dla takiego samego $k$. Rozkład mutantów dla $k = 1$ nie przypomina rozkładu normalnego, 
-natomiast dla $k = 6$ już upodabnia się do niego, zaobserwować to można na rysunkach \ref{fig:10k}. 
-Przedstawiają one 10 tysięcy mutantów wygenerowanych z tej samej, dwuwymiarowej populacji początkowej.
-Po lewej stronie użyto mutacji DE/rand/1, po prawej DE/rand/6. Wspołczynnik skalujący $F$ dla 
-DE/rand/1 wynosił 1, dla DE/rand/6 (zgodnie z tabelą \ref{table:wspolczynniki}) $\frac{1}{\sqrt{6}}$.
-Populacja początkowa przedstawiona na rysunku \ref{fig:10k_start} zawierała 20 punktów, 
-przy czym 18 z nich leżało niemal w jednej linii na osi $y = 0$. 
-Jedynie 2 punkty wprowadzały większą różnorodność 
-w wymiarze $y$: jeden o $y = 2.5$ oraz jeden o~$y = -2.5$. Liczba mutantów,
-dla których $|y| > 5$, znacznie się różniła. Dla DE/rand/1 było to 75 mutantów,
-natomiast dla DE/rand/6 -- 19. Obliczenia
-powtórzono i uśredniono wielokrotnie, aby wyelimonować czynnik losowy. Mutanty, które sięgają
-na tyle daleko, że umożliwiają wyjście z lokalnego optimum, są bardzo cenne. 
-Ciągłe próbkowanie okolicznych, już zbadanych obszarów, na ogół nie przynosi korzyści. 
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=.5\textwidth]{img/pop} 
-\caption{20 punktów populacji początkowej} 
-\label{fig:10k_start}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\mbox{
-\includegraphics[width=.5\textwidth]{img/pop_10000_r1}
-\includegraphics[width=.5\textwidth]{img/pop_10000_r6}  
-}
-\caption{Po lewej 10 tysięcy mutantów dla DE/rand/1. Po prawej 10 tysięcy mutantów dla DE/rand/6.} 
-\label{fig:10k}
-\end{figure}
-
-Ponadto, podczas mutacji DE/rand/1 zazwyczaj powstawał jeden mutant o $y > 7.5$. 
-Żeby tak się zdarzyło, najpierw wylosowany musi zostać osobnik $P_{i_1}$ o~$y=2.5$.
-Prawdopodobieństwo takiego zdarzenia wynosi $\frac{1}{20}$.
-Następnie musi zostać wylosowany wektor różnicowy o~długości 5. Tylko jedna para punktów 
-dawała taki wektor --
-pierwszy punkt o $y = 2.5$, drugi punkt o $y = -2.5$. 
-Prawdopodobieństwo wylosowania takiej pary wynosiło $\frac{1}{400}$. 
-Zatem łączne prawdopodobieństwo powstania mutanta o~
-$y~=~7.5$ dla DE/rand/1 wynosiło $\frac{1}{8000}$. 
-
-Dla DE/rand/6 prawdopodobieństwo powstania mutanta o $y > 7.5$ jest znacznie mniejsze.
-W celu oszacowania, przyjęto dla uproszczenia, że rozkład prawdopodobieństwa mutantów dla
-DE/rand/6 jest wystarczająco zbliżony do DE/rand/$\infty$.
-Zgodnie z opisem w rozdziale \ref{sub:de_rand_inf}, na początku wylosowany musi zostać osobnik 
-$P_{i_1}$ o $y = 2.5$. Następnie musi zostać wygenerowana zmienna losowa 
-$v_\infty$ o rozkładzie normalnym, której wartość w wymiarze $y$
-przekroczy $5\sqrt{6} \approx 12.25$. Macierz kowariancji populacji początkowej  
-$\C[P]$ wynosiła $\left[ \begin{array}{ c c }
-  35.1798210 & -0.2902915 \\
-  -0.2902915 &  0.6719438
-\end{array} \right]$.
-Wektor średnich~$m=\left[ \begin{array}{ c c } 10.463749675 & 0.004673205 \end{array} \right]$.
-Prawdopodobieństwo wylosowania zmiennej o~$y > 5\sqrt{6}$ wynosi 
-$1 - F(\infty, 5\sqrt{6}) \approx 0$.\footnote{Wartość ta jest tak mała,
-że w reprezentacji liczb podwójnej precyzji użytych przy wywołaniu funkcji \texttt{pmvnorm} języka R
-została uznana za 0.} $F$ to
-dystrybuanta wielowymiarowego rozkładu $\mathcal{N}(m, \C[P])$.
-Całowite prawdopodobieństwo wylosowanie mutanta o $y > 7.5$ dla DE/rand/6 jest zatem 
-znacznie mniejsze w porównaniu do
-$\frac{1}{8000}$ dla DE/rand/1.
-Gdyby pierwszym wylosowanym punktem $P_{i_1}$ nie był ten o $y = 2.5$, tylko np. któryś 
-z leżący blisko osi $y = 0$, wówczas mutacja DE/rand/6 musiałaby wygenerować zmienną
-o wartości $y$ większej niż $7.5\sqrt{6} \approx 18.37$. 
-Prawdobieństwo takiego zdarzenia również jest bliskie zeru.
+\begin{tabular}{ | l | c | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c|}{Numer funkcji testowej} & \\  \hline
+Algorytm         &15& 16& 19& 20& 21& 22& 24 & Suma \\  \hline
+BIPOP-aCMA-STEP	 & -- & -- & -- & -- & -- & -- & -- & -7 \\
+BIPOP-saACM-k	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6 \\
+CGA-grid100	 & + & -- & + & -- & + & $\cdot$ & + & 2 \\
+CGA-grid16	 & + & -- & + & -- & $\cdot$ & + & + & 2\\
+CMAES	 & $\cdot$ & -- & + & -- & + & $\cdot$ & + & 1 \\
+GA-100	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5 \\
+HILL	 & + & -- & + & -- & $\cdot$ & + & + & 2 \\
+IP	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5 \\
+IP-10Dr	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6 \\
+IP-500	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5\\
+MEMPSODE	 & -- & -- & -- & -- & -- & -- & -- & -7 \\
+PRCGA	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- & -5\\
+tany	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6 \\
+texp	 & -- & -- & -- & -- & -- & $\cdot$ & -- & -6 \\ \hline
+Suma     & -7 & -14 & -6 & -14 & -4 & 0 & -6 & -51 \\ \hline
+\end{tabular}
+\caption{Porównanie DE/rand/1 do 14 algorytmów z BBOB 2013 w 40 wymiarach}
+\end{table}
 
 \chapter{Podsumowanie}
 
@@ -1323,14 +1359,14 @@ Wówczas opłacalne byłoby zwiększenie różnorodności populacji, np. poprzez
 Do pracy została dołączona płyta CD. Zawiera one katalogi \texttt{kod/} oraz \texttt{praca/},
 w~których znajduje się pełny kod źródłowy oraz ta praca w formie elektronicznej.
 
-\chapter{Pełne wyniki}
+\chapter{Pełne wyniki eksperymentów}
 
 \section{10 wymiarów}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/rand/2	 & + & + & $\cdot$ & + & $\cdot$ & $\cdot$ & $\cdot$ \\
 DE/rand/6	 & + & + & $\cdot$ & + & $\cdot$ & $\cdot$ & $\cdot$ \\
@@ -1342,15 +1378,15 @@ DE/best/$\infty$	 & + & + & + & + & + & $\cdot$ & + \\
 DE/mid/1	 & -- & + & -- & + & $\cdot$ & $\cdot$ & -- \\
 DE/mid/2	 & + & + & $\cdot$ & + & + & $\cdot$ & $\cdot$ \\
 DE/mid/6	 & + & + & $\cdot$ & + & $\cdot$ & $\cdot$ & $\cdot$ \\
-DE/mid/$\infty$	 & + & + & $\cdot$ & + & $\cdot$ & $\cdot$ & $\cdot$ \\
+DE/mid/$\infty$	 & + & + & $\cdot$ & + & $\cdot$ & $\cdot$ & $\cdot$ \\ \hline
 \end{tabular}
 \caption{Porównanie DE/rand/1 do reszty algorytmów}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/rand/1	 & -- & -- & -- & -- & -- & -- & -- \\
 DE/rand/2	 & -- & $\cdot$ & -- & + & -- & -- & -- \\
@@ -1362,15 +1398,15 @@ DE/best/$\infty$	 & $\cdot$ & + & -- & + & $\cdot$ & -- & -- \\
 DE/mid/1	 & -- & $\cdot$ & -- & + & -- & -- & -- \\
 DE/mid/2	 & -- & $\cdot$ & -- & + & $\cdot$ & -- & -- \\
 DE/mid/6	 & -- & $\cdot$ & -- & + & -- & -- & -- \\
-DE/mid/$\infty$	 & -- & $\cdot$ & -- & + & -- & -- & -- \\
+DE/mid/$\infty$	 & -- & $\cdot$ & -- & + & -- & -- & -- \\ \hline
 \end{tabular}
 \caption{Porównanie DE/best/1 do reszty algorytmów}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/rand/1	 & + & -- & + & -- & $\cdot$ & $\cdot$ & + \\
 DE/rand/2	 & + & + & + & -- & $\cdot$ & $\cdot$ & + \\
@@ -1382,15 +1418,15 @@ DE/best/6	 & + & + & + & + & $\cdot$ & $\cdot$ & + \\
 DE/best/$\infty$	 & + & + & + & + & + & $\cdot$ & + \\
 DE/mid/2	 & + & + & + & $\cdot$ & $\cdot$ & $\cdot$ & + \\
 DE/mid/6	 & + & + & + & $\cdot$ & $\cdot$ & $\cdot$ & + \\
-DE/mid/$\infty$	 & + & + & + & $\cdot$ & $\cdot$ & $\cdot$ & + \\
+DE/mid/$\infty$	 & + & + & + & $\cdot$ & $\cdot$ & $\cdot$ & + \\ \hline
 \end{tabular}
 \caption{Porównanie DE/mid/1 do reszty algorytmów}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/rand/1	 & 1 & 30 & 7 & 0 & 1 & 1 & 0 \\
 DE/rand/2	 & 8 & 43 & 9 & 0 & 5 & 3 & 0 \\
@@ -1404,7 +1440,7 @@ DE/mid/1         & 0 & 27 & 0 & 0 & 1 & 1 & 0 \\
 DE/mid/2	 & 5 & 42 & 10 & 0 & 12 & 16 & 0 \\
 DE/mid/6	 & 8 & 43 & 11 & 0 & 9 & 6 & 0 \\
 DE/mid/$\infty$	 & 9 & 43 & 11 & 0 & 11 & 6 & 0 \\ \hline
-średnia          & 6 & 33 & 8 & 0 & 6 & 5 & 0 \\              
+średnia          & 6 & 33 & 8 & 0 & 6 & 5 & 0 \\        \hline      
 \end{tabular}
 \caption{Średni procent osobników poza obszarem przeszukiwań}
 \end{table}
@@ -1455,8 +1491,8 @@ DE/mid/$\infty$	 & 9 & 43 & 11 & 0 & 11 & 6 & 0 \\ \hline
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/rand/2	 & + & + & + & + & $\cdot$ & $\cdot$ & + \\
 DE/rand/6	 & + & + & + & + & + & $\cdot$ & + \\
@@ -1468,15 +1504,15 @@ DE/best/$\infty$	 & + & + & + & + & + & + & + \\
 DE/mid/1	 & $\cdot$ & + & $\cdot$ & + & $\cdot$ & $\cdot$ & + \\
 DE/mid/2	 & + & + & + & + & + & $\cdot$ & + \\
 DE/mid/6	 & + & + & + & + & + & $\cdot$ & + \\
-DE/mid/$\infty$	 & + & + & + & + & + & $\cdot$ & + \\
+DE/mid/$\infty$	 & + & + & + & + & + & $\cdot$ & + \\ \hline
 \end{tabular}
 \caption{Porównanie DE/rand/1 do reszty algorytmów}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/rand/1	 & -- & -- & -- & -- & -- & -- & -- \\
 DE/rand/2	 & $\cdot$ & + & $\cdot$ & + & -- & -- & -- \\
@@ -1488,15 +1524,15 @@ DE/best/$\infty$	 & + & + & + & + & + & + & + \\
 DE/mid/1	 & -- & + & -- & + & -- & -- & -- \\
 DE/mid/2	 & -- & + & -- & + & $\cdot$ & -- & -- \\
 DE/mid/6	 & $\cdot$ & + & $\cdot$ & + & $\cdot$ & -- & -- \\
-DE/mid/$\infty$	 & $\cdot$ & + & $\cdot$ & + & $\cdot$ & -- & -- \\
+DE/mid/$\infty$	 & $\cdot$ & + & $\cdot$ & + & $\cdot$ & -- & -- \\ \hline
 \end{tabular}
 \caption{Porównanie DE/best/1 do reszty algorytmów}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c | }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/best/1	 & + & -- & + & -- & + & + & + \\
 DE/best/2	 & + & + & + & + & + & + & + \\
@@ -1508,15 +1544,15 @@ DE/mid/$\infty$	 & + & + & + & $\cdot$ & + & $\cdot$ & + \\
 DE/rand/1	 & $\cdot$ & -- & $\cdot$ & -- & $\cdot$ & $\cdot$ & -- \\
 DE/rand/2	 & + & + & + & $\cdot$ & $\cdot$ & $\cdot$ & + \\
 DE/rand/6	 & + & + & + & + & + & $\cdot$ & + \\
-DE/rand/$\infty$	 & + & + & + & $\cdot$ & + & $\cdot$ & + \\
+DE/rand/$\infty$	 & + & + & + & $\cdot$ & + & $\cdot$ & + \\ \hline
 \end{tabular}
 \caption{Porównanie DE/mid/1 do reszty algorytmów}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/rand/1	 & 12 & 38 & 2 & 2 & 4 & 5 & 0   \\
 DE/rand/2	 & 30 & 47 & 13 & 5 & 23 & 20 & 0  \\
@@ -1530,7 +1566,7 @@ DE/mid/1         & 3 & 42 & 0 & 0 & 0 & 0 & 0  \\
 DE/mid/2	 & 23 & 47 & 9 & 3 & 25 & 18 & 0  \\
 DE/mid/6	 & 32 & 47 & 18 & 5 & 31 & 26 & 0  \\
 DE/mid/$\infty$	 & 32 & 47 & 17 & 4 & 32 & 25 & 0 \\ \hline
-średnia          & 23 & 37 & 11 & 5 & 19 & 17 & 0 \\  
+średnia          & 23 & 37 & 11 & 5 & 19 & 17 & 0 \\  \hline
 \end{tabular}
 \caption{Średni \% osobników poza obszarem przeszukiwań}
 \end{table}
@@ -1581,8 +1617,8 @@ DE/mid/$\infty$	 & 32 & 47 & 17 & 4 & 32 & 25 & 0 \\ \hline
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/rand/2	 & + & + & + & + & + & + & + \\
 DE/rand/6	 & + & + & + & + & + & + & + \\
@@ -1594,15 +1630,15 @@ DE/best/$\infty$	 & + & + & + & + & + & + & + \\
 DE/mid/1	 & -- & $\cdot$ & -- & + & $\cdot$ & $\cdot$ & -- \\
 DE/mid/2	 & + & + & + & + & + & + & + \\
 DE/mid/6	 & + & + & + & + & + & + & + \\
-DE/mid/$\infty$	 & + & + & + & + & + & + & + \\
+DE/mid/$\infty$	 & + & + & + & + & + & + & + \\ \hline
 \end{tabular}
 \caption{Porównanie DE/rand/1 do reszty algorytmów}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/rand/1	 & -- & + & -- & -- & -- & -- & -- \\
 DE/rand/2	 & + & + & + & + & + & + & + \\
@@ -1614,15 +1650,15 @@ DE/best/$\infty$	 & + & + & + & + & + & + & + \\
 DE/mid/1	 & -- & + & -- & -- & -- & -- & -- \\
 DE/mid/2	 & -- & + & $\cdot$ & -- & $\cdot$ & $\cdot$ & -- \\
 DE/mid/6	 & + & + & + & + & + & + & + \\
-DE/mid/$\infty$	 & + & + & + & + & + & + & + \\
+DE/mid/$\infty$	 & + & + & + & + & + & + & + \\ \hline
 \end{tabular}
 \caption{Porównanie DE/best/1 do reszty algorytmów}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/rand/1	 & + & $\cdot$ & + & -- & $\cdot$ & $\cdot$ & + \\
 DE/rand/2	 & + & + & + & + & + & + & + \\
@@ -1634,15 +1670,15 @@ DE/best/6	 & + & + & + & + & + & + & + \\
 DE/best/$\infty$	 & + & + & + & + & + & + & + \\
 DE/mid/2	 & + & + & + & + & + & + & + \\
 DE/mid/6	 & + & + & + & + & + & + & + \\
-DE/mid/$\infty$	 & + & + & + & + & + & + & + \\
+DE/mid/$\infty$	 & + & + & + & + & + & + & + \\ \hline
 \end{tabular}
 \caption{Porównanie DE/mid/1 do reszty algorytmów}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/rand/1	 & 31 & 42 & 3 & 6 & 17 & 16 & 0   \\
 DE/rand/2	 & 47 & 42 & 35 & 45 & 14 & 12 & 2   \\
@@ -1656,7 +1692,7 @@ DE/mid/1         & 7 & 45 & 0 & 0 & 1 & 1 & 0  \\
 DE/mid/2	 & 46 & 43 & 17 & 26 & 26 & 25 & 2   \\
 DE/mid/6	 & 44 & 40 & 35 & 43 & 4 & 3 & 0     \\
 DE/mid/$\infty$	 & 43 & 38 & 35 & 44 & 5 & 3 & 0    \\ \hline
-średnia          & 32 & 33 & 18 & 25 & 7 & 6 & 0 \\  
+średnia          & 32 & 33 & 18 & 25 & 7 & 6 & 0 \\  \hline
 \end{tabular}
 \caption{Średni \% osobników poza obszarem przeszukiwań}
 \end{table}
@@ -1707,8 +1743,8 @@ DE/mid/$\infty$	 & 43 & 38 & 35 & 44 & 5 & 3 & 0    \\ \hline
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/rand/2	 & + & + & + & + & + & + & + \\
 DE/rand/6	 & + & + & + & + & + & + & + \\
@@ -1720,15 +1756,15 @@ DE/best/$\infty$	 & + & + & + & + & + & + & + \\
 DE/mid/1	 & -- & $\cdot$ & -- & -- & -- & -- & -- \\
 DE/mid/2	 & + & + & + & + & + & + & + \\
 DE/mid/6	 & + & + & + & + & + & + & + \\
-DE/mid/$\infty$	 & + & + & + & + & + & + & + \\
+DE/mid/$\infty$	 & + & + & + & + & + & + & + \\ \hline
 \end{tabular}
 \caption{Porównanie DE/rand/1 do reszty algorytmów}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/rand/1	 & -- & + & -- & -- & -- & $\cdot$ & -- \\
 DE/rand/2	 & + & + & + & + & + & + & + \\
@@ -1740,7 +1776,7 @@ DE/best/$\infty$	 & + & + & + & + & + & + & + \\
 DE/mid/1	 & -- & + & -- & -- & -- & -- & -- \\
 DE/mid/2	 & + & + & -- & -- & + & + & + \\
 DE/mid/6	 & + & + & + & + & + & + & + \\
-DE/mid/$\infty$	 & + & + & + & + & + & + & + \\
+DE/mid/$\infty$	 & + & + & + & + & + & + & + \\ \hline
 
 \end{tabular}
 \caption{Porównanie DE/best/1 do reszty algorytmów}
@@ -1748,8 +1784,8 @@ DE/mid/$\infty$	 & + & + & + & + & + & + & + \\
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/rand/1	 & + & $\cdot$ & + & + & + & + & + \\
 DE/rand/2	 & + & + & + & + & + & + & + \\
@@ -1761,15 +1797,15 @@ DE/best/6	 & + & + & + & + & + & + & + \\
 DE/best/$\infty$	 & + & + & + & + & + & + & + \\
 DE/mid/2	 & + & + & + & + & + & + & + \\
 DE/mid/6	 & + & + & + & + & + & + & + \\
-DE/mid/$\infty$	 & + & + & + & + & + & + & + \\
+DE/mid/$\infty$	 & + & + & + & + & + & + & + \\ \hline
 \end{tabular}
 \caption{Porównanie DE/mid/1 do reszty algorytmów}
 \end{table}
 
 \begin{table}[H]
 \centering
-\begin{tabular}{ l | c | c | c | c | c | c | c }
-		 & \multicolumn{7}{c}{Numer funkcji testowej}  \\  \hline
+\begin{tabular}{ | l | c | c | c | c | c | c | c | }
+\hline		 & \multicolumn{7}{c |}{Numer funkcji testowej}  \\  \hline
 Algorytm         &15& 16& 19& 20& 21& 22& 24 \\ \hline
 DE/rand/1	 & 40 & 39 & 10 & 20 & 16 & 17 & 1    \\
 DE/rand/2	 & 39 & 36 & 18 & 32 & 0 & 0 & 0  \\
@@ -1783,7 +1819,7 @@ DE/mid/1         & 14 & 46 & 1 & 1 & 2 & 3 & 0   \\
 DE/mid/2	 & 45 & 39 & 30 & 40 & 1 & 0 & 0      \\
 DE/mid/6	 & 32 & 30 & 4 & 22 & 0 & 0 & 0     \\
 DE/mid/$\infty$	 & 28 & 26 & 3 & 19 & 0 & 0 & 0     \\ \hline
-średnia          & 26 & 28 & 6 & 16 & 3 & 3 & 0 \\  
+średnia          & 26 & 28 & 6 & 16 & 3 & 3 & 0 \\    \hline
 \end{tabular}
 \caption{Średni \% osobników poza obszarem przeszukiwań}
 \end{table}
