@@ -36,7 +36,7 @@
 \advance\evensidemargin 33mm
 \topmargin -1in
 \advance\topmargin 25mm
-\setlength\textheight{46\baselineskip}
+\setlength\textheight{45\baselineskip}
 \addtolength\textheight{\topskip}
 \marginparwidth15mm
 
@@ -191,8 +191,12 @@ się sposób ich testowania (opisany w rozdziale \ref{sec:zestaw}).
 
 \section{Algorytm ewolucyjny}
 
-W algorytmie ewolucyjnym punkty przestrzeni przeszukiwań
-reprezentowane są jako tablice liczb rzeczywistych \cite{jarabas}. 
+Algorytmy ewolucyjne to rodzaj algorytmów, w których wykorzystywane są operatory genetyczne (selekcja,
+mutacja, krzyżowanie) na zbiorach punktów w przestrzeni przeszukiwań nazywanych populacjami \cite{jarabas}. 
+Punkty przestrzeni przeszukiwań
+reprezentowane są jako tablice liczb rzeczywistych. 
+Celem działania algorytmu jest
+wyznaczenie ektremum globalnego (minium bądź maksimum) optymalizowanej funkcji.
 Zasadę działania algorytmu ewolucyjnego przedstawiano na listingu \ref{algorithm:ea}.
 
 \begin{algorithm}[H]
@@ -253,18 +257,11 @@ Niewątpliwą zaletą ewolucji różnicowej jest jej pewien rodzaj samoadaptacji
 czemu posiada stosunkowo małą liczbę parametrów do strojenia w porównaniu do innych algorytmów
 optymalizacji.
 
-\section{Metaheurystyki}
-
 \section{Algorytm ewolucji różnicowej}
 
 Ewolucja różnicowa jest algorytmem ewolucyjnym służącym do optymalizacji
 w przestrzeniach ciągłych zaproponowanym w 1995 roku. \cite{storn} Sposób działania algorytmu
 przedstawiono na listingu \ref{algorithm:de}.
-
-Kolejność wykonywania operatorów genetycznych (mutacji oraz krzyżowania) w~ewolucji różnicowej
-jest inna niż w algorytmie ewolucyjnym.
-W algorytmie ewolucyjnym najpierw wykonywane jest krzyżowanie, potem mutacja.
-W ewolucji różnicowej -- na odwrót.
 
 \usetikzlibrary{decorations.pathreplacing,calc}
 \newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \node (#1) {};}
@@ -299,9 +296,12 @@ W ewolucji różnicowej -- na odwrót.
 \EndWhile \\
 \Return arg min$_i f(P^t_i)$ \AddNote{top}{bottom}{right}{~~sukcesja}
 \end{algorithmic}
-
 \end{algorithm}
 
+Kolejność wykonywania operatorów genetycznych (mutacji oraz krzyżowania) w~ewolucji różnicowej
+jest inna niż w algorytmie ewolucyjnym.
+W algorytmie ewolucyjnym najpierw wykonywane jest krzyżowanie, potem mutacja.
+W ewolucji różnicowej -- na odwrót.
 Kolejną różnicą jest konkretyzacja operatora sukcesji. Po wygenerowaniu potomka
 $o_i$ jest on od razu porównywany ze swoim rodzicem. Jeśli okaże się lepszy -- zastępuje go
 w~kolejnej populacji. Powoduje to silny nacisk selektywny -- dalej przechodzą jedynie dzieci
@@ -340,9 +340,19 @@ został wykorzystany w tej pracy.
 Potomkiem jest rozwiązanie znajdujące się dokładnie w~połowie odległości pomiędzy rodzicami.
 \end{itemize} 
 
-\section{Techniki uwzględniania ograniczeń}
+\subsection{Inne modyfikacje ewolucji różnicowej}
+
+Można wprowadzić olbrzymią liczbę modyfikacji do podstawowego algorytmu ewolucji różnicowej.
+Oprócz zmian w podstawowych operatorach genetycznych, możliwe jest również dodawanie reguł adaptacyjnych.
+Przykładami mogą być algorytmy SaDE oraz jDE wykorzystujące metody losowego wyboru
+wartości parametrów \cite{brest}. Istnieją również podejścia hybrydowe, np. w algorytmach JADE \cite{jade} oraz 
+DEPSO \cite{depso} wykorzystano elementy znane w algorytmach optymalizacji rojem cząstek (ang. PSO -- Particle Swarm Optimization).
 
 \chapter{Algorytm DE/mid -- nowy wariant ewolucji różnicowej}
+
+W tym rozdziale przeanalizowano rozkłady mutantów różnych wariantów ewolucji różnicowej.
+Dla ustalenia tego samego zasięgu mutacji kluczowe było wyprowadzenie odpowiednych współczynników skalujących
+dla każdego z wariantów DE. Następnie przedstawiono nowy wariant ewolucji różnicowej nazwanej DE/mid.
 
 \section{Analiza porównawcza macierzy kowariancji różnych wariantów ewolucji różnicowej}
 
@@ -581,7 +591,14 @@ Prawdobieństwo takiego zdarzenia również jest bliskie zeru.
 \section{Algorytm DE/mid -- nowy wariant ewolucji różnicowej}
 \label{chap:de_mid}
 
-\subsection{Schemat algorytmu}
+W poniższym podrozdziale przedstawiono nowy wariant ewolucji różnicowej wybierający w selekcji punkt środkowy populacji -- DE/mid.
+Wybór punktu środkowego jest uzasadniony wynikiem pracy Zhanga oraz Sandersona, w której dowodzi się, że
+środek populacji w DE ma zbieżność w sensie wartości oczekiwanej do wierzchołka paraboli optymalizowanej funkcji
+\cite{zhang}. Punkt środkowy jest również wykorzystywany w bardzo efektywnym algorytmie CMA-ES
+(ang. Covariance Matrix Adaptation Evolution Strategy) \cite{cmaes}.
+Warianty tego algorytmu od lat zajmują najwyższe miejsca w konkursach typu BBOB \cite{setup} czy CEC \cite{cec}.
+
+\subsection{Schemat algorytmu DE/mid/k}
 
 W DE/mid/k mutant powstaje w następujący sposób:
 
@@ -1495,6 +1512,11 @@ Poniżej zamieszczono pełne wyniki testów istotności statystycznej (opisanych
 \ref{sec:testy_istotnosci}) oraz wszystkie
 dystrybuanty empiryczne (opisane w rozdziale \ref{sec:dystrybuanty})
 dla wymiarów: 10, 20, 40 oraz 80.
+W notacji stosowanej w tabelach brak statystycznej różnicy oznaczono znakiem ,,$\cdotp$''.
+Jeśli test istotności
+odrzucał hipotezę zerową, uznawano, że algorytmy A i B dają różne wyniki.
+Wówczas porówywane były mediany obu zbiorów. Algorytm, którego mediana wyników była niższa,
+uznawany był za lepszy i oznaczany znakiem ,,+''. Algorytm istotnie gorszy był oznaczany znakiem ,,--''.
 
 \section{10 wymiarów}
 
