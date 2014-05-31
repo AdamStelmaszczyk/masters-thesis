@@ -11,6 +11,8 @@ DE/rand/2	 & + & + & $\cdot$ & + & $\cdot$ & $\cdot$ & $\cdot$ \\
 DE/rand/6	 & + & + & $\cdot$ & + & $\cdot$ & $\cdot$ & $\cdot$ \\
 DE/rand/$\infty$	 & + & + & $\cdot$ & + & $\cdot$ & $\cdot$ & $\cdot$ \\
 
+BIPOP-aCMA-STEP	 & -- & -- & -- & -- & -- & -- & -- \\
+BIPOP-saACM-k	 & -- & -- & -- & -- & -- & -- & -- \\
 DE/best/1	 & + & + & + & + & + & + & + \\
 DE/best/2	 & + & + & + & + & + & + & + \\
 DE/best/6	 & + & + & + & + & + & + & + \\
@@ -23,7 +25,36 @@ DE/rand/1	 & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$
 DE/rand/2	 & + & + & + & + & $\cdot$ & $\cdot$ & + \\
 DE/rand/6	 & + & + & + & + & + & $\cdot$ & + \\
 DE/rand/$\infty$	 & + & + & + & + & + & $\cdot$ & + \\
+HCMA	 & -- & -- & -- & -- & -- & -- & -- \\
+holtschulte2013ga100	 & + & + & -- & + & + & $\cdot$ & $\cdot$ \\
+holtschulte2013grid100	 & + & + & + & + & + & + & + \\
+holtschulte2013grid16	 & + & + & $\cdot$ & + & + & + & + \\
+holtschulte2013hill	 & + & + & $\cdot$ & + & + & $\cdot$ & + \\
+hutter2013CMAES	 & + & + & + & + & + & $\cdot$ & + \\
+liao2013IPOP	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- \\
+liao2013IPOP-10DDr	 & -- & -- & -- & -- & -- & $\cdot$ & -- \\
+liao2013IPOP-500	 & -- & -- & -- & + & $\cdot$ & $\cdot$ & -- \\
+liao2013IPOP-tany	 & -- & -- & -- & -- & -- & $\cdot$ & -- \\
+liao2013IPOP-texp	 & -- & -- & -- & $\cdot$ & -- & -- & -- \\
+pal2013DE	 & + & + & + & $\cdot$ & $\cdot$ & $\cdot$ & + \\
+pal2013fmincon	 & + & + & -- & + & -- & -- & + \\
+pal2013fminunc	 & + & + & -- & + & -- & -- & + \\
+pal2013HMLSL	 & + & + & -- & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ \\
+pal2013MLSL	 & + & + & -- & + & -- & -- & + \\
+pal2013OQNLP	 & + & + & -- & + & $\cdot$ & $\cdot$ & $\cdot$ \\
+pal2013simplex	 & + & + & -- & + & $\cdot$ & $\cdot$ & + \\
+P-DCN	 & + & + & + & + & + & + & + \\
+P-zero	 & + & + & + & + & + & $\cdot$ & + \\
+sawyerr2013prcga	 & + & + & -- & + & + & $\cdot$ & -- \\
+U-DCN	 & + & + & -- & + & + & + & + \\
+U-zero	 & + & + & $\cdot$ & + & + & + & + \\
+voglis2013memPSODE	 & -- & $\cdot$ & -- & $\cdot$ & -- & -- & -- \\
 
+BIPOP-aCMA-STEP	 & -- & -- & -- & -- & -- & -- & -- \\
+BIPOP-saACM-k	 & -- & -- & -- & -- & -- & $\cdot$ & -- \\
+CGA-grid100	 & + & -- & + & -- & + & $\cdot$ & + \\
+CGA-grid16	 & + & -- & + & -- & $\cdot$ & + & + \\
+CMAES	 & $\cdot$ & -- & + & -- & + & $\cdot$ & + \\
 DE/best/1	 & + & -- & + & + & + & + & + \\
 DE/best/2	 & + & + & + & + & + & + & + \\
 DE/best/6	 & + & + & + & + & + & + & + \\
@@ -36,6 +67,15 @@ DE/rand/1	 & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$
 DE/rand/2	 & + & + & + & + & + & + & + \\
 DE/rand/6	 & + & + & + & + & + & + & + \\
 DE/rand/$\infty$	 & + & + & + & + & + & + & + \\
+GA-100	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- \\
+HILL	 & + & -- & + & -- & $\cdot$ & + & + \\
+IP	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- \\
+IP-10Dr	 & -- & -- & -- & -- & -- & $\cdot$ & -- \\
+IP-500	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- \\
+MEMPSODE	 & -- & -- & -- & -- & -- & -- & -- \\
+PRCGA	 & -- & -- & -- & -- & $\cdot$ & $\cdot$ & -- \\
+tany	 & -- & -- & -- & -- & -- & $\cdot$ & -- \\
+texp	 & -- & -- & -- & -- & -- & $\cdot$ & -- \\
 
 DE/best/1	 & + & -- & + & + & + & $\cdot$ & + \\
 DE/best/2	 & + & + & + & + & + & + & + \\
