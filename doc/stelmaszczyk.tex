@@ -187,7 +187,7 @@ się sposób ich testowania (opisany w rozdziale \ref{sec:zestaw}).
  \item[] $u_i$ -- mutant w iteracji $i$
  \item[] $o_i$ -- potomek po krzyżowaniu w iteracji $i$
  \item[] $F$ (ang. Factor) -- współczynnik skalujący, parametr ewolucji różnicowej sterujący zasięgiem mutacji
- \item[] $CR$ (ang. Crossover Rate) -- prawdopodobieństwo krzyżowania, parametr algorytmów ewolucyjnych sterujący częstością krzyżowań
+ \item[] $p_c$ (ang. crossover probability) -- prawdopodobieństwo krzyżowania, parametr algorytmów ewolucyjnych sterujący częstością krzyżowań
  \item[] $f$ -- funkcja celu, przystosowania, oceny, optymalizowana funkcja, funkcja testowa
  \item[] $f_\text{opt}$ -- optymalna wartość $f$, tzn. minimum podczas minimalizacji lub maksimum podczas maksymalizacji
  \item[] $\C[u]$ -- macierz kowariancji rozkładu zmiennej losowej $u$
@@ -201,21 +201,21 @@ Algorytmy ewolucyjne to rodzaj algorytmów, w których wykorzystywane są operat
 mutacja, krzyżowanie) na zbiorach punktów w przestrzeni przeszukiwań nazywanych populacjami \cite{jarabas}. 
 Celem działania algorytmu jest
 wyznaczenie ektremum globalnego (minium bądź maksimum) optymalizowanej funkcji.
-Zasadę działania typowego algorytmu ewolucyjnego przedstawiano na listingu \ref{algorithm:ea}.
+Działanie typowego algorytmu ewolucyjnego przedstawia pseudokod \ref{algorithm:ea}.
 
 \begin{algorithm}[H]
 \caption{Algorytm ewolucyjny}
 \label{algorithm:ea}
 \begin{algorithmic}[1]
-\State Inicjalizacja parametrów $CR, \mu$
+\State Inicjalizacja parametrów $p_c, \mu$
 \State Inicjalizacja populacji początkowej $P^1 \gets \{P^1_1, P^1_2, \ldots, P^1_{\mu}\}$
 \State $t \gets 1$
 \While{kryterium stopu nie zostało spełnione}
   \ForAll{$i \in \{ 1, 2, \ldots, \mu \}$}
-    \If{$\mathcal{U}(0, 1) < CR$}
-      \State $O^t_i \gets$ mutacja(krzy{\.z}owanie(selekcja($P(t)$), selekcja($P(t)$)))
+    \If{$\mathcal{U}(0, 1) < p_c$}
+      \State $O^t_i \gets$ mutacja(krzy{\.z}owanie(selekcja($P^t$), selekcja($P^t$)))
     \Else
-      \State $O^t_i \gets$ mutacja(selekcja($P(t)$))
+      \State $O^t_i \gets$ mutacja(selekcja($P^t$))
     \EndIf
   \EndFor
   \State $P^{t+1} \gets$ sukcesja$(P^t, O^t)$
@@ -225,9 +225,9 @@ Zasadę działania typowego algorytmu ewolucyjnego przedstawiano na listingu \re
 \end{algorithm}
 
 $\mathcal{U}(0, 1)$ to realizacja zmiennej losowej o rozkładzie jednostajnym na przedziale od 0 do 1.
-Algorytm ewolucyjny w podstawowej postaci ma trzy parametry wejściowe.
-Są nimi: $CR$~--~prawdopodobieństwo krzyżowania, $\mu$ -- liczba osobników w populacji
-oraz $F$ -- współczynnik skalujący wykorzystywany w mutacji.
+Algorytm ewolucyjny w podstawowej postaci ma dwa parametry wejściowe.
+Są nimi: $p_c$~--~prawdopodobieństwo krzyżowania oraz $\mu$ -- liczba osobników w populacji.
+Ponadto, sam operator mutacji może potrzebować paremetrów, w zależności od typu mutacji.
 Po nadaniu wartości początkowych parametrom, następuja inicjalizacja populacji początkowej. 
 Jeśli zupełnie nie wiadomo, gdzie może znajdować się poszukiwane optimum, 
 populację początkową generuje się w sposób losowy z rozkładem jednostajnym w zbiorze dopuszczalnym.
@@ -240,7 +240,7 @@ Algorytm można zatrzymać również wtedy, gdy znalezione rozwiązanie jest zad
 W głównej pętli programu przetwarzana jest bieżąca populacja. 
 Wykonywana jest kolejna pętla, tym razem iterująca kolejno po wszystkich osobnikach 
 (rozwiązaniach) z bieżącej populacji. W niej losowana jest liczba od 0 do 1 i jeśli jest ona mniejsza
-od ustalonego $CR$ -- dokonywana jest selekcja dwóch punktów, ich krzyżowanie, a następnie mutacja.
+od ustalonego $p_c$ -- dokonywana jest selekcja dwóch punktów, ich krzyżowanie, a następnie mutacja.
 W przeciwnim przypadku krzyżowanie jest pomijane.
 Po wygenerowaniu populacji potomków $O^t$ następuje sukcesja, czyli wybór punktów, które przechodzą
 do następnej populacji $P^{t+1}$. Zwiększany jest licznik populacji (czasu) $t$,
@@ -248,20 +248,20 @@ sprawdzane jest kryterium stopu i jeśli nie jest spełnione --
 wykonywana jest kolejna pętla.
  
 Kolejnym problemem jest dobór parametrów dla algorytmu ewolucyjnego. 
-Istnieją pewne porady, np. stosowana w tej pracy reguła $\mu = 10D$, 
+Istnieją pewne porady, np. stosowane w tej pracy zalecenie $\mu = 10D$, 
 jednak w ogólnym przypadku nie wiadomo jaki rozmiar populacji czy jakie prawdopodobieństwo
-krzyżowania $CR$ sprawdzi się najlepiej. Duży problem również stanowi dobór parametrów dla mutacji.
+krzyżowania $p_c$ sprawdzi się najlepiej. Duży problem również stanowi dobór parametrów dla mutacji.
 Z pomocą przychodzą
 metody samoadaptacji, które same dostrajają parametry algorytmu w zależności od stanu w jakim się
 znajdują, np. w~zależności od zawartości populacji \cite{brest}.
-Ewolucja różnicowa radzi sobie z problemem doboru parametrów właśnie dzięki pewnemu rodzajowi
+Opisana w kolejnym dziale ewolucja różnicowa radzi sobie z problemem doboru parametrów właśnie dzięki pewnemu rodzajowi
 samoadaptacji.
 
 \section{Algorytm ewolucji różnicowej}
 
 Ewolucja różnicowa jest algorytmem ewolucyjnym służącym do optymalizacji
 w przestrzeniach ciągłych zaproponowanym w 1995 roku. \cite{storn} Sposób działania algorytmu
-przedstawiono na listingu \ref{algorithm:de}.
+przedstawia pseudokod \ref{algorithm:de}.
 
 \usetikzlibrary{decorations.pathreplacing,calc}
 \newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \node (#1) {};}
@@ -279,14 +279,14 @@ przedstawiono na listingu \ref{algorithm:de}.
 \caption{Ewolucja różnicowa}
 \label{algorithm:de}
 \begin{algorithmic}[1]
-\State Inicjalizacja parametrów $CR, F, \mu$
+\State Inicjalizacja parametrów $p_c, F, \mu$
 \State Inicjalizacja populacji początkowej $P^1 \gets \{P^1_1, P^1_2, \ldots, P^1_\mu\}$
 \State $t \gets 1$
 \While{kryterium stopu nie zostało spełnione}
   \ForAll{$i \in \{ 1, 2, \ldots, \mu \}$}
     \State $v_i \gets$ selekcja$(P^t_i)$
     \State $u_i \gets$ mutacja$(v_i, P^t_i, F)$ 
-    \State $o_i \gets$ krzy{\.z}owanie$(u_i, P_i^t, CR)$    
+    \State $o_i \gets$ krzy{\.z}owanie$(u_i, P_i^t, p_c)$    
     \If{$f(o_i) \le f(P_i^t)$}  \tikzmark{top} \tikzmark{right} 
       \State $P_i^{t+1} \gets o_i$     
     \Else 
@@ -349,7 +349,8 @@ W ewolucji różnicowej jednym z rodziców jest mutant.
 Często wykorzystywanym rodzajem krzyżowania jest krzyżowanie wymieniające, w którym 
 część rozwiązania jest brana od jednego z rodziców, a pozostała część od drugiego. 
 Krzyżowanie wymieniające ma dwie odmiany -- bin (ang. binomial -- dwumianowe) oraz 
-exp (ang. exponential -- wykładnicze). Sposób działania krzyżowania dwumianowego przedstawiono na listingu \ref{algorithm:bin}.
+exp (ang. exponential -- wykładnicze). 
+Sposób działania krzyżowania dwumianowego przedstawia pseudokod \ref{algorithm:bin}.
 
 \begin{algorithm}[H]
 \caption{Krzyżowanie dwumianowe (bin)}
@@ -358,7 +359,7 @@ exp (ang. exponential -- wykładnicze). Sposób działania krzyżowania dwumiano
 \State Wejście: dwa rozwiązania rodzicielskie $x_1, x_2$ 
 \State $o \gets x_1$
 \ForAll{$d \in \{ 1, 2, \ldots, D \}$}
-  \If{$\mathcal{U}(0, 1) < CR$} 
+  \If{$\mathcal{U}(0, 1) < p_c$} 
     \State $o[d] \gets x_2[d]$     
   \EndIf 
 \EndFor \\
@@ -367,8 +368,8 @@ exp (ang. exponential -- wykładnicze). Sposób działania krzyżowania dwumiano
 \end{algorithm}
 
 $\mathcal{U}(0, 1)$ to realizacja zmiennej losowej o rozkładzie jednostajnym na przedziale od 0 do 1.
-$CR$ (ang. Crossover Rate) to sparametryzowane prawdopodobieństwo krzyżowania. 
-Sposób działania krzyżowania wykładniczego przedstawiono na listingu \ref{algorithm:exp}.
+$p_c$ (ang. crossover probability) to sparametryzowane prawdopodobieństwo krzyżowania. 
+Sposób działania krzyżowania wykładniczego przedstawia pseudokod \ref{algorithm:exp}.
 
 \begin{algorithm}[H]
 \caption{Krzyżowanie wykładnicze (exp)}
@@ -377,7 +378,7 @@ Sposób działania krzyżowania wykładniczego przedstawiono na listingu \ref{al
 \State Wejście: dwa rozwiązania rodzicielskie $x_1, x_2$ 
 \State $o \gets x_1$
 \State $d \gets 1$
-\While{$d \leq D$ \textbf{and} $\mathcal{U}(0, 1) < CR$}
+\While{$d \leq D$ \textbf{and} $\mathcal{U}(0, 1) < p_c$}
     \State $o[d] \gets x_2[d]$ 
     \State $d \gets d + 1$
 \EndWhile \\
@@ -409,7 +410,7 @@ oraz wyprowadzono wzory na współczynniki skalujące $F$. We wzorach, dla zwię
 czytelności, pomijano indeks górny $t$ dla populacji, np. stosowano zapis $P_{i_1}$ 
 zamiast $P_{i_1}^t$.
 
-\subsection{DE/rand}
+\subsection{Selekcja DE/rand}
 \label{chap:de_rand} 
 
 W DE/rand/1, $i$-ty mutant w populacji $P$~o~$\mu$~osobnikach powstaje w następujący sposób 
@@ -446,12 +447,12 @@ Rozwijając lewą stronę równania \eqref{eq:kowariancje} i korzystając z tego
 \C[u_i] \overset{(\ref{eq:derand1})}{=} \C[P_{i_1} + F(P_{i_2} - P_{i_3})] = \C[P_{i_1}] + F^2(\C[P_{i_2}] + \C[P_{i_3}])
 \end{align*}
 
-Każdy osobnik ma taki sam rozkład prawdopodobieństwa. 
-Macierz kowariancji punktów losowanych z $P$ ma teorytyczną wartość $\C[P]$,
-równą empirycznej macierzy kowariancji populacji $P$.
-Zatem dla DE/rand/1 macierz kowariancji mutanta wynosi:
+Każdy osobnik ma taki sam rozkład prawdopodobieństwa. Macierze
+$\C[P_{i_1}], \C[P_{i_2}], \C[P_{i_3}]$ są równe empirycznej macierzy kowariancji populacji 
+$\Sigma[P] = \frac{\mu - 1}{\mu}\C[P]$, gdzie $\C[P]$ jest teoretyczną macierzą kowariancji
+populacji $P$. Zatem dla DE/rand/1 macierz kowariancji mutanta wynosi:
 \begin{equation} \label{eq:macierz_kow_mutanta}
-\C[u_i] = \C[P] + F^2(\C[P] + \C[P]) = \C[P](2F^2 + 1)
+\C[u_i] = \frac{\mu - 1}{\mu}\left(\C[P] + F^2(\C[P] + \C[P])\right) = \frac{\mu - 1}{\mu}\C[P](2F^2 + 1)
 \end{equation}
 
 Rozwijając prawą stronę równania \eqref{eq:kowariancje}, w przypadku DE/rand/k macierz kowariancji mutanta wynosi:
@@ -460,16 +461,16 @@ Rozwijając prawą stronę równania \eqref{eq:kowariancje}, w przypadku DE/rand
  \label{eq:macierz_kow_mutanta_prim}
 \C[u_i'] \overset{(\ref{eq:derand})}{=} \C[P_{i_1} + F_k\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] 
 &= \C[P_{i_1}] + F_k^2\C[\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] \\
-&= \C[P_{i_1}] + F_k^2\C[\sum\limits_{j=2}^{2k+1} P_{i_{j}}] = \C[P](2kF_k^2 + 1)
+&= \C[P_{i_1}] + F_k^2\C[\sum\limits_{j=2}^{2k+1} P_{i_{j}}] = \frac{\mu - 1}{\mu}\C[P](2kF_k^2 + 1)
 \end{align}
 \end{equation}
 
 Przyrównując \eqref{eq:macierz_kow_mutanta} oraz \eqref{eq:macierz_kow_mutanta_prim}:
 \begin{align*}
-\C[P](2F^2 + 1) = \C[P](2kF_k^2 + 1)
+\frac{\mu - 1}{\mu}\C[P](2F^2 + 1) = \frac{\mu - 1}{\mu}\C[P](2kF_k^2 + 1)
 \end{align*}
 
-Przy założeniu, że $\C[P] \neq \textbf{0}$:
+Przy założeniu, że $\mu > 1$ oraz $\C[P] \neq \textbf{0}$:
 \begin{align*}
 F^2 = kF_k^2
 \end{align*}
@@ -485,7 +486,7 @@ do \eqref{eq:derand}, wzór na mutanta dla DE/rand/k można zapisać nastepując
 
 $$ u_i' = P_{i_1} + \frac{F}{\sqrt{k}}\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}}) $$
 
-\subsection{DE/rand/$\infty$}
+\subsection{Wariant DE/rand/$\infty$}
 \label{sub:de_rand_inf}
 
 Wariant DE/rand/$\infty$ został zaproponowany w \cite{decomposition} i nie jest wariantem klasycznym.
@@ -509,7 +510,7 @@ F_\infty^2 &= 2F^2 \\
 F_\infty &= \sqrt{2}F
 \end{align*}
 
-\subsection{DE/best}
+\subsection{Selekcja DE/best}
 
 W DE/best/k, $i$-ty mutant w populacji $P$~o~$\mu$~osobnikach powstaje w następujący sposób:
 \begin{equation} \label{eq:debest}
@@ -531,22 +532,23 @@ Można to osiągnąć tak dobierając $F_k$, aby było spełnione równanie:
 \C[u_i] = \C[u_i^*]
 \end{equation}
 
-Rozwijając prawą stronę równania \eqref{eq:kowariancje_best},  macierz kowariancji mutanta dla DE/best/k wynosi:
+Rozwijając prawą stronę równania \eqref{eq:kowariancje_best}, macierz kowariancji mutanta dla DE/best/k wynosi:
 \begin{equation}
 \begin{align}
  \label{eq:macierz_kow_mutanta_star}
 \C[u_i^*] &\overset{\eqref{eq:debest}}{=} \C[P_* + F_*\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] 
 = \C[P_*] + F_*^2\C[\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] \\
-&= \frac{1}{\mu}\C[P] + F_*^2\C[\sum\limits_{j=2}^{2k+1} P_{i_{j}}] = \C[P](2kF_*^2 + \frac{1}{\mu})
+&= \frac{\mu - 1}{\mu}\left(\frac{1}{\mu}\C[P] + F_*^2\C[\sum\limits_{j=2}^{2k+1} P_{i_{j}}]\right) 
+= \frac{\mu - 1}{\mu}\C[P](2kF_*^2 + \frac{1}{\mu})
 \end{align}
 \end{equation}
 
 Przyrównując \eqref{eq:macierz_kow_mutanta} oraz \eqref{eq:macierz_kow_mutanta_star}:
 \begin{align*}
-\C[P](2F^2 + 1) = \C[P](2kF_*^2 + \frac{1}{\mu})
+\frac{\mu - 1}{\mu}\C[P](2F^2 + 1) = \frac{\mu - 1}{\mu}\C[P](2kF_*^2 + \frac{1}{\mu})
 \end{align*}
 
-Przy założeniu, że $\C[P] \neq \textbf{0}$:
+Przy założeniu, że $\mu > 1$ oraz $\C[P] \neq \textbf{0}$:
 \begin{align*}
 2F^2 + 1 &= 2kF_*^2 + \frac{1}{\mu} \\
 F_*^2 &= \frac{2F^2 + 1 - \frac{1}{\mu}}{2k}
@@ -557,7 +559,7 @@ Obie strony są nieujemne, więc ostatecznie:
 F_* = \sqrt{\frac{2F^2 + 1 - \frac{1}{\mu}}{2k}}
 \end{align*}
 
-\subsection{DE/best/$\infty$}
+\subsection{Wariant DE/best/$\infty$}
 \label{sub:de_rand_inf}
 
 Przechodząc z $k$ do nieskończności, równanie mutanta DE/best/$\infty$ można zapisać jako:
@@ -586,7 +588,7 @@ Są nią 4 punkty o wartościach $x$ równych kolejno $-0.5, 0, 0.5, 3$.
 Punkty te dobrano specjalnie w taki sposób, aby można było zaobserwować asymetrię
 rozkładu mutantów dla DE/rand/1 -- trzy pierwsze punkty znajdują się w grupie po lewej stronie, 
 po prawej natomiast znajduje się tylko jeden punkt.
-Współczynnik skalujący $F$ wynosił 1, dla uproszczenia.
+Współczynnik skalujący $F$ wynosił 1, dla uproszczenia rozważań.
 Dla DE/best/1 przyjęto, że najlepszym punktem był punkt o $x = 0$.
 
 \begin{figure}[H]
@@ -614,9 +616,10 @@ mutantów dla DE/rand/1. Dla każdego z algorytmów wygenerowano 20 tysięcy mut
 \label{fig:sym_rand}
 \end{figure}
 
-
-Wektor różnicowy dla DE/rand/1 oraz DE/best/1 ma postać $w = \sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})$. 
-Rozkład wartości wektora $w$ jest symetryczny względem 0 i dąży do rozkładu Gaussa, gdy $k$ dąży do 
+Wektor różnicowy dla DE/rand/1 ma postać $w = F\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})$. 
+W przypadku DE/best/1, wektor różnicowy różni się tylko współczynnikiem skalującym:
+$w_* = F_*\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})$.
+Rozkład wartości wektorów $w$ oraz $w_*$ jest symetryczny względem 0 i dąży do rozkładu Gaussa, gdy $k$ dąży do 
 nieskończoności.
 
 W przypadku DE/best/1 w selekcji wybierany był zawsze jeden ustalony punkt (najlepszy), 
@@ -648,7 +651,7 @@ w wymiarze $y$: jeden o $y = 2.5$ oraz jeden o~$y = -2.5$.
 Rysunek \ref{fig:10k_rand1} przedstawia 40 tysięcy mutantów wygerowanych zgodnie ze schematem DE/rand/1.
 Rysunek \ref{fig:10k_rand6} przedstawia 40 tysięcy mutantów wygerowanych zgodnie ze schematem DE/rand/6.
 Współczynnik skalujący $F$ dla 
-DE/rand/1 wynosił 1, dla DE/rand/6 (zgodnie z tabelą \ref{table:wspolczynniki}) $\frac{1}{\sqrt{6}}$.
+DE/rand/1 wynosił 1, dla DE/rand/6 (zgodnie z tabelą \ref{table:wspolczynniki}) miał wartość $\frac{1}{\sqrt{6}}$.
 
 \begin{figure}[H]
 \centering
@@ -672,7 +675,8 @@ znacznie się różniła w przypadku obu porównywanych schematów mutacji.
 Dla DE/rand/1 było to 352 mutantów,
 natomiast dla DE/rand/6 jedynie 64. 
 
-Ponadto, podczas mutacji DE/rand/1 pojawiły się 2 bardzo oddalone punkty o~$y > 7.5$. 
+Ponadto, po wygenerowaniu 40 tysięcy mutantów dla DE/rand/1, średnio pojawiały
+się 2 bardzo oddalone osobniki o~$y > 7.5$. 
 Żeby tak się zdarzyło, najpierw wylosowany musi zostać osobnik $P_{i_1}$ o~$y=2.5$.
 Prawdopodobieństwo takiego zdarzenia wynosi $\frac{1}{20}$.
 Następnie musi zostać wylosowany wektor różnicowy o~długości 5. Tylko jedna para punktów 
@@ -744,16 +748,17 @@ Rozwijając prawą stronę równania (\ref{eq:rownanie}):
 \label{eq:macierz_kow_mutanta_mid}
 \C[u_i^\text{mid}] &\overset{\eqref{eq:demid}}{=} \C[m + F_\text{mid}\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] 
 \overset{(\ref{eq:midpoint})}{=} \C[\frac{1}{\mu}\sum\limits_{j=1}^\mu P_j] + F_\text{mid}^2\C[\sum\limits_{j=1}^k (P_{i_{2j}} - P_{i_{2j+1}})] \\
-&= \frac{1}{\mu^2}\mu\C[P] + F_\text{mid}^2\C[\sum\limits_{j=2}^{2k+1} P] = \C[P](2kF_\text{mid}^2 + \frac{1}{\mu})
+&= \frac{\mu - 1}{\mu}\left(\frac{1}{\mu^2}\mu\C[P] + F_\text{mid}^2\C[\sum\limits_{j=2}^{2k+1} P]\right) 
+= \frac{\mu - 1}{\mu}\C[P](2kF_\text{mid}^2 + \frac{1}{\mu})
 \end{align}
 \end{equation}
 
 Przyrównując \eqref{eq:macierz_kow_mutanta} do \eqref{eq:macierz_kow_mutanta_mid}:
 \begin{align*}
-\C[P](2F^2 + 1) = \C[P](2kF_\text{mid}^2 + \frac{1}{\mu})
+\frac{\mu - 1}{\mu}\C[P](2F^2 + 1) = \frac{\mu - 1}{\mu}\C[P](2kF_\text{mid}^2 + \frac{1}{\mu})
 \end{align*}
 
-Przy założeniu, że $\C[P] \neq \textbf{0}$:
+Przy założeniu, że $\mu > 1$ oraz $\C[P] \neq \textbf{0}$:
 \begin{align*}
 2F^2 + 1 = 2kF_\text{mid}^2 + \frac{1}{\mu} \\
 F_\text{mid}^2 = \frac{2F^2 + 1 - \frac{1}{\mu}}{2k}
@@ -783,7 +788,7 @@ Gdzie współczynnik skalujący $F_{\infty_\text{mid}}$ jest równy $\sqrt{2F^2 
 F_{\infty_\text{mid}} &= \sqrt{2F^2 + 1 - \frac{1}{\mu}}
 \end{align*}
 
-\section{Współczynniki skalujące}
+\section{Współczynniki skalujące zapewniające równość macierzy kowariancji mutantów}
 
 Tabela \ref{table:wspolczynniki} podsumowuje wyprowadzone współczynniki skalujące dla wszystkich
 wariantów algorytmów analizowanych w tej pracy. Użycie tych współczynników gwarantuje, że macierz
@@ -1166,7 +1171,7 @@ Dla pozostałych algorytmów współczynnik skalujący był obliczany zgodnie z 
 \ref{table:wspolczynniki}.
 W każdym z~algorytmów zostało wykorzystane krzyżowanie dwumianowe (opisane w rozdziale
 \ref{sec:krzyzowanie}) ze
-współczynnikiem krzyżowania $CR = 0.9$ \cite{ronkkonen}.
+współczynnikiem krzyżowania $p_c = 0.9$ \cite{ronkkonen}.
 
 \section{Implementacja}
 
@@ -1184,7 +1189,7 @@ Poprawność implementacji algorytmów w Javie została zweryfikowana dzięki te
 populacji. Zbadano wartości macierzy po pierwszej mutacji, uśrednione z~10000 niezależnych uruchomień. 
 Średnie wartości macierzy kowariancji były bardzo zbliżone dla wszystkich badanych algorytmów, 
 zgodnie z założeniami teoretycznymi poczynionymi w rozdziale
-\ref{chap:de_mid}. Uśrednioną macierz kowariancji populacji przedstawia tabela 
+\ref{chap:de_mid}. Przykładową, uśrednioną macierz kowariancji populacji przedstawia tabela 
 \ref{table:cov_matrix}. 
 
 \begin{table}[H]
@@ -1217,12 +1222,15 @@ Dzięki niemal identycznej macierzy kowariancji algorytmy
 mają taki sam zasięg mutacji i wyniki przez nie zwracane zależą tylko od badanego sposobu selekcji.
 Wartość bliską 21.4 można uzasadnić dzięki wyprowadzonej zależności \eqref{eq:macierz_kow_mutanta},
 wiążącej macierz kowariancji mutanta $\C[u_i]$
-z macierzą kowariancji początkowej populacji $\C[P]$. Populacja początkowa była losowana zgodnie z 
+z teoretyczną macierzą kowariancji początkowej populacji $\C[P]$. Populacja początkowa była losowana zgodnie z 
 rozkładem jednostajnym na przedziale $[-5;5]^{10}$, zatem na głównej przekątnej $\C[P]$
-znajduje się liczba $\frac{10^2}{12} \approx 8.3$, zgodnie ze wzorem na wariancję rozkładu jednostajnego 
-$\frac{(b - a)^2}{12}$. $F$ było równe 0.9, zatem 
-$\C[u_i] = \C[P](2 \cdot 0.9^2 + 1) = \C[P] \cdot 2.62 \approx \bold{\Lambda_{10}} \cdot 8.3 \cdot 2.62 \approx \bold{\Lambda_{10}} \cdot 21.7$, gdzie $\bold{\Lambda_{10}}$
-to 10-wymiarowa macierz diagonalna. 
+znajduje się $\frac{10^2}{12}$, zgodnie ze wzorem na wariancję rozkładu jednostajnego 
+$\frac{(b - a)^2}{12}$. $F$ było równe 0.9, $\mu = 100$, zatem wartość na przekątnej teoretycznej macierzy
+$\C[u_i]$ na mocy równania \eqref{eq:macierz_kow_mutanta} wynosiła
+$\frac{100 - 1}{100} \cdot \frac{10^2}{12} (2 \cdot 0.9^2 + 1) 
+= 0.99 \cdot \frac{10^2}{12}  \cdot 2.62 \approx 21.615$. Natomiast wartość na przekątnej 
+empirycznej macierzy kowariancji $\Sigma[P]$
+wynosiła $0.99 \cdot 21.615 \approx 21.4$. 
 
 \section{Wnioski}
 
@@ -1650,7 +1658,7 @@ Suma     & -7 & -14 & -6 & -14 & -4 & 0 & -6 & -51 \\ \hline
 \end{table}
 
 Na niekorzyść DE/mid/1 działała nie tylko niska liczba wymiarów, ale również brak dostrojenia
-paremetrów takich jak $\mu$, $F$, $CR$ do optymalizowanych funkcji. Pozostałe algorytmy startujące
+paremetrów takich jak $\mu$, $F$, $p_c$ do optymalizowanych funkcji. Pozostałe algorytmy startujące
 w BBOB 2013 miały dostrojone parametry.
 
 \chapter{Podsumowanie}
@@ -1701,6 +1709,10 @@ sam sposób dla każdego uczestnika konkursu. W taki sam sposób przetwarzane i 
 wyniki w postaci tabel, wykresów itp. Możliwe byłoby prowadzenie bieżących rankingów -- konkurs
 mógłby trwać cały czas. Dodatkowo, obliczenia mogłbyby zostać znacznie przyspieszone
 dzięki chmurze obliczeniowej.
+
+W tej pracy wartość podstawowego współczynnik skalującego $F$ ustawiono na 0.9.
+Dostrojenie tego paremetru dla konkretnych funkcji konkursowych prawdopodobnie 
+spowodowałoby zajęcie wyższego miejsca w rankingu algorytmów.
 
 Obiecującym kierunkiem rozwoju jest również adoptowanie parametrów algorytmu w~czasie
 jego wykonywania, czyli tzw. samoadaptacja \cite{brest}. W momencie, gdy różnorodność populacji
