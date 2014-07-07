@@ -1,0 +1,115 @@
+BBOB data directory 'derand2_20D' created
+01-02-2014 15:01:49
+ 34% 20D f15 run   1 FEs = 2000000 best-target =    142.83083532 28s
+ 38% 20D f15 run   2 FEs = 2000000 best-target =    124.00511495 62s
+ 31% 20D f15 run   3 FEs = 2000000 best-target =    131.29549390 96s
+ 31% 20D f15 run   4 FEs = 2000000 best-target =    142.99680090 131s
+ 24% 20D f15 run   5 FEs = 2000000 best-target =    151.36883409 165s
+ 37% 20D f15 run   6 FEs = 2000000 best-target =    139.84185259 200s
+ 32% 20D f15 run   7 FEs = 2000000 best-target =    135.39630430 236s
+ 29% 20D f15 run   8 FEs = 2000000 best-target =    149.08732650 271s
+ 25% 20D f15 run   9 FEs = 2000000 best-target =    139.67647551 306s
+ 32% 20D f15 run  10 FEs = 2000000 best-target =    133.22690440 340s
+ 29% 20D f15 run  11 FEs = 2000000 best-target =    131.49322969 374s
+ 39% 20D f15 run  12 FEs = 2000000 best-target =    141.64291757 408s
+ 29% 20D f15 run  13 FEs = 2000000 best-target =    126.16362744 441s
+ 30% 20D f15 run  14 FEs = 2000000 best-target =    153.35392153 477s
+ 23% 20D f15 run  15 FEs = 2000000 best-target =    129.19619295 512s
+01-02-2014 15:10:21
+ 48% 20D f16 run   1 FEs = 2000000 best-target =     23.45650723 581s
+ 47% 20D f16 run   2 FEs = 2000000 best-target =     25.85999511 647s
+ 47% 20D f16 run   3 FEs = 2000000 best-target =     29.02764076 699s
+ 48% 20D f16 run   4 FEs = 2000000 best-target =     24.05684928 749s
+ 49% 20D f16 run   5 FEs = 2000000 best-target =     24.77266217 813s
+ 47% 20D f16 run   6 FEs = 2000000 best-target =     19.88007146 881s
+ 48% 20D f16 run   7 FEs = 2000000 best-target =     23.56898148 948s
+ 48% 20D f16 run   8 FEs = 2000000 best-target =     26.57781557 1014s
+ 46% 20D f16 run   9 FEs = 2000000 best-target =     24.88556426 1069s
+ 48% 20D f16 run  10 FEs = 2000000 best-target =     25.12680130 1119s
+ 48% 20D f16 run  11 FEs = 2000000 best-target =     28.26283537 1183s
+ 47% 20D f16 run  12 FEs = 2000000 best-target =     26.00209877 1250s
+ 46% 20D f16 run  13 FEs = 2000000 best-target =     25.90088096 1307s
+ 48% 20D f16 run  14 FEs = 2000000 best-target =     23.94974124 1357s
+ 47% 20D f16 run  15 FEs = 2000000 best-target =     29.21246742 1416s
+01-02-2014 15:25:26
+ 14% 20D f19 run   1 FEs = 2000000 best-target =      5.24721336 1422s
+ 16% 20D f19 run   2 FEs = 2000000 best-target =      5.84692096 1428s
+ 13% 20D f19 run   3 FEs = 2000000 best-target =      5.61229355 1434s
+ 14% 20D f19 run   4 FEs = 2000000 best-target =      5.97069818 1440s
+ 14% 20D f19 run   5 FEs = 2000000 best-target =      4.00923471 1446s
+  9% 20D f19 run   6 FEs = 2000000 best-target =      5.43401436 1452s
+ 12% 20D f19 run   7 FEs = 2000000 best-target =      6.18342202 1457s
+ 12% 20D f19 run   8 FEs = 2000000 best-target =      5.77386483 1466s
+ 13% 20D f19 run   9 FEs = 2000000 best-target =      5.31885810 1475s
+ 13% 20D f19 run  10 FEs = 2000000 best-target =      5.54842278 1483s
+ 14% 20D f19 run  11 FEs = 2000000 best-target =      5.23683209 1489s
+ 13% 20D f19 run  12 FEs = 2000000 best-target =      5.47885391 1496s
+ 13% 20D f19 run  13 FEs = 2000000 best-target =      4.96573813 1504s
+ 17% 20D f19 run  14 FEs = 2000000 best-target =      5.72860300 1512s
+ 15% 20D f19 run  15 FEs = 2000000 best-target =      4.92167678 1521s
+01-02-2014 15:27:10
+  5% 20D f20 run   1 FEs = 2000000 best-target =      2.39066401 1533s
+  5% 20D f20 run   2 FEs = 2000000 best-target =      2.54258711 1545s
+  5% 20D f20 run   3 FEs = 2000000 best-target =      2.33264071 1558s
+  5% 20D f20 run   4 FEs = 2000000 best-target =      2.57594231 1570s
+  5% 20D f20 run   5 FEs = 2000000 best-target =      2.63155786 1582s
+  5% 20D f20 run   6 FEs = 2000000 best-target =      2.73720657 1595s
+  5% 20D f20 run   7 FEs = 2000000 best-target =      2.58176747 1607s
+  5% 20D f20 run   8 FEs = 2000000 best-target =      2.80991059 1620s
+  5% 20D f20 run   9 FEs = 2000000 best-target =      2.63786706 1632s
+  5% 20D f20 run  10 FEs = 2000000 best-target =      2.53507070 1643s
+  5% 20D f20 run  11 FEs = 2000000 best-target =      2.74382029 1652s
+  5% 20D f20 run  12 FEs = 2000000 best-target =      2.69223492 1662s
+  5% 20D f20 run  13 FEs = 2000000 best-target =      2.84447591 1671s
+  5% 20D f20 run  14 FEs = 2000000 best-target =      2.71137917 1681s
+  5% 20D f20 run  15 FEs = 2000000 best-target =      2.79325170 1690s
+01-02-2014 15:29:59
+ 27% 20D f21 run   1 FEs = 2000000 best-target =      0.17200113 1713s
+ 37% 20D f21 run   2 FEs = 2000000 best-target =      4.39301507 1735s
+ 30% 20D f21 run   3 FEs = 2000000 best-target =      1.91254970 1757s
+ 30% 20D f21 run   4 FEs = 2000000 best-target =      0.86645057 1779s
+ 17% 20D f21 run   5 FEs = 2000000 best-target =      2.04446383 1801s
+ 27% 20D f21 run   6 FEs = 2000000 best-target =      1.66073623 1823s
+ 12% 20D f21 run   7 FEs = 2000000 best-target =      0.93085426 1844s
+ 14% 20D f21 run   8 FEs = 2000000 best-target =      1.81488883 1866s
+ 28% 20D f21 run   9 FEs = 2000000 best-target =      0.93993632 1888s
+ 11% 20D f21 run  10 FEs = 2000000 best-target =      2.04383084 1920s
+ 27% 20D f21 run  11 FEs = 2000000 best-target =      0.15857402 1954s
+ 24% 20D f21 run  12 FEs = 2000000 best-target =      1.84743750 1989s
+ 23% 20D f21 run  13 FEs = 2000000 best-target =      0.05503225 2023s
+ 30% 20D f21 run  14 FEs = 2000000 best-target =      0.49610517 2049s
+ 14% 20D f21 run  15 FEs = 2000000 best-target =      0.00330773 2077s
+01-02-2014 15:36:27
+ 13% 20D f22 run   1 FEs = 2000000 best-target =      1.95505359 2089s
+ 16% 20D f22 run   2 FEs = 2000000 best-target =      1.95512763 2101s
+ 38% 20D f22 run   3 FEs = 2000000 best-target =      0.88559431 2112s
+  9% 20D f22 run   4 FEs = 2000000 best-target =      0.69213696 2124s
+ 35% 20D f22 run   5 FEs = 2000000 best-target =      1.95361257 2136s
+  9% 20D f22 run   6 FEs = 2000000 best-target =      8.74384377 2147s
+ 34% 20D f22 run   7 FEs = 2000000 best-target =      9.17801164 2159s
+ 13% 20D f22 run   8 FEs = 2000000 best-target =      0.69199386 2169s
+ 28% 20D f22 run   9 FEs = 2000000 best-target =      1.09386667 2177s
+ 23% 20D f22 run  10 FEs = 2000000 best-target =      0.69280894 2184s
+ 18% 20D f22 run  11 FEs = 2000000 best-target =      1.95522556 2192s
+ 18% 20D f22 run  12 FEs = 2000000 best-target =      0.69283622 2200s
+ 30% 20D f22 run  13 FEs = 2000000 best-target =      2.74811268 2207s
+ 13% 20D f22 run  14 FEs = 2000000 best-target =     11.12611257 2215s
+  9% 20D f22 run  15 FEs = 2000000 best-target =      1.95510440 2222s
+01-02-2014 15:38:52
+  0% 20D f24 run   1 FEs = 2000000 best-target =    143.27390554 2229s
+  1% 20D f24 run   2 FEs = 2000000 best-target =    165.65184032 2235s
+  0% 20D f24 run   3 FEs = 2000000 best-target =    151.71579049 2242s
+  0% 20D f24 run   4 FEs = 2000000 best-target =    137.27373919 2249s
+  1% 20D f24 run   5 FEs = 2000000 best-target =    170.52380419 2255s
+  1% 20D f24 run   6 FEs = 2000000 best-target =    144.22598856 2262s
+  1% 20D f24 run   7 FEs = 2000000 best-target =    159.95957139 2268s
+  0% 20D f24 run   8 FEs = 2000000 best-target =    152.15360651 2275s
+  0% 20D f24 run   9 FEs = 2000000 best-target =    164.47546447 2281s
+  0% 20D f24 run  10 FEs = 2000000 best-target =    155.86510271 2288s
+  1% 20D f24 run  11 FEs = 2000000 best-target =    160.46410193 2294s
+  0% 20D f24 run  12 FEs = 2000000 best-target =    158.67644330 2301s
+  1% 20D f24 run  13 FEs = 2000000 best-target =    157.89975238 2307s
+  0% 20D f24 run  14 FEs = 2000000 best-target =    159.96155350 2314s
+  1% 20D f24 run  15 FEs = 2000000 best-target =    164.58919040 2320s
+01-02-2014 15:40:30
+---- 20-D done ----

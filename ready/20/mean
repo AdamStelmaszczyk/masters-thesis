@@ -1,0 +1,108 @@
+& 8  & 21 & 1  & 0 & 1 & 2 & 0          debest1_20.out
+& 21 & 22 & 11 & 8 & 15 & 16 & 0          debest2_20.out
+& 23 & 21 & 15 & 13 & 15 & 15 & 1          debest6_20.out
+& 23 & 21 & 14 & 12 & 15 & 16 & 1          debestinf_20.out
+& 3  & 42 & 0  & 0 & 0 & 0 & 0          demid1_20.out
+& 23 & 47 & 9  & 3 & 25 & 18 & 0          demid2_20.out
+& 32 & 47 & 18 & 5 & 31 & 26 & 0          demid6_20.out
+& 32 & 47 & 17 & 4 & 32 & 25 & 0          demidinf_20.out
+& 12 & 38 & 2  & 2 & 4 & 5 & 0          derand1_20.out
+& 30 & 47 & 13 & 5 & 23 & 20 & 0          derand2_20.out
+& 33 & 47 & 16 & 5 & 31 & 27 & 0          derand6_20.out
+& 34 & 47 & 18 & 5 & 33 & 28 & 0          derandinf_20.out
+debest1_20D
+debest1_20D/bbobexp_f15.info: 131.37760720000000000000
+debest1_20D/bbobexp_f16.info: 12.42322866666666666666
+debest1_20D/bbobexp_f19.info: 6.08147260000000000000
+debest1_20D/bbobexp_f20.info: 296.02087366666666666666
+debest1_20D/bbobexp_f21.info: 13.18096546666666666666
+debest1_20D/bbobexp_f22.info: 18.96497753333333333333
+debest1_20D/bbobexp_f24.info: 192.76013466666666666666
+debest2_20D
+debest2_20D/bbobexp_f15.info: 206.89951346666666666666
+debest2_20D/bbobexp_f16.info: 27.82228666666666666666
+debest2_20D/bbobexp_f19.info: 7.39526966666666666666
+debest2_20D/bbobexp_f20.info: 3.43500013333333333333
+debest2_20D/bbobexp_f21.info: 16.93038426666666666666
+debest2_20D/bbobexp_f22.info: 15.53854986666666666666
+debest2_20D/bbobexp_f24.info: 215.31130833333333333333
+debest6_20D
+debest6_20D/bbobexp_f15.info: 288.93097913333333333333
+debest6_20D/bbobexp_f16.info: 29.59078180000000000000
+debest6_20D/bbobexp_f19.info: 9.05734260000000000000
+debest6_20D/bbobexp_f20.info: 174.25034080000000000000
+debest6_20D/bbobexp_f21.info: 59.49401773333333333333
+debest6_20D/bbobexp_f22.info: 55.76874460000000000000
+debest6_20D/bbobexp_f24.info: 292.92610926666666666666
+debestinf_20D
+debestinf_20D/bbobexp_f15.info: 275.13075826666666666666
+debestinf_20D/bbobexp_f16.info: 30.29922740000000000000
+debestinf_20D/bbobexp_f19.info: 9.00466473333333333333
+debestinf_20D/bbobexp_f20.info: 156.58179673333333333333
+debestinf_20D/bbobexp_f21.info: 56.23937786666666666666
+debestinf_20D/bbobexp_f22.info: 42.89288413333333333333
+debestinf_20D/bbobexp_f24.info: 283.42722033333333333333
+demid1_20D
+demid1_20D/bbobexp_f15.info: 32.65312446666666666666
+demid1_20D/bbobexp_f16.info: 17.72667333333333333333
+demid1_20D/bbobexp_f19.info: 3.09293780000000000000
+demid1_20D/bbobexp_f20.info: 2.63089106666666666666
+demid1_20D/bbobexp_f21.info: 2.75649786666666666666
+demid1_20D/bbobexp_f22.info: 5.55374413333333333333
+demid1_20D/bbobexp_f24.info: 99.79642473333333333333
+demid2_20D
+demid2_20D/bbobexp_f15.info: 91.14212306666666666666
+demid2_20D/bbobexp_f16.info: 24.66542620000000000000
+demid2_20D/bbobexp_f19.info: 5.23955426666666666666
+demid2_20D/bbobexp_f20.info: 2.61616620000000000000
+demid2_20D/bbobexp_f21.info: 9.70026540000000000000
+demid2_20D/bbobexp_f22.info: 8.38905540000000000000
+demid2_20D/bbobexp_f24.info: 139.99031920000000000000
+demid6_20D
+demid6_20D/bbobexp_f15.info: 144.91128200000000000000
+demid6_20D/bbobexp_f16.info: 25.35029760000000000000
+demid6_20D/bbobexp_f19.info: 6.00996773333333333333
+demid6_20D/bbobexp_f20.info: 2.74598333333333333333
+demid6_20D/bbobexp_f21.info: 20.82371293333333333333
+demid6_20D/bbobexp_f22.info: 5.66955053333333333333
+demid6_20D/bbobexp_f24.info: 164.39233893333333333333
+demidinf_20D
+demidinf_20D/bbobexp_f15.info: 144.46808546666666666666
+demidinf_20D/bbobexp_f16.info: 25.22812860000000000000
+demidinf_20D/bbobexp_f19.info: 5.86132460000000000000
+demidinf_20D/bbobexp_f20.info: 2.63973066666666666666
+demidinf_20D/bbobexp_f21.info: 21.63994853333333333333
+demidinf_20D/bbobexp_f22.info: 6.85095860000000000000
+demidinf_20D/bbobexp_f24.info: 163.68825340000000000000
+derand1_20D
+derand1_20D/bbobexp_f15.info: 16.12550386666666666666
+derand1_20D/bbobexp_f16.info: 1.07834213333333333333
+derand1_20D/bbobexp_f19.info: 3.63834360000000000000
+derand1_20D/bbobexp_f20.info: .20765600000000000000
+derand1_20D/bbobexp_f21.info: 1.03129840000000000000
+derand1_20D/bbobexp_f22.info: 4.49719793333333333333
+derand1_20D/bbobexp_f24.info: 53.78962820000000000000
+derand2_20D
+derand2_20D/bbobexp_f15.info: 138.10505546666666666666
+derand2_20D/bbobexp_f16.info: 25.36939400000000000000
+derand2_20D/bbobexp_f19.info: 5.41844313333333333333
+derand2_20D/bbobexp_f20.info: 2.63735846666666666666
+derand2_20D/bbobexp_f21.info: 1.28927886666666666666
+derand2_20D/bbobexp_f22.info: 3.08796293333333333333
+derand2_20D/bbobexp_f24.info: 156.44732360000000000000
+derand6_20D
+derand6_20D/bbobexp_f15.info: 151.88913560000000000000
+derand6_20D/bbobexp_f16.info: 26.93027693333333333333
+derand6_20D/bbobexp_f19.info: 6.04477366666666666666
+derand6_20D/bbobexp_f20.info: 2.74542880000000000000
+derand6_20D/bbobexp_f21.info: 14.54739126666666666666
+derand6_20D/bbobexp_f22.info: 6.39147180000000000000
+derand6_20D/bbobexp_f24.info: 168.23583200000000000000
+derandinf_20D
+derandinf_20D/bbobexp_f15.info: 147.72806520000000000000
+derandinf_20D/bbobexp_f16.info: 26.08635440000000000000
+derandinf_20D/bbobexp_f19.info: 6.13526086666666666666
+derandinf_20D/bbobexp_f20.info: 2.72985433333333333333
+derandinf_20D/bbobexp_f21.info: 21.05784746666666666666
+derandinf_20D/bbobexp_f22.info: 8.26816426666666666666
+derandinf_20D/bbobexp_f24.info: 168.24949266666666666666
