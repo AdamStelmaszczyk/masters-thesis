@@ -8,8 +8,7 @@
 *.aux
 *.blg
 *.log
-*.pdf
 *.toc
 *.backup
-ready/*
 pngs/*
+bbob13_alg_results/*
